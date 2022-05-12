@@ -27,7 +27,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 			studentNo.requestFocus()
 			studentNo.postDelayed({
 				showKeyboard(studentNo)
-			}, 1)
+			}, 200)
 
 
 			studentNo.addTextChangedListener(object : TextWatcher {
@@ -49,10 +49,14 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 			okButton.setOnClickListener {
 				hideKeyboard(requireView())
 
-				val studentNo = studentNo.text.toString().trim()
-				enterStudentNoLayout.visibility = View.GONE
-				studentDetailLayout.visibility = View.VISIBLE
-				studentNoTextView.text = studentNo
+				viewButton.visibility=View.VISIBLE
+				submitEntryButton.visibility=View.VISIBLE
+				okButton.visibility=View.GONE
+				studentNo.isEnabled=false
+//				val studentNo = studentNo.text.toString().trim()
+//				enterStudentNoLayout.visibility = View.GONE
+//				studentDetailLayout.visibility = View.VISIBLE
+//				studentNoTextView.text = studentNo
 
 //				val dialog = BottomSheetDialog(requireContext())
 //				val layout = layoutInflater.inflate(R.layout.fragment_view_bottom_sheet_fragment,
@@ -77,11 +81,13 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
 	private fun showKeyboard(view: View) {
 		val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-		imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+		imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
 	}
 
 	private fun hideKeyboard(view: View) {
 		val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 		imm.hideSoftInputFromWindow(view.windowToken, 0)
 	}
+
+
 }

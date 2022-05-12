@@ -6,14 +6,12 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/enterStudentNoLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+           >
 
             <ImageView
                 android:id="@+id/horizontalBar"
@@ -66,43 +64,9 @@
                 android:textColor="#6882EF"
                 android:textSize="20sp"
                 app:backgroundTint="@color/custom_blue"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/studentNoTextInputLayout"
                 app:layout_constraintEnd_toEndOf="@+id/studentNoTextInputLayout"
                 app:layout_constraintTop_toTopOf="@+id/studentNoTextInputLayout" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/studentDetailLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/horizontalBar2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_horizontal_bar" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/studentNoTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/edit_text_curved_edge"
-                android:fontFamily="@font/source_sans_pro_semibold"
-                android:padding="16dp"
-                android:textColor="#242E42"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/horizontalBar2" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/viewButton"
@@ -117,8 +81,9 @@
                 android:textSize="23sp"
                 app:backgroundTint="@color/white"
                 app:cornerRadius="8dp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/studentNoTextView"
+                app:layout_constraintTop_toBottomOf="@+id/studentNoTextInputLayout"
                 app:strokeColor="@color/custom_blue"
                 app:strokeWidth="2dp" />
 
@@ -132,16 +97,15 @@
                 android:layout_marginBottom="34dp"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="9dp"
+                android:visibility="gone"
                 android:text="Submit Entry"
                 android:textSize="23sp"
                 app:backgroundTint="@color/custom_blue"
                 app:cornerRadius="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/viewButton"
-                app:layout_constraintTop_toBottomOf="@+id/studentNoTextView" />
+                app:layout_constraintTop_toBottomOf="@+id/studentNoTextInputLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
