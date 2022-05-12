@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/JellyBean-App/app/src/main/res/layout/activity_main.xml" value="0.2390625" />
+        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/ic_flash_off.xml" value="0.175" />
+        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/ic_flash_on.xml" value="0.175" />
+        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/selector.xml" value="0.175" />
+        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/activity_main.xml" value="0.17552083333333332" />
+        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/fragment_barcode_sanner.xml" value="0.29278887923544744" />
       </map>
     </option>
   </component>
