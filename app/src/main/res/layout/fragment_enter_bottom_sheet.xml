@@ -143,22 +143,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/extendedFab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/source_sans_pro_semibold"
-            android:paddingVertical="14dp"
-            android:paddingRight="16dp"
-            android:text="Enter student number"
-            android:textColor="#242E42"
-            android:textSize="16sp"
-            app:backgroundTint="@color/white"
-            app:cornerRadius="52dp"
-            app:icon="@drawable/ic_avatar"
-            app:iconPadding="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/enterStudentNoLayout" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

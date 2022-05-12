@@ -1,19 +1,16 @@
 package `in`.silive.lateentryproject
 
+import `in`.silive.lateentryproject.databinding.ActivityMainBinding
 import `in`.silive.lateentryproject.ui.BarcodeFragment
+import `in`.silive.lateentryproject.ui.BottomSheetFragment
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
-import `in`.silive.lateentryproject.databinding.ActivityMainBinding
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.databinding.DataBindingUtil
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 
@@ -23,17 +20,13 @@ class MainActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
-		requestPermission.launch(
-			Manifest.permission.CAMERA
-		)
+		requestPermission.launch(Manifest.permission.CAMERA)
 
 	}
 
-
-
 	private fun gotToMainActivity() {
 		val transaction = supportFragmentManager.beginTransaction()
-		transaction.replace(R.id.container, BarcodeFragment())
+		transaction.replace(R.id.fragmentContainerView, BarcodeFragment())
 		transaction.commit()
 	}
 
@@ -80,7 +73,5 @@ class MainActivity : AppCompatActivity() {
 		val modalBottomSheet = BottomSheetFragment()
 		modalBottomSheet.show(supportFragmentManager, "BottomSheet")
 
-//			supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView, ())
-//			.commit()
 	}
 }

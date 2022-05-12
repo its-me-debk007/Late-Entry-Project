@@ -1,5 +1,6 @@
-package `in`.silive.lateentryproject
+package `in`.silive.lateentryproject.ui
 
+import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentEnterBottomSheetBinding
 import android.content.Context
 import android.graphics.Color
@@ -24,7 +25,10 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
 		binding.apply {
 			studentNo.requestFocus()
-			showKeyboard(studentNo)
+			studentNo.postDelayed({
+				showKeyboard(studentNo)
+			}, 1)
+
 
 			studentNo.addTextChangedListener(object : TextWatcher {
 				override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -40,7 +44,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 				}
 
 				override fun afterTextChanged(p0: Editable?) {}
-
 			})
 
 			okButton.setOnClickListener {

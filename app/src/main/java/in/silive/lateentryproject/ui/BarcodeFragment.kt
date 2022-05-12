@@ -2,6 +2,7 @@ package `in`.silive.lateentryproject.ui
 
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentBarcodeSannerBinding
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,13 +32,15 @@ class BarcodeFragment: Fragment(), ZBarScannerView.ResultHandler {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             layoutInflater,
             R.layout.fragment_barcode_sanner,
             container,
             false
         )
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         val view = binding.root
         val scan = binding.containerScanner
         onClicks()
@@ -45,6 +48,13 @@ class BarcodeFragment: Fragment(), ZBarScannerView.ResultHandler {
         scan.setOnClickListener {
             scannerView.resumeCameraPreview(this)
         }
+
+        binding.enterStudentNo.setOnClickListener {
+            val modalBottomSheet = BottomSheetFragment()
+            modalBottomSheet.show(requireActivity().supportFragmentManager,
+                                  "BottomSheetDialogFragment")
+        }
+
         return view
     }
 
