@@ -1,111 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <data>
+    <ImageView
+        android:id="@+id/horizontalBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_horizontal_bar" />
 
-    </data>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/studentNoTextInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeColor="@color/custom_blue"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="1dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:paddingBottom="12dp"
+        app:hintEnabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontalBar">
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/enterStudentNoLayout"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/studentNo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-           >
+            android:layout_height="match_parent"
+            android:fontFamily="@font/source_sans_pro_semibold"
+            android:hint="Student No."
+            android:imeOptions="actionGo"
+            android:inputType="number"
+            android:padding="16dp"
+            android:textColor="#242E42"
+            android:textColorHint="#BDC0C6"
+            android:textSize="18sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <ImageView
-                android:id="@+id/horizontalBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_horizontal_bar" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/okButton"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/ok_button_curved_edge"
+        android:fontFamily="@font/source_sans_pro_semibold"
+        android:paddingHorizontal="24dp"
+        android:text="OK"
+        android:textColor="#6882EF"
+        android:textSize="20sp"
+        app:backgroundTint="@color/custom_blue"
+        app:layout_constraintBottom_toBottomOf="@+id/studentNoTextInputLayout"
+        app:layout_constraintEnd_toEndOf="@+id/studentNoTextInputLayout"
+        app:layout_constraintTop_toTopOf="@+id/studentNoTextInputLayout" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/studentNoTextInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
-                android:paddingBottom="12dp"
-                app:hintEnabled="false"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/horizontalBar">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/studentNo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edit_text_curved_edge"
-                    android:fontFamily="@font/source_sans_pro_semibold"
-                    android:hint="Student No."
-                    android:imeOptions="actionGo"
-                    android:inputType="number"
-                    android:padding="16dp"
-                    android:textColor="#242E42"
-                    android:textColorHint="#BDC0C6"
-                    android:textSize="18sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/okButton"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/ok_button_curved_edge"
-                android:fontFamily="@font/source_sans_pro_semibold"
-                android:paddingHorizontal="24dp"
-                android:text="OK"
-                android:textColor="#6882EF"
-                android:textSize="20sp"
-                app:backgroundTint="@color/custom_blue"
-                app:layout_constraintBottom_toBottomOf="@+id/studentNoTextInputLayout"
-                app:layout_constraintEnd_toEndOf="@+id/studentNoTextInputLayout"
-                app:layout_constraintTop_toTopOf="@+id/studentNoTextInputLayout" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/viewButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="27dp"
-                android:paddingHorizontal="45dp"
-                android:paddingVertical="9dp"
-                android:text="View"
-                android:textColor="@color/custom_blue"
-                android:textSize="23sp"
-                app:backgroundTint="@color/white"
-                app:cornerRadius="8dp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/studentNoTextInputLayout"
-                app:strokeColor="@color/custom_blue"
-                app:strokeWidth="2dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/submitEntryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="27dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="34dp"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="9dp"
-                android:visibility="gone"
-                android:text="Submit Entry"
-                android:textSize="23sp"
-                app:backgroundTint="@color/custom_blue"
-                app:cornerRadius="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/viewButton"
-                app:layout_constraintTop_toBottomOf="@+id/studentNoTextInputLayout" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,8 @@
-package `in`.silive.lateentryproject
+package `in`.silive.lateentryproject.ui.activities
 
+import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.ActivityMainBinding
-import `in`.silive.lateentryproject.ui.BarcodeFragment
-import `in`.silive.lateentryproject.ui.BottomSheetFragment
+import `in`.silive.lateentryproject.ui.fragments.BarcodeFragment
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
@@ -19,7 +19,9 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_main)
+		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 		requestPermission.launch(Manifest.permission.CAMERA)
 
 	}
@@ -66,12 +68,5 @@ class MainActivity : AppCompatActivity() {
 		intent.addCategory(Intent.CATEGORY_DEFAULT)
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 		startActivity(intent)
-		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
-		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-		val modalBottomSheet = BottomSheetFragment()
-		modalBottomSheet.show(supportFragmentManager, "BottomSheet")
-
 	}
 }
