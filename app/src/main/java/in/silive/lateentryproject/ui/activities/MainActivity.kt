@@ -8,6 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -18,12 +19,16 @@ class MainActivity : AppCompatActivity() {
 	private lateinit var binding: ActivityMainBinding
 
 	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
 		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+		super.onCreate(savedInstanceState)
 
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-		requestPermission.launch(Manifest.permission.CAMERA)
+		askPermission()
 
+	}
+
+	private fun askPermission() {
+		requestPermission.launch(Manifest.permission.CAMERA)
 	}
 
 	private fun gotToMainActivity() {
@@ -33,17 +38,14 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private val requestPermission = registerForActivityResult(
-		ActivityResultContracts
-			.RequestPermission()
-	) {
-		when (it) {
-			true -> {
-				gotToMainActivity()
+		ActivityResultContracts.RequestPermission()) {
+			if (it) gotToMainActivity()
+			else {
+				if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+					showGoToAppSettingsDialog()
+
+				else askPermission()
 			}
-			false -> {
-				showGoToAppSettingsDialog()
-			}
-		}
 	}
 
 	private fun showGoToAppSettingsDialog() {
@@ -52,12 +54,12 @@ class MainActivity : AppCompatActivity() {
 			.setMessage(getString(R.string.we_need_permission))
 			.setPositiveButton(getString(R.string.grant)) { _, _ ->
 				goToAppSettings()
+				finish()
 			}
 			.setNegativeButton(getString(R.string.cancel)) { _, _ ->
-				run {
 					finish()
-				}
-			}.show()
+			}
+			.show()
 	}
 
 	private fun goToAppSettings() {

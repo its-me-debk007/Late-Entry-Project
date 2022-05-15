@@ -58,6 +58,7 @@
         android:fontFamily="@font/source_sans_pro_semibold"
         android:paddingHorizontal="24dp"
         android:text="OK"
+        android:enabled="false"
         android:textColor="#6882EF"
         android:textSize="20sp"
         app:backgroundTint="@color/custom_blue"

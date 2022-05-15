@@ -3,6 +3,6 @@
     <string name="grant">Grant</string>
     <string name="cancel">Cancel</string>
     <string name="grant_permissions">Grant Permissions</string>
-    <string name="we_need_permission">We need camera permission to scan QR codes. Go to App Settings and manage
+    <string name="we_need_permission">We need camera permission to scan Bar codes. Go to App Settings and manage
         permissions</string>
 </resources>

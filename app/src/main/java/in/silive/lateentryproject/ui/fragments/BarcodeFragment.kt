@@ -1,13 +1,14 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
-import `in`.silive.lateentryproject.databinding.FragmentBarcodeSannerBinding
+import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,14 +24,9 @@ import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
 
 class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
-	lateinit var binding: FragmentBarcodeSannerBinding
-
-	companion object {
-		fun newInstance(): BarcodeFragment {
-			return BarcodeFragment()
-		}
-	}
-	lateinit var scannerView: ZBarScannerView
+	private lateinit var binding: FragmentBarcodeScannerBinding
+	private lateinit var scannerView: ZBarScannerView
+	var c = 0
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -39,22 +35,27 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 	): View {
 		binding = DataBindingUtil.inflate(
 			layoutInflater,
-			R.layout.fragment_barcode_sanner,
+			R.layout.fragment_barcode_scanner,
 			container,
 			false
 		)
 		requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
 		val view = binding.root
-		val scan = binding.containerScanner
+		val scan = binding.scannerContainer
 		onClicks()
 		initializeQRCamera()
 		scan.setOnClickListener {
 			scannerView.resumeCameraPreview(this)
 		}
 
-		binding.enterStudentNo.setOnClickListener {
-			showBottomSheet(requireContext(), null)
+		binding.enterStudentNoBtn.setOnClickListener {
+			if (binding.enterStudentNoBtn.isEnabled)
+				showBottomSheet(requireContext(), null)
+
+			binding.enterStudentNoBtn.isEnabled = false
+			binding.enterStudentNoBtn.isClickable = false
+
 		}
 
 		return view
@@ -63,32 +64,32 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 	private fun initializeQRCamera() {
 		scannerView = ZBarScannerView(context)
 		scannerView.setResultHandler(this)
-		scannerView.setBackgroundColor(
-			ContextCompat.getColor(
-				requireContext(),
-				R.color.colorTranslucent
+
+		scannerView.apply {
+			setBackgroundColor(
+				ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
+			setBorderColor(
+				ContextCompat.getColor(
+					requireContext(),
+					R.color.white
+				)
 			)
-		)
-		scannerView.setBorderColor(
-			ContextCompat.getColor(
-				requireContext(),
-				R.color.white
+			setLaserColor(
+				ContextCompat.getColor(
+					requireContext(),
+					R.color.black
+				)
 			)
-		)
-		scannerView.setLaserColor(
-			ContextCompat.getColor(
-				requireContext(),
-				R.color.black
-			)
-		)
-		scannerView.setBorderStrokeWidth(10)
-		scannerView.setMaskColor(ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
-		scannerView.setLaserEnabled(true)
-		scannerView.setBorderLineLength(200)
-		scannerView.setupScanner()
-		scannerView.setAutoFocus(true)
+			setBorderStrokeWidth(10)
+			setMaskColor(ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
+			setLaserEnabled(true)
+			setBorderLineLength(200)
+			setupScanner()
+			setAutoFocus(true)
+		}
+
 		startQRCamera()
-		binding.containerScanner.addView(scannerView)
+		binding.scannerContainer.addView(scannerView)
 	}
 
 	private fun startQRCamera() {
@@ -133,33 +134,37 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 
 	override fun handleResult(rawResult: Result?) {
 		showBottomSheet(requireContext(), rawResult?.contents)
-		scannerView.setResultHandler(this)
-		startQRCamera()
 	}
 
 	private fun showBottomSheet(context: Context, studentNumber: String?) {
-		val dialog = BottomSheetDialog(context)
+		val bottomSheetDialog = BottomSheetDialog(context)
 		val enterStudentNoView = layoutInflater.inflate(R.layout.fragment_enter_bottom_sheet, null)
 		val seeStudentDetailView = layoutInflater.inflate(
 			R.layout.fragment_view_bottom_sheet_fragment, null)
 
 		val studentNo = enterStudentNoView.findViewById<TextInputEditText>(R.id.studentNo)
 		val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
-
 		val studentNoTextView =
 			seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNoTextView)
+		val submitLateEntryBtn =
+			seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
+		val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
 
-		if (studentNumber == null)
-			dialog.setContentView(enterStudentNoView)
+		if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
 		else {
-			dialog.setContentView(seeStudentDetailView)
+			bottomSheetDialog.setContentView(seeStudentDetailView)
 			studentNoTextView.text = studentNumber
 		}
 
-		dialog.show()
+		bottomSheetDialog.show()
 
 		studentNo.requestFocus()
-		studentNo.postDelayed({ showKeyboard(studentNo) }, 200)
+		studentNo.postDelayed({
+								  showKeyboard(studentNo)
+								  scannerView.stopCamera()
+								  binding.enterStudentNoBtn.isEnabled = true
+								  binding.enterStudentNoBtn.isClickable = true
+							  }, 200)
 
 		studentNo.addTextChangedListener(object : TextWatcher {
 			override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -179,18 +184,22 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 
 		okButton.setOnClickListener {
 			hideKeyboard(studentNo)
-			dialog.setContentView(seeStudentDetailView)
+			bottomSheetDialog.setContentView(seeStudentDetailView)
 
+			studentNoTextView.text = studentNo.text
+		}
 
-			val studentNumber = studentNo.text
+		bottomSheetDialog.setOnCancelListener {
+			hideKeyboard(requireView())
 
-			studentNoTextView.text = studentNumber
+			scannerView.setResultHandler(this)
+			startQRCamera()
 		}
 	}
 
 	private fun showKeyboard(view: View) {
 		val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-		imm.showSoftInput(view, InputMethodManager.SHOW_FORCED)
+		imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
 	}
 
 	private fun hideKeyboard(view: View) {
