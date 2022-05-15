@@ -40,10 +40,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/source_sans_pro_semibold"
-            android:hint="Student No."
+            android:hint="  Student No."
             android:imeOptions="actionGo"
             android:inputType="number"
             android:padding="16dp"
+            android:paddingEnd="94dp"
             android:textColor="#242E42"
             android:textColorHint="#BDC0C6"
             android:textSize="18sp" />
