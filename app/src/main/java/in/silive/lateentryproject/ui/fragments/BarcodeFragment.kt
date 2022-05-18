@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +30,7 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView
 class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 	private lateinit var binding: FragmentBarcodeScannerBinding
 	private lateinit var scannerView: ZBarScannerView
-	private lateinit var studentNo:String
+	private lateinit var studentNo: String
 	private lateinit var lateEntryViewModel: LateEntryViewModel
 	var c = 0
 
@@ -140,14 +139,12 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 	}
 
 	override fun handleResult(rawResult: Result?) {
-		if (rawResult?.contents?.length==7)
-		showBottomSheet(requireContext(), rawResult.contents)
-		else
-		{
+		if (rawResult?.contents?.length == 7)
+			showBottomSheet(requireContext(), rawResult.contents)
+		else {
 //			scannerView.setResultHandler(this)
 //			scannerView.startCamera()
 			scannerView.resumeCameraPreview(this)
-
 		}
 	}
 
@@ -165,10 +162,7 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 			seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
 		val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
 
-		if (studentNumber == null){
-			bottomSheetDialog.setContentView(enterStudentNoView)
-
-		}
+		if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
 		else {
 			bottomSheetDialog.setContentView(seeStudentDetailView)
 			studentNoTextView.text = studentNumber
@@ -189,7 +183,7 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 			override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 				if (p0.isNullOrEmpty()) {
 					okButton.isEnabled = false
-					okButton.setTextColor(Color.parseColor("#6882EF"))
+					okButton.setTextColor(Color.parseColor("#3392C5"))
 				} else {
 					okButton.isEnabled = true
 					okButton.setTextColor(Color.parseColor("#FFFFFF"))
@@ -214,10 +208,10 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 		}
 
 		submitLateEntryBtn.setOnClickListener {
-			val student=studentNoTextView.text.toString().trim()
+			val student = studentNoTextView.text.toString().trim()
 
 			lateEntryViewModel.studentNo.value = student
-			lateEntryViewModel.venue.value=1
+			lateEntryViewModel.venue.value = 1
 			lateEntryViewModel.submitResult()
 			lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
 				when (it) {
@@ -225,7 +219,7 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 						Toast.makeText(context, it.data?.message, Toast.LENGTH_SHORT).show()
 					}
 					is Response.Error -> {
-						Toast.makeText(context,  "Error", Toast.LENGTH_SHORT).show()
+						Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
 
 					}
 
@@ -246,7 +240,6 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		lateEntryViewModel = ViewModelProvider((context as FragmentActivity?)!!)[LateEntryViewModel::class.java]
+		lateEntryViewModel = ViewModelProvider(this)[LateEntryViewModel::class.java]
 	}
-
 }

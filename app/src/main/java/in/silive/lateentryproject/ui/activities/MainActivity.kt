@@ -3,6 +3,7 @@ package `in`.silive.lateentryproject.ui.activities
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.ActivityMainBinding
 import `in`.silive.lateentryproject.ui.fragments.BarcodeFragment
+import `in`.silive.lateentryproject.ui.fragments.LoginFragment
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
@@ -22,7 +23,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        askPermission()
+//        askPermission()
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView,
+                                                          LoginFragment()).commit()
 
     }
 

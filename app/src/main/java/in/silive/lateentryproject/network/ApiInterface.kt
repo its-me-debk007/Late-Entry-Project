@@ -1,4 +1,7 @@
+package `in`.silive.lateentryproject.network
 
+import `in`.silive.lateentryproject.models.LateEntryDataClass
+import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.models.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -8,7 +11,7 @@ import retrofit2.http.POST
 
 interface ApiInterface {
 
-	@POST("auth/login/")
+	@POST("/auth/login/")
 	@FormUrlEncoded
 	fun login(
 		@Field("email") email: String,
@@ -16,5 +19,6 @@ interface ApiInterface {
 	): Call<ResponseBody>
 
 	@POST("/entry/scan/")
-	fun lateEntry(@Body data: Late_entry_data_class): Call<Message_data_class>
+	fun lateEntry(@Body data: LateEntryDataClass): Call<MessageDataClass>
+
 }

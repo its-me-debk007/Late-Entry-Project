@@ -4,8 +4,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ServiceBuilder {
+    private const val baseURL = "https://lateentry.herokuapp.com"
+
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://lateentry.herokuapp.com")
+        .baseUrl(baseURL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
