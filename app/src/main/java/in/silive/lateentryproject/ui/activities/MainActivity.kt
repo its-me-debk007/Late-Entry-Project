@@ -3,12 +3,12 @@ package `in`.silive.lateentryproject.ui.activities
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.ActivityMainBinding
 import `in`.silive.lateentryproject.ui.fragments.BarcodeFragment
+import `in`.silive.lateentryproject.ui.fragments.LoginFragment
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +23,10 @@ class MainActivity : AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-		askPermission()
+//		askPermission()
+
+		supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView,
+														  LoginFragment()).commit()
 
 	}
 
@@ -39,13 +42,12 @@ class MainActivity : AppCompatActivity() {
 
 	private val requestPermission = registerForActivityResult(
 		ActivityResultContracts.RequestPermission()) {
-			if (it) gotToMainActivity()
-			else {
-				if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
-					showGoToAppSettingsDialog()
-
-				else askPermission()
-			}
+		if (it) gotToMainActivity()
+		else {
+			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+				showGoToAppSettingsDialog()
+			else askPermission()
+		}
 	}
 
 	private fun showGoToAppSettingsDialog() {
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 				finish()
 			}
 			.setNegativeButton(getString(R.string.cancel)) { _, _ ->
-					finish()
+				finish()
 			}
 			.show()
 	}
