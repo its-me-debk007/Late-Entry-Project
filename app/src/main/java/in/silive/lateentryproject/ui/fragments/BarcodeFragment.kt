@@ -2,19 +2,25 @@ package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
+import `in`.silive.lateentryproject.sealed_class.Response
+import `in`.silive.lateentryproject.view_models.LateEntryViewModel
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -25,6 +31,8 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView
 class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 	private lateinit var binding: FragmentBarcodeScannerBinding
 	private lateinit var scannerView: ZBarScannerView
+	private lateinit var studentNo:String
+	private lateinit var lateEntryViewModel: LateEntryViewModel
 	var c = 0
 
 	override fun onCreateView(
@@ -49,6 +57,7 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 		}
 
 		binding.enterStudentNoBtn.setOnClickListener {
+			scannerView.stopCamera()
 			if (binding.enterStudentNoBtn.isEnabled)
 				showBottomSheet(requireContext(), null)
 
@@ -131,7 +140,15 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 	}
 
 	override fun handleResult(rawResult: Result?) {
-		showBottomSheet(requireContext(), rawResult?.contents)
+		if (rawResult?.contents?.length==7)
+		showBottomSheet(requireContext(), rawResult.contents)
+		else
+		{
+//			scannerView.setResultHandler(this)
+//			scannerView.startCamera()
+			scannerView.resumeCameraPreview(this)
+
+		}
 	}
 
 	private fun showBottomSheet(context: Context, studentNumber: String?) {
@@ -148,7 +165,10 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 			seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
 		val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
 
-		if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
+		if (studentNumber == null){
+			bottomSheetDialog.setContentView(enterStudentNoView)
+
+		}
 		else {
 			bottomSheetDialog.setContentView(seeStudentDetailView)
 			studentNoTextView.text = studentNumber
@@ -159,7 +179,6 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 		studentNo.requestFocus()
 		studentNo.postDelayed({
 								  showKeyboard(studentNo)
-								  scannerView.stopCamera()
 								  binding.enterStudentNoBtn.isEnabled = true
 								  binding.enterStudentNoBtn.isClickable = true
 							  }, 200)
@@ -193,6 +212,26 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 			scannerView.setResultHandler(this)
 			startQRCamera()
 		}
+
+		submitLateEntryBtn.setOnClickListener {
+			val student=studentNoTextView.text.toString().trim()
+
+			lateEntryViewModel.studentNo.value = student
+			lateEntryViewModel.venue.value=1
+			lateEntryViewModel.submitResult()
+			lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
+				when (it) {
+					is Response.Success -> {
+						Toast.makeText(context, it.data?.message, Toast.LENGTH_SHORT).show()
+					}
+					is Response.Error -> {
+						Toast.makeText(context,  "Error", Toast.LENGTH_SHORT).show()
+
+					}
+
+				}
+			}
+		}
 	}
 
 	private fun showKeyboard(view: View) {
@@ -204,4 +243,10 @@ class BarcodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 		val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 		imm.hideSoftInputFromWindow(view.windowToken, 0)
 	}
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		lateEntryViewModel = ViewModelProvider((context as FragmentActivity?)!!)[LateEntryViewModel::class.java]
+	}
+
 }

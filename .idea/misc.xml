@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/ic_avatar.xml" value="0.175" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable-v31/textview_ripple_effect.xml" value="0.154" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/constraint_layout_background.xml" value="0.2135" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/edit_text_curved_edge.xml" value="0.176" />
@@ -20,7 +21,9 @@
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/selector.xml" value="0.175" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/activity_main.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/fragment_barcode_sanner.xml" value="0.29278887923544744" />
+        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/fragment_barcode_scanner.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/fragment_enter_bottom_sheet.xml" value="0.27177334732423925" />
+        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/fragment_view_bottom_sheet_fragment.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.175" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.175" />
       </map>
