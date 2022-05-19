@@ -1,38 +1,50 @@
 package `in`.silive.lateentryproject.repositories
 
-import `in`.silive.lateentryproject.models.ResponseBody
+import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
+import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
+import `in`.silive.lateentryproject.sealed_class.Response
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Response
 
 class LoginRepository {
-	private val loginLiveData = MutableLiveData<String>()
+    private val loginLiveData = MutableLiveData<Response<MessageDataClass>>()
 
-	fun login(email: String, password: String): MutableLiveData<String> {
-		val call = ServiceBuilder.buildService().login(email, password)
+    fun login(email: String, password: String): MutableLiveData<Response<MessageDataClass>> {
+        val call = ServiceBuilder.buildService().login(email, password)
+        call.enqueue(object : Callback<MessageDataClass> {
+            override fun onResponse(
+                call: Call<MessageDataClass>,
+                response: retrofit2.Response<MessageDataClass>
+            ) {
+                when {
+                    response.isSuccessful -> {
+                        val responseBody = response.body()!!
+                        loginLiveData.postValue(Response.Success(responseBody))
+                    }
+                    response.code() == 403 -> {
+                        val gson: Gson = GsonBuilder().create()
+                        val mError: ErrorPojoClass =
+                            gson.fromJson(
+                                response.errorBody()?.string(),
+                                ErrorPojoClass::class.java
+                            )
+                        loginLiveData.postValue(mError.message?.let { Response.Error(it) })
+                    }
+                    else -> {
+                        loginLiveData.postValue(Response.Error(response.message()))
+                    }
+                }
+            }
 
-		call.enqueue(object : Callback<ResponseBody> {
-			override fun onResponse(call: Call<ResponseBody>,
-									response: Response<ResponseBody>) {
-				when {
-					response.isSuccessful ->
-						loginLiveData.postValue(response.body()!!.message)
-
-					response.code() == 401 ->
-						loginLiveData.postValue("Incorrect password\nPlease try again")
-
-					response.code() == 406 ->
-						loginLiveData.postValue("No matching user found\nPlease try again")
-				}
-			}
-
-			override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-				loginLiveData.postValue(t.message + "\nPlease try again")
-			}
-		})
-		return loginLiveData
-	}
+            override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
+                loginLiveData.postValue(Response.Error(t.message.toString() + "\nPlease try again"))
+            }
+        })
+        return loginLiveData
+    }
 
 }
