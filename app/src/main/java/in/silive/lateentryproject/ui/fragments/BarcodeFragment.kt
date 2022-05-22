@@ -4,6 +4,7 @@ import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.view_models.LateEntryViewModel
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -26,9 +27,12 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView
 class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView.ResultHandler {
 	private lateinit var binding: FragmentBarcodeScannerBinding
 	private lateinit var scannerView: ZBarScannerView
-	private val lateEntryViewModel by lazy { ViewModelProvider(this)[LateEntryViewModel::class
-		.java] }
+	private val lateEntryViewModel by lazy {
+		ViewModelProvider(this)[LateEntryViewModel::class
+			.java]
+	}
 
+	@SuppressLint("SourceLockedOrientationActivity")
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding = FragmentBarcodeScannerBinding.bind(view)
@@ -57,22 +61,10 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		scannerView.setResultHandler(this)
 
 		scannerView.apply {
-			setBackgroundColor(
-				ContextCompat.getColor(requireContext(), R.color.colorTranslucent)
-			)
-			setBorderColor(
-				ContextCompat.getColor(
-					requireContext(),
-					R.color.white
-				)
-			)
-			setLaserColor(
-				ContextCompat.getColor(
-					requireContext(),
-					R.color.black
-				)
-			)
-			setBorderStrokeWidth(10)
+//			setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
+			setBorderColor(ContextCompat.getColor(requireContext(), R.color.white))
+			setLaserColor(ContextCompat.getColor(requireContext(), R.color.black))
+			setBorderStrokeWidth(13)
 			setMaskColor(ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
 			setLaserEnabled(true)
 			setBorderLineLength(200)
@@ -131,15 +123,14 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 	private fun showBottomSheet(context: Context, studentNumber: String?) {
 		val bottomSheetDialog = BottomSheetDialog(context)
-		val enterStudentNoView = layoutInflater.inflate(R.layout.fragment_enter_bottom_sheet, null)
-		val seeStudentDetailView = layoutInflater.inflate(
-			R.layout.fragment_view_bottom_sheet_fragment, null
-		)
+		val enterStudentNoView = layoutInflater.inflate(R.layout.layout_input_bottom_sheet, null)
+		val seeStudentDetailView =
+			layoutInflater.inflate(R.layout.layout_entry_bottom_sheet_fragment, null)
 
 		val studentNo = enterStudentNoView.findViewById<TextInputEditText>(R.id.studentNo)
 		val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
-		val studentNoTextView =
-			seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNoTextView)
+		val studentNoEditText =
+			seeStudentDetailView.findViewById<TextInputEditText>(R.id.studentNoEditText)
 		val submitLateEntryBtn =
 			seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
 		val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
@@ -147,7 +138,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
 		else {
 			bottomSheetDialog.setContentView(seeStudentDetailView)
-			studentNoTextView.text = studentNumber
+			studentNoEditText.setText(studentNumber)
 		}
 
 		bottomSheetDialog.show()
@@ -163,7 +154,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
 			override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-				if (p0.isNullOrEmpty()) {
+				if (p0 == null || p0.trim().length < 7) {
 					okButton.isEnabled = false
 					okButton.setTextColor(Color.parseColor("#3392C5"))
 				} else {
@@ -179,7 +170,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			hideKeyboard(studentNo)
 			bottomSheetDialog.setContentView(seeStudentDetailView)
 
-			studentNoTextView.text = studentNo.text
+			studentNoEditText.setText(studentNo.text!!.trim())
 		}
 
 		bottomSheetDialog.setOnCancelListener {
@@ -192,7 +183,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		submitLateEntryBtn.setOnClickListener {
 			submitLateEntryBtn.isEnabled = false
 			okButton.setTextColor(Color.parseColor("#3392C5"))
-			val student = studentNoTextView.text.toString().trim()
+			val student = studentNoEditText.text.toString().trim()
 
 			lateEntryViewModel.studentNo.value = student
 			lateEntryViewModel.venue.value = 1

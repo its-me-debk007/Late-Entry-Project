@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 	private lateinit var binding: FragmentLoginBinding
@@ -48,9 +49,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 					disableViews(false)
 
 					if (it is Response.Success) askPermission()
-					else if (it is Response.Error) Toast.makeText(context,
-																  it.errorMessage,
-																  Toast.LENGTH_SHORT).show()
+					else if (it is Response.Error) {
+						val snackBar = Snackbar.make(loginBtn, it.errorMessage!!, Snackbar
+							.LENGTH_SHORT)
+						snackBar.animationMode = Snackbar.ANIMATION_MODE_SLIDE
+						snackBar.show()
+					}
 				}
 			}
 		}
@@ -70,7 +74,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 			if (bool) {
 				progressBar.visibility = View.VISIBLE
 				loginBtn.setTextColor(Color.parseColor("#7191A1"))
-
 			} else {
 				progressBar.visibility = View.INVISIBLE
 				loginBtn.setTextColor(Color.parseColor("#0077B6"))
