@@ -26,6 +26,7 @@ import com.google.android.material.textview.MaterialTextView
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
 
+
 class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView.ResultHandler {
 	private lateinit var binding: FragmentBarcodeScannerBinding
 	private lateinit var scannerView: ZBarScannerView
@@ -240,6 +241,13 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			}
 			true
 		}
+
+		val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+		fieldMPopup.isAccessible = true
+		val mPopup = fieldMPopup.get(popup)
+		mPopup.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+			.invoke(mPopup, true)
+
 		popup.show()
 	}
 }
