@@ -52,8 +52,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 					else if (it is Response.Error) {
 						val snackBar = Snackbar.make(loginBtn, it.errorMessage!!, Snackbar
 							.LENGTH_SHORT)
-						snackBar.animationMode = Snackbar.ANIMATION_MODE_SLIDE
-						snackBar.show()
+						snackBar.apply {
+							setAction(R.string.ok_btn_snackbar){
+								dismiss()
+							}
+							animationMode = Snackbar.ANIMATION_MODE_SLIDE
+							show()
+						}
 					}
 				}
 			}

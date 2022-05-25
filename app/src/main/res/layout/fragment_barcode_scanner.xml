@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/scannerContainer"
             android:layout_width="0dp"
@@ -18,37 +17,35 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/enterStudentNoBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:fontFamily="@font/source_sans_pro_semibold"
-                android:paddingVertical="14dp"
-                android:paddingEnd="16dp"
-                android:text="Enter student number"
-                android:textColor="#242E42"
-                android:textSize="16sp"
-                app:backgroundTint="@color/white"
-                app:cornerRadius="52dp"
-                app:icon="@drawable/ic_avatar"
-                app:iconPadding="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/enterStudentNoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="@font/source_sans_pro_semibold"
+            android:paddingVertical="14dp"
+            android:paddingEnd="16dp"
+            android:text="Enter student number"
+            android:textColor="#242E42"
+            android:textSize="16sp"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="52dp"
+            app:icon="@drawable/ic_avatar"
+            app:iconPadding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/flashToggle"
             android:layout_width="25dp"
             android:layout_height="35dp"
-            android:layout_marginTop="26dp"
-            android:layout_marginEnd="31dp"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="18dp"
             android:src="@drawable/selector"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/scannerContainer" />
 
         <TextView
@@ -65,16 +62,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="31dp"
-            android:layout_marginTop="28dp"
-            app:layout_constraintStart_toStartOf="@+id/scannerContainer"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_vector__42_" />
-
-        <ImageView
             android:id="@+id/icLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -82,7 +69,17 @@
             android:layout_marginEnd="6dp"
             app:layout_constraintEnd_toStartOf="@+id/location"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_vector__43_" />
+            app:srcCompat="@drawable/ic_location" />
+
+        <ImageView
+            android:id="@+id/icOverflowMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="26dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_overflow_menu" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

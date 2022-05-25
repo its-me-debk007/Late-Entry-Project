@@ -35,4 +35,19 @@
         <!--Title and Messages Color-->
         <item name="android:textColorPrimary">@color/white</item>
     </style>
+
+    <style name="snackbar_style" parent="@style/Widget.MaterialComponents.Snackbar">
+        <item name="android:radius">32dp</item>
+    </style>
+
+    <style name="snackbar_button" parent="@style/Widget.MaterialComponents.Button.TextButton.Snackbar">
+        <item name="backgroundTint">@color/darkSnackbar</item>
+        <item name="android:text">@string/ok_btn_snackbar</item>
+        <item name="android:fontFamily">@font/source_sans_pro_bold</item>
+    </style>
+
+    <style name="snackbar_text" parent="@style/Widget.MaterialComponents.Snackbar.TextView">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/source_sans_pro</item>
+    </style>
 </resources>

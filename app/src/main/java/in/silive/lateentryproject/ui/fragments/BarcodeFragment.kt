@@ -14,12 +14,14 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textview.MaterialTextView
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
@@ -54,6 +56,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			binding.enterStudentNoBtn.isEnabled = false
 			binding.enterStudentNoBtn.isClickable = false
 		}
+
+		binding.icOverflowMenu.setOnClickListener { showPopup(it) }
 	}
 
 	private fun initializeQRCamera() {
@@ -129,6 +133,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 		val studentNo = enterStudentNoView.findViewById<TextInputEditText>(R.id.studentNo)
 		val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
+		val studentNoTextInputLayout = enterStudentNoView.findViewById<TextInputLayout>(R.id
+																							.studentNoTextInputLayout)
 		val studentNoEditText =
 			seeStudentDetailView.findViewById<TextInputEditText>(R.id.studentNoEditText)
 		val submitLateEntryBtn =
@@ -154,12 +160,14 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
 			override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-				if (p0 == null || p0.trim().length < 7) {
+				if (p0 == null || p0.length < 7) {
 					okButton.isEnabled = false
 					okButton.setTextColor(Color.parseColor("#3392C5"))
+					studentNoTextInputLayout.helperText = "Wrong student number"
 				} else {
 					okButton.isEnabled = true
 					okButton.setTextColor(Color.parseColor("#FFFFFF"))
+					studentNoTextInputLayout.helperText = " "
 				}
 			}
 
@@ -213,5 +221,25 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 	private fun hideKeyboard(view: View) {
 		val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 		imm.hideSoftInputFromWindow(view.windowToken, 0)
+	}
+
+	private fun showPopup(view: View) {
+		val popup = PopupMenu(requireContext(), view)
+		popup.menuInflater.inflate(R.menu.scanner_menu, popup.menu)
+		popup.setOnMenuItemClickListener { menuItem ->
+			when (menuItem.itemId) {
+				R.id.settings -> {
+
+				}
+				R.id.venue -> {
+
+				}
+				R.id.history -> {
+
+				}
+			}
+			true
+		}
+		popup.show()
 	}
 }

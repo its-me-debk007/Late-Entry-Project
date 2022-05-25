@@ -5,4 +5,5 @@
     <string name="grant_permissions">Grant Permissions</string>
     <string name="we_need_permission">We need camera permission to scan Bar codes. Go to App Settings and manage
         permissions</string>
+    <string name="ok_btn_snackbar"><font color="#4890EE" size="15"><b>OK</b></font></string>
 </resources>
