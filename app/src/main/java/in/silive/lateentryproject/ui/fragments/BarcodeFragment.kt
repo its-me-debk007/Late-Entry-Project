@@ -1,7 +1,9 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
+import `in`.silive.lateentryproject.adapters.VenueItemsAdapter
 import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
+import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.view_models.LateEntryViewModel
 import android.annotation.SuppressLint
@@ -11,8 +13,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
@@ -25,10 +30,13 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textview.MaterialTextView
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
+import kotlin.properties.Delegates
 
 class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView.ResultHandler {
 	private lateinit var binding: FragmentBarcodeScannerBinding
 	private lateinit var scannerView: ZBarScannerView
+	private lateinit var venueArrayList : ArrayList<String>
+
 	private val lateEntryViewModel by lazy {
 		ViewModelProvider(this)[LateEntryViewModel::class
 			.java]
@@ -42,6 +50,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
 		val scan = binding.scannerContainer
+		venueArrayList=ArrayList()
+		venueArrayList= arrayListOf("CSIT","LTs","Main Gate")
 		onClicks()
 		initializeQRCamera()
 		scan.setOnClickListener {
@@ -57,7 +67,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			binding.enterStudentNoBtn.isClickable = false
 		}
 
-		binding.icOverflowMenu.setOnClickListener { showPopup(it) }
+		binding.icOverflowMenu.setOnClickListener { showPopup(it,requireContext()) }
 	}
 
 	private fun initializeQRCamera() {
@@ -65,7 +75,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		scannerView.setResultHandler(this)
 
 		scannerView.apply {
-//			setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
 			setBorderColor(ContextCompat.getColor(requireContext(), R.color.white))
 			setLaserColor(ContextCompat.getColor(requireContext(), R.color.black))
 			setBorderStrokeWidth(13)
@@ -133,12 +142,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 		val studentNo = enterStudentNoView.findViewById<TextInputEditText>(R.id.studentNo)
 		val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
-		val studentNoTextInputLayout = enterStudentNoView.findViewById<TextInputLayout>(R.id
-																							.studentNoTextInputLayout)
-		val studentNoEditText =
-			seeStudentDetailView.findViewById<TextInputEditText>(R.id.studentNoEditText)
-		val submitLateEntryBtn =
-			seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
+		val studentNoTextInputLayout = enterStudentNoView.findViewById<TextInputLayout>(R.id.studentNoTextInputLayout)
+		val studentNoEditText = seeStudentDetailView.findViewById<TextInputEditText>(R.id.studentNoEditText)
+		val submitLateEntryBtn = seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
 		val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
 
 		if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
@@ -223,7 +229,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		imm.hideSoftInputFromWindow(view.windowToken, 0)
 	}
 
-	private fun showPopup(view: View) {
+	private fun showPopup(view: View,context: Context) {
 		val popup = PopupMenu(requireContext(), view)
 		popup.menuInflater.inflate(R.menu.scanner_menu, popup.menu)
 		popup.setOnMenuItemClickListener { menuItem ->
@@ -232,6 +238,31 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 				}
 				R.id.venue -> {
+					scannerView.stopCamera()
+					val bottomSheetDialog = BottomSheetDialog(context)
+					val venueItems = layoutInflater.inflate(R.layout.layout_venue_bottom_sheet_fragment, null)
+					bottomSheetDialog.setContentView(venueItems)
+					val listview:ListView=venueItems.findViewById(R.id.listview)
+					listview.isClickable=true
+					listview.divider=null
+					val adapter=VenueItemsAdapter(requireActivity(),venueArrayList)
+					listview.adapter=adapter
+
+
+//					listview.setOnItemClickListener { parent,view,position,id ->
+//						Toast.makeText(requireContext(), listview.onItemClickListener.toString(), Toast.LENGTH_SHORT).show()
+//						Log.i("venue", "showPopup:$position")
+//					}
+
+					bottomSheetDialog.show()
+//						listview.setOnItemClickListener { adapterView, view, i, l ->
+//						}
+						Toast.makeText(requireContext(),listview.count.toString(), Toast.LENGTH_SHORT).show()
+
+					bottomSheetDialog.setOnCancelListener {
+						scannerView.setResultHandler(this)
+						startQRCamera()
+					}
 
 				}
 				R.id.history -> {
