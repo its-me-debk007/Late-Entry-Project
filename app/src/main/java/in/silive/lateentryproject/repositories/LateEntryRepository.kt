@@ -12,7 +12,7 @@ import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 
-class LateEntryRepo {
+class LateEntryRepository {
 	private val lateEntryLiveData = MutableLiveData<Response<MessageDataClass>>()
 
 	fun lateEntry(

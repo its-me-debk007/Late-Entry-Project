@@ -125,7 +125,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		val bottomSheetDialog = BottomSheetDialog(context)
 		val enterStudentNoView = layoutInflater.inflate(R.layout.layout_input_bottom_sheet, null)
 		val seeStudentDetailView =
-			layoutInflater.inflate(R.layout.layout_entry_bottom_sheet_fragment, null)
+			layoutInflater.inflate(R.layout.layout_entry_bottom_sheet, null)
 
 		val studentNo = enterStudentNoView.findViewById<TextInputEditText>(R.id.studentNo)
 		val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
@@ -154,7 +154,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
 			override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-				if (p0 == null || p0.trim().length < 7) {
+				if (p0 == null || p0.length < 7) {
 					okButton.isEnabled = false
 					okButton.setTextColor(Color.parseColor("#3392C5"))
 				} else {
