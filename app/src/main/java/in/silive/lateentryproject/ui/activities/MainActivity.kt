@@ -2,6 +2,7 @@ package `in`.silive.lateentryproject.ui.activities
 
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.ActivityMainBinding
+import `in`.silive.lateentryproject.ui.fragments.BarcodeFragment
 import `in`.silive.lateentryproject.ui.fragments.LoginFragment
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -18,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         supportFragmentManager.beginTransaction().replace(
             R.id.fragmentContainerView,
-            LoginFragment()
+            BarcodeFragment()
         ).commit()
 
     }

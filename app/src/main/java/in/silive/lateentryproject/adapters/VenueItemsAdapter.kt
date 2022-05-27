@@ -1,25 +1,64 @@
 package `in`.silive.lateentryproject.adapters
 
-import `in`.silive.lateentryproject.R
-import `in`.silive.lateentryproject.models.MessageDataClass
-import android.app.Activity
+import `in`.silive.lateentryproject.databinding.LayoutVenueItemsBinding
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.TextView
-import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 
+class VenueRecyclerAdapter(private val venueList: List<String>, private val selectedVenue:
+String, private val listener: VenueClickListenerInterface) :
+	RecyclerView.Adapter<VenueRecyclerAdapter.ViewHolder>() {
 
-class VenueItemsAdapter (private val context:Activity,private val arraylist:ArrayList<String>):ArrayAdapter<String>(context,
-    R.layout.layout_venue_items,arraylist)  {
+	var selectedVenueBtn: MaterialButton? = null
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val inflater:LayoutInflater=LayoutInflater.from(context)
-        val view:View=inflater.inflate(R.layout.layout_venue_items, null)
-        val venue:TextView=view.findViewById(R.id.venueData)
-        venue.text = arraylist[position]
-        return view
-    }
-    }
+	inner class ViewHolder(val binding: LayoutVenueItemsBinding) :
+		RecyclerView.ViewHolder(binding.root)
+
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(
+		(LayoutVenueItemsBinding.inflate(LayoutInflater.from(parent.context), parent, false)))
+
+	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+		holder.binding.apply {
+			venue.text = venueList[position]
+			if (venue.text == selectedVenue) {
+				selectedVenueBtn = venue
+				highlight(selectedVenueBtn!!, icCheckCircle, true)
+			}
+
+			venue.setOnClickListener {
+				listener.venueClickListener(venue.text.toString())
+				highlight(selectedVenueBtn!!, icCheckCircle, false)
+				selectedVenueBtn = venue
+				highlight(venue, icCheckCircle, true)
+			}
+		}
+	}
+
+	override fun getItemCount(): Int {
+		return venueList.size
+	}
+
+	private fun highlight(btn: MaterialButton, icCheckCircle: View, bool: Boolean) {
+		if (bool) {
+			btn.setBackgroundColor(Color.parseColor("#1A73E8"))
+			btn.strokeWidth = 0
+			btn.setTextColor(Color.parseColor("#FFFFFF"))
+			icCheckCircle.visibility = View.VISIBLE
+		}
+		else {
+			btn.setBackgroundColor(Color.parseColor("#FFFFFF"))
+			btn.strokeWidth = 1
+			btn.setTextColor(Color.parseColor("#242E42"))
+			icCheckCircle.visibility = View.INVISIBLE
+		}
+	}
+}
+
+interface VenueClickListenerInterface{
+	fun venueClickListener(venue: String)
+}
