@@ -1,6 +1,6 @@
 package `in`.silive.lateentryproject.repositories
 
-import `in`.silive.lateentryproject.models.MessageDataClass
+import `in`.silive.lateentryproject.models.BulkReqDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
@@ -10,16 +10,16 @@ import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 
-class LoginRepository {
-	private val liveData = MutableLiveData<Response<MessageDataClass>>()
+class BulkRepository {
+	private val liveData = MutableLiveData<Response<BulkReqDataClass>>()
 
-	fun login(email: String, password: String): MutableLiveData<Response<MessageDataClass>> {
-		val call = ServiceBuilder.buildService().login(email, password)
+	fun bulkUpload(body: BulkReqDataClass): MutableLiveData<Response<BulkReqDataClass>> {
+		val call = ServiceBuilder.buildService().bulkUpload(body)
 
-		call.enqueue(object : Callback<MessageDataClass> {
+		call.enqueue(object : Callback<BulkReqDataClass> {
 			override fun onResponse(
-				call: Call<MessageDataClass>,
-				response: retrofit2.Response<MessageDataClass>
+				call: Call<BulkReqDataClass>,
+				response: retrofit2.Response<BulkReqDataClass>
 			) {
 				when {
 					response.isSuccessful ->
@@ -37,10 +37,10 @@ class LoginRepository {
 				}
 			}
 
-			override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
+			override fun onFailure(call: Call<BulkReqDataClass>, t: Throwable) {
 				val message = if (t.message == "Unable to resolve host \"lateentry.herokuapp" +
 					".com\": No address associated with hostname") "No Internet connection. " +
-						"Please connect to the Internet first!" else t.message + "\nPlease try again"
+						"Please connect to the Internet first!" else t.message.toString() + "\nPlease try again"
 
 				liveData.postValue(Response.Error(message))
 			}
