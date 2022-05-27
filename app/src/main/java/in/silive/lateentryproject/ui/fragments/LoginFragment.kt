@@ -1,19 +1,17 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
+import `in`.silive.lateentryproject.Utils
 import `in`.silive.lateentryproject.databinding.FragmentLoginBinding
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.view_models.LoginViewModel
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -40,7 +38,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 					return@setOnClickListener
 				}
 
-				hideKeyboard(requireView())
+				Utils().hideKeyboard(requireView(), activity)
 				disableViews(true)
 
 				viewModel.login(email.text?.trim().toString(), password.text?.trim().toString())
@@ -53,7 +51,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 						val snackBar = Snackbar.make(loginBtn, it.errorMessage!!, Snackbar
 							.LENGTH_SHORT)
 						snackBar.apply {
-							setAction(R.string.ok_btn_snackbar){
+							setAction(R.string.ok_btn_snackbar) {
 								dismiss()
 							}
 							animationMode = Snackbar.ANIMATION_MODE_SLIDE
@@ -62,12 +60,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 					}
 				}
 			}
-		}
-	}
 
-	private fun hideKeyboard(view: View) {
-		val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-		imm.hideSoftInputFromWindow(view.windowToken, 0)
+			download.setOnClickListener { Utils().download(activity) }
+		}
 	}
 
 	private fun disableViews(bool: Boolean) {
@@ -98,21 +93,20 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 			?.commit()
 	}
 
-	private val requestPermission = registerForActivityResult(
-		ActivityResultContracts.RequestPermission()
-	) {
-		if (it) gotToBarcodeFragment()
-		else {
-			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
-				showGoToAppSettingsDialog()
-			else askPermission()
+	private val requestPermission =
+		registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+			if (it) gotToBarcodeFragment()
+			else {
+				if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+					showGoToAppSettingsDialog()
+				else askPermission()
+			}
 		}
-	}
 
 	private fun showGoToAppSettingsDialog() {
 		AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
 			.setTitle(getString(R.string.grant_permissions))
-			.setMessage(getString(R.string.we_need_permission))
+			.setMessage(R.string.we_need_permission)
 			.setPositiveButton(getString(R.string.grant)) { _, _ ->
 				goToAppSettings()
 				activity?.finish()

@@ -15,6 +15,7 @@ class LoginRepository {
 
 	fun login(email: String, password: String): MutableLiveData<Response<MessageDataClass>> {
 		val call = ServiceBuilder.buildService().login(email, password)
+
 		call.enqueue(object : Callback<MessageDataClass> {
 			override fun onResponse(
 				call: Call<MessageDataClass>,
@@ -39,7 +40,7 @@ class LoginRepository {
 			override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
 				val message = if (t.message == "Unable to resolve host \"lateentry.herokuapp" +
 					".com\": No address associated with hostname") "No Internet connection. " +
-						"Please connect to the Internet first!" else t.message.toString() + "\nPlease try again"
+						"Please connect to the Internet first!" else t.message + "\nPlease try again"
 
 				loginLiveData.postValue(Response.Error(message))
 			}
