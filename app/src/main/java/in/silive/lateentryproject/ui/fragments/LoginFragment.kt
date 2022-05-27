@@ -2,7 +2,9 @@ package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentLoginBinding
+import `in`.silive.lateentryproject.models.Datastore
 import `in`.silive.lateentryproject.sealed_class.Response
+import `in`.silive.lateentryproject.view_models.BulkDataViewModel
 import `in`.silive.lateentryproject.view_models.LoginViewModel
 import android.Manifest
 import android.content.Context
@@ -11,6 +13,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -18,15 +21,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 	private lateinit var binding: FragmentLoginBinding
+	lateinit var datastore: Datastore
+	lateinit var id:ArrayList<String>
 	private val viewModel by lazy { ViewModelProvider(this@LoginFragment)[LoginViewModel::class.java] }
-
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding = FragmentLoginBinding.bind(view)
+		id= ArrayList()
 		binding.apply {
 			loginBtn.setOnClickListener {
 				emailTextInputLayout.helperText = null
@@ -48,7 +55,17 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 				viewModel.loginLiveData.observe(viewLifecycleOwner) {
 					disableViews(false)
 
-					if (it is Response.Success) askPermission()
+
+					if (it is Response.Success) {
+						datastore = Datastore(requireContext())
+						lifecycleScope.launch {
+							datastore.changeLoginState(true)
+							activity?.supportFragmentManager?.beginTransaction()
+								?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
+								?.replace(R.id.fragmentContainerView, BarcodeFragment())
+								?.commit()
+						}
+					}
 					else if (it is Response.Error) {
 						val snackBar = Snackbar.make(loginBtn, it.errorMessage!!, Snackbar
 							.LENGTH_SHORT)
@@ -63,6 +80,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 				}
 			}
 		}
+
 	}
 
 	private fun hideKeyboard(view: View) {
@@ -87,49 +105,5 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 		}
 	}
 
-	private fun askPermission() {
-		requestPermission.launch(Manifest.permission.CAMERA)
-	}
 
-	private fun gotToBarcodeFragment() {
-		activity?.supportFragmentManager?.beginTransaction()
-			?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
-			?.replace(R.id.fragmentContainerView, BarcodeFragment())
-			?.commit()
-	}
-
-	private val requestPermission = registerForActivityResult(
-		ActivityResultContracts.RequestPermission()
-	) {
-		if (it) gotToBarcodeFragment()
-		else {
-			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
-				showGoToAppSettingsDialog()
-			else askPermission()
-		}
-	}
-
-	private fun showGoToAppSettingsDialog() {
-		AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
-			.setTitle(getString(R.string.grant_permissions))
-			.setMessage(getString(R.string.we_need_permission))
-			.setPositiveButton(getString(R.string.grant)) { _, _ ->
-				goToAppSettings()
-				activity?.finish()
-			}
-			.setNegativeButton(getString(R.string.cancel)) { _, _ ->
-				activity?.finish()
-			}
-			.show()
-	}
-
-	private fun goToAppSettings() {
-		val intent = Intent(
-			Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-			Uri.fromParts("package", activity?.packageName, null)
-		)
-		intent.addCategory(Intent.CATEGORY_DEFAULT)
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-		startActivity(intent)
-	}
 }

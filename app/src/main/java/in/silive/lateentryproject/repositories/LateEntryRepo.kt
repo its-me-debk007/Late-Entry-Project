@@ -44,7 +44,6 @@ class LateEntryRepo {
 
 				else {
 					lateEntryLiveData.postValue(Response.Error(response.message()))
-					Log.e("dddd", response.code().toString()+response.message())
 				}
 			}
 
