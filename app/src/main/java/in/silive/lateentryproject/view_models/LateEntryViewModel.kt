@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-
 class LateEntryViewModel : ViewModel() {
 
 	var studentNo = MutableLiveData<String>()
@@ -21,7 +20,6 @@ class LateEntryViewModel : ViewModel() {
 		get() = lateEntryResult
 
 	fun submitResult() = viewModelScope.launch {
-		lateEntryResult = LateEntryRepository().lateEntry(studentNo.value, venue.value)
-
+		lateEntryResult = LateEntryRepository().lateEntry(studentNo.value!!, venue.value!!)
 	}
 }
