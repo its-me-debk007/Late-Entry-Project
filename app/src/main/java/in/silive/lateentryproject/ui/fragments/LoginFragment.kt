@@ -26,12 +26,10 @@ import kotlinx.coroutines.launch
 class LoginFragment : Fragment(R.layout.fragment_login) {
 	private lateinit var binding: FragmentLoginBinding
 	lateinit var datastore: Datastore
-	lateinit var id:ArrayList<String>
 	private val viewModel by lazy { ViewModelProvider(this@LoginFragment)[LoginViewModel::class.java] }
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding = FragmentLoginBinding.bind(view)
-		id= ArrayList()
 		binding.apply {
 			loginBtn.setOnClickListener {
 				emailTextInputLayout.helperText = null
@@ -59,7 +57,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 						lifecycleScope.launch {
 							datastore.changeLoginState(true)
 							activity?.supportFragmentManager?.beginTransaction()
-								?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
 								?.replace(R.id.fragmentContainerView, BarcodeFragment())
 								?.commit()
 						}

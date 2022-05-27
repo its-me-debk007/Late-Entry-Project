@@ -41,7 +41,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 	private lateinit var scannerView: ZBarScannerView
 	private lateinit var venueBottomSheetDialog: BottomSheetDialog
 	lateinit var datastore: Datastore
-	private lateinit var venueArrayList : ArrayList<String>
 	private lateinit var venue:MutableMap<Int,String>
 	private lateinit var venue2:Map<Int,String>
 	private var change:Boolean?=null
@@ -59,11 +58,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		datastore = Datastore(requireContext())
 		requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-		val scan = binding.scannerContainer
-		venueArrayList=ArrayList()
 		venue=HashMap()
 		venue2=HashMap()
-		venueArrayList= arrayListOf("CSIT","LTs","Main Gate")
 		onClicks()
 		initializeCamera()
 		binding.scannerContainer.setOnClickListener {
@@ -236,10 +232,12 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		}
 
 		bottomSheetDialog.setOnCancelListener {
-			Utils().hideKeyboard(requireView(), activity)
+			scannerView.postDelayed({
+				Utils().hideKeyboard(requireView(), activity)
+				scannerView.setResultHandler(this)
+				startCamera()
+			},100)
 
-			scannerView.setResultHandler(this)
-			startCamera()
 		}
 
 		submitLateEntryBtn.setOnClickListener {
@@ -314,6 +312,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		binding.location.postDelayed({
 										 venueBottomSheetDialog.dismiss()
 										 binding.location.text = venue
+			scannerView.setResultHandler(this)
+			startCamera()
 									 }, 350)
 	}
 }
