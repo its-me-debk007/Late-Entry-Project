@@ -2,11 +2,8 @@ package `in`.silive.lateentryproject.adapters
 
 import `in`.silive.lateentryproject.databinding.LayoutVenueItemsBinding
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 
@@ -14,7 +11,7 @@ class VenueRecyclerAdapter(private val venueList: List<String>, private val sele
 String, private val listener: VenueClickListenerInterface) :
 	RecyclerView.Adapter<VenueRecyclerAdapter.ViewHolder>() {
 
-	var selectedVenueBtn: MaterialButton? = null
+	private lateinit var selectedVenueBtn: MaterialButton
 
 	inner class ViewHolder(val binding: LayoutVenueItemsBinding) :
 		RecyclerView.ViewHolder(binding.root)
@@ -27,14 +24,14 @@ String, private val listener: VenueClickListenerInterface) :
 			venue.text = venueList[position]
 			if (venue.text == selectedVenue) {
 				selectedVenueBtn = venue
-				highlight(selectedVenueBtn!!, icCheckCircle, true)
+				highlight(selectedVenueBtn, true)
 			}
 
 			venue.setOnClickListener {
 				listener.venueClickListener(venue.text.toString())
-				highlight(selectedVenueBtn!!, icCheckCircle, false)
+				highlight(selectedVenueBtn, false)
 				selectedVenueBtn = venue
-				highlight(venue, icCheckCircle, true)
+				highlight(venue, true)
 			}
 		}
 	}
@@ -43,22 +40,19 @@ String, private val listener: VenueClickListenerInterface) :
 		return venueList.size
 	}
 
-	private fun highlight(btn: MaterialButton, icCheckCircle: View, bool: Boolean) {
+	private fun highlight(btn: MaterialButton, bool: Boolean) {
 		if (bool) {
 			btn.setBackgroundColor(Color.parseColor("#1A73E8"))
 			btn.strokeWidth = 0
 			btn.setTextColor(Color.parseColor("#FFFFFF"))
-			icCheckCircle.visibility = View.VISIBLE
-		}
-		else {
+		} else {
 			btn.setBackgroundColor(Color.parseColor("#FFFFFF"))
 			btn.strokeWidth = 1
 			btn.setTextColor(Color.parseColor("#242E42"))
-			icCheckCircle.visibility = View.INVISIBLE
 		}
 	}
 }
 
-interface VenueClickListenerInterface{
+interface VenueClickListenerInterface {
 	fun venueClickListener(venue: String)
 }

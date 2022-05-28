@@ -1,13 +1,11 @@
 package `in`.silive.lateentryproject.network
 
+import `in`.silive.lateentryproject.models.BulkDataClass
 import `in`.silive.lateentryproject.models.BulkReqDataClass
 import `in`.silive.lateentryproject.models.LateEntryDataClass
 import `in`.silive.lateentryproject.models.MessageDataClass
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ApiInterface {
 
@@ -20,5 +18,8 @@ interface ApiInterface {
 
 	@POST("/entry/bulk/")
 	fun bulkUpload(@Body body: BulkReqDataClass): Call<BulkReqDataClass>
+
+	@GET("/entry/cache/")
+	fun cacheData():Call<BulkDataClass>
 
 }
