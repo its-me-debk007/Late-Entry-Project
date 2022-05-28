@@ -1,11 +1,11 @@
 package `in`.silive.lateentryproject.repositories
 
+import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.models.LateEntryDataClass
 import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -16,15 +16,11 @@ class LateEntryRepository {
 	private val lateEntryLiveData = MutableLiveData<Response<MessageDataClass>>()
 
 	fun lateEntry(
-		studentNo: String?,
-		venue: Int?
+		studentNo: String,
+		venue: Int
 	): MutableLiveData<Response<MessageDataClass>> {
-		val call = ServiceBuilder.buildService().lateEntry(
-            LateEntryDataClass(
-				student_no = studentNo,
-				venue = venue
-			)
-		)
+		val call = ServiceBuilder.buildService()
+			.lateEntry(LateEntryDataClass(studentNo, Utils().currentTime(), venue))
 
 		call.enqueue(object : Callback<MessageDataClass?> {
 			override fun onResponse(

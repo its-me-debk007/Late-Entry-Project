@@ -1,7 +1,7 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
-import `in`.silive.lateentryproject.Utils
+import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.adapters.VenueClickListenerInterface
 import `in`.silive.lateentryproject.adapters.VenueRecyclerAdapter
 import `in`.silive.lateentryproject.connectivity.ConnectivityLiveData
@@ -15,6 +15,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -114,7 +115,12 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 										}
 
 									venue2 = map
+								}
 
+								for (data in response.data.student_data) {
+									data.student_image?.let {
+										Utils().download(activity, it, data.student_no!!)
+									}
 								}
 							}
 							is Response.Error ->
@@ -125,7 +131,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 				}
 			}
 		}
-
 	}
 
 	private fun initializeCamera() {

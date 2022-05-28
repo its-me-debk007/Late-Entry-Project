@@ -1,7 +1,7 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
-import `in`.silive.lateentryproject.Utils
+import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.databinding.FragmentLoginBinding
 import `in`.silive.lateentryproject.models.Datastore
 import `in`.silive.lateentryproject.sealed_class.Response
@@ -100,7 +100,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 			activity?.supportFragmentManager?.beginTransaction()
 				?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
 				?.replace(R.id.fragmentContainerView, BarcodeFragment())
-				?.addToBackStack(null)
 				?.commit()
 		}
 		else {
