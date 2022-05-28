@@ -13,4 +13,5 @@
     <color name="colorTranslucent">#50000000</color>
     <color name="colorTransparent">#00FFFFFF</color>
     <color name="darkSnackbar">#0F0F0F</color>
+    <color name="background">#065AC9</color>
 </resources>

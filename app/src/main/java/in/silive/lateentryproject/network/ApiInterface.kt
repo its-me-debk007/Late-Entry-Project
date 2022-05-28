@@ -19,7 +19,7 @@ interface ApiInterface {
 	@POST("/entry/bulk/")
 	fun bulkUpload(@Body body: BulkReqDataClass): Call<BulkReqDataClass>
 
-	@GET("/entry/cache/")
+	@GET("/entry/syncall/")
 	fun cacheData():Call<BulkDataClass>
 
 }
