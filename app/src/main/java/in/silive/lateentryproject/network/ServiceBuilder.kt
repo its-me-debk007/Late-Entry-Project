@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ServiceBuilder {
-    private const val baseURL = "https://lateentry.herokuapp.com"
+    private const val baseURL = "https://lateentry.azurewebsites.net"
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseURL)

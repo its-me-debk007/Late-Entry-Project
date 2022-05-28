@@ -22,4 +22,11 @@
         <!--Title and Messages Color-->
         <item name="android:textColorPrimary">@color/white</item>
     </style>
+    <style name="SplashScreenBackground" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen_background</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
 </resources>
