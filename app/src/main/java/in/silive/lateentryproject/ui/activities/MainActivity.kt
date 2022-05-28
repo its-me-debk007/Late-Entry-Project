@@ -2,7 +2,7 @@ package `in`.silive.lateentryproject.ui.activities
 
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.ActivityMainBinding
-import `in`.silive.lateentryproject.models.Datastore
+import `in`.silive.lateentryproject.ui.activities.SplashScreen.Companion.login
 import `in`.silive.lateentryproject.ui.fragments.BarcodeFragment
 import `in`.silive.lateentryproject.ui.fragments.LoginFragment
 import android.Manifest
@@ -15,51 +15,51 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-	private lateinit var binding: ActivityMainBinding
-	private lateinit var datastore: Datastore
+    private lateinit var binding: ActivityMainBinding
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-		datastore = Datastore(this@MainActivity)
+        if (login == true){
+            askPermission()
+        }
+        else gotToLoginFragment()
 
-		lifecycleScope.launch {
-			if (datastore.isLoggedIn()) askPermission()
-			else gotToFragment(LoginFragment())
-		}
-	}
+    }
+    private fun askPermission() {
+        requestPermission.launch(Manifest.permission.CAMERA)
+    }
 
-	private fun askPermission() {
-		requestPermission.launch(Manifest.permission.CAMERA)
-	}
+    private fun gotToBarcodeFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainerView, BarcodeFragment())
+            .commit()
+    }
+    private fun gotToLoginFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainerView, LoginFragment())
+            .commit()
+    }
 
-	private val requestPermission = registerForActivityResult(
-		ActivityResultContracts.RequestPermission()
-	) {
-		if (it) {
-			gotToFragment(BarcodeFragment())
-		} else {
-			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
-				showGoToAppSettingsDialog(this)
-			else askPermission()
-		}
-	}
+    private val requestPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        if (it) {
+            gotToBarcodeFragment()
+        }
+        else {
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+                showGoToAppSettingsDialog(this)
+            else askPermission()
+        }
+    }
 
-	private fun gotToFragment(fragment: Fragment) {
-		supportFragmentManager.beginTransaction()
-			.replace(R.id.fragmentContainerView, fragment)
-			.commit()
-	}
-
-	fun showGoToAppSettingsDialog(context: Context) {
+	private fun showGoToAppSettingsDialog(context: Context) {
 		MaterialAlertDialogBuilder(context, R.style.CustomAlertDialog)
 			.setTitle(R.string.grant_permissions)
 			.setMessage(R.string.we_need_permission)

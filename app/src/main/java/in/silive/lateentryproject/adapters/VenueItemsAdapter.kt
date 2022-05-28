@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 
-class VenueRecyclerAdapter(private val venueList: List<String>, private val selectedVenue:
+class VenueRecyclerAdapter(private val venueMap: Map<Int,String>, private val selectedVenue:
 String, private val listener: VenueClickListenerInterface) :
 	RecyclerView.Adapter<VenueRecyclerAdapter.ViewHolder>() {
 
@@ -21,14 +21,14 @@ String, private val listener: VenueClickListenerInterface) :
 
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		holder.binding.apply {
-			venue.text = venueList[position]
+			venue.text = venueMap.values.toTypedArray()[position]
 			if (venue.text == selectedVenue) {
 				selectedVenueBtn = venue
 				highlight(selectedVenueBtn, true)
 			}
 
 			venue.setOnClickListener {
-				listener.venueClickListener(venue.text.toString())
+				listener.venueClickListener(venue.text.toString(),venueMap.keys.toTypedArray()[position])
 				highlight(selectedVenueBtn, false)
 				selectedVenueBtn = venue
 				highlight(venue, true)
@@ -37,7 +37,7 @@ String, private val listener: VenueClickListenerInterface) :
 	}
 
 	override fun getItemCount(): Int {
-		return venueList.size
+		return venueMap.size
 	}
 
 	private fun highlight(btn: MaterialButton, bool: Boolean) {
@@ -53,6 +53,6 @@ String, private val listener: VenueClickListenerInterface) :
 	}
 }
 
-interface VenueClickListenerInterface {
-	fun venueClickListener(venue: String)
+interface VenueClickListenerInterface{
+	fun venueClickListener(venue: String,id:Int)
 }

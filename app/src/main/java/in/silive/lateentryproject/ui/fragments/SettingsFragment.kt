@@ -1,6 +1,7 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
+import `in`.silive.lateentryproject.Utils
 import `in`.silive.lateentryproject.databinding.FragmentSettingsBinding
 import `in`.silive.lateentryproject.models.Datastore
 import android.os.Bundle
@@ -34,7 +35,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 	private fun goToNextFragment(fragment: Fragment) {
 		activity?.supportFragmentManager?.beginTransaction()
-			?.setCustomAnimations(R.anim.long_fade_in, R.anim.slide_out)
 			?.replace(R.id.fragmentContainerView, fragment)
 			?.commit()
 	}
