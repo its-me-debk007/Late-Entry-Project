@@ -30,7 +30,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 			}
 
 			syncBtn.setOnClickListener {
-
 				Utils().download(activity, "/filer_public/2019/compressed_2012107.jpg", "2012107")
 			}
 		}
@@ -38,7 +37,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 	private fun goToNextFragment(fragment: Fragment) {
 		activity?.supportFragmentManager?.beginTransaction()
-			?.setCustomAnimations(R.anim.fade_in, R.anim.slide_out)
 			?.replace(R.id.fragmentContainerView, fragment)
 			?.commit()
 	}

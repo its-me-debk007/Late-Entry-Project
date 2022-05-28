@@ -10,11 +10,14 @@ import `in`.silive.lateentryproject.models.Datastore
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
 import `in`.silive.lateentryproject.view_models.LateEntryViewModel
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -46,33 +49,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         ViewModelProvider(this)[LateEntryViewModel::class.java]
     }
 
-
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		binding = FragmentBarcodeScannerBinding.bind(view)
-
-		datastore = Datastore(requireContext())
-
-		venue2 = HashMap()
-		onClicks()
-		initializeCamera()
-//		binding.scannerContainer.setOnClickListener {
-//			scannerView.resumeCameraPreview(this)
-//		}
-
-		val checkNetworkConnection = ConnectivityLiveData(requireActivity().application)
-		checkNetworkConnection.observe(viewLifecycleOwner) {
-			if (it) {
-				val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_out)
-				binding.noConnection.startAnimation(animation)
-				binding.noConnection.visibility = View.INVISIBLE
-			} else {
-				val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_in)
-				binding.noConnection.startAnimation(animation)
-				binding.noConnection.visibility = View.VISIBLE
-			}
-		}
-
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -82,6 +58,18 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         onClicks()
         initializeCamera()
+        val checkNetworkConnection = ConnectivityLiveData(requireActivity().application)
+        checkNetworkConnection.observe(viewLifecycleOwner) {
+            if (it) {
+                val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_out)
+                binding.noConnection.startAnimation(animation)
+                binding.noConnection.visibility = View.INVISIBLE
+            } else {
+                val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_in)
+                binding.noConnection.startAnimation(animation)
+                binding.noConnection.visibility = View.VISIBLE
+            }
+        }
         binding.scannerContainer.setOnClickListener {
             scannerView.resumeCameraPreview(this)
         }
@@ -98,7 +86,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 												 }, 500)
 		}
 
-        binding.icOverflowMenu.setOnClickListener { showPopup(it, requireContext()) }
         binding.icOverflowMenu.setOnClickListener { showPopup(it, requireContext()) }
 
 

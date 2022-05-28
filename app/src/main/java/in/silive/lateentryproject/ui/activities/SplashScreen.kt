@@ -13,7 +13,7 @@ import kotlin.properties.Delegates
 class SplashScreen: AppCompatActivity()  {
     lateinit var datastore: Datastore
     companion object{
-        var login by Delegates.notNull<Boolean>()
+        var login : Boolean?=null
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
