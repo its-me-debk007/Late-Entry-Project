@@ -9,14 +9,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-
 class BulkDataViewModel : ViewModel() {
 
-    private var bulkDataResult: MutableLiveData<Response<BulkDataClass>> = MutableLiveData()
-    val _bulkDataResult: LiveData<Response<BulkDataClass>>
-        get() = bulkDataResult
+	private var bulkDataResult: MutableLiveData<Response<BulkDataClass>> = MutableLiveData()
+	val _bulkDataResult: LiveData<Response<BulkDataClass>>
+		get() = bulkDataResult
 
-    fun sendResult() = viewModelScope.launch {
-        bulkDataResult = BulkDataRepo().cacheData()
-    }
+	fun sendResult() = viewModelScope.launch {
+		bulkDataResult = BulkDataRepo().cacheData()
+	}
 }

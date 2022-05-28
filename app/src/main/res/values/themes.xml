@@ -21,8 +21,6 @@
         <item name="popupMenuStyle">@style/popupMenuBackground</item>
         <item name="textAppearanceLargePopupMenu">@style/popupMenuTextView</item>
 
-        <!-- Change Overflow Menu ListView Item Height -->
-        <!--        <item name="android:listPreferredItemHeightSmall">30dp</item>-->
     </style>
 
     <!-- Change Overflow Menu ListView Text Size and Text Size -->
