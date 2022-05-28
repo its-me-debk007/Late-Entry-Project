@@ -1,7 +1,6 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
-import `in`.silive.lateentryproject.Utils
 import `in`.silive.lateentryproject.databinding.FragmentSettingsBinding
 import `in`.silive.lateentryproject.models.Datastore
 import android.os.Bundle

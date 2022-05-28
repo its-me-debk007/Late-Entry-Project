@@ -1,13 +1,13 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
-import `in`.silive.lateentryproject.Utils
 import `in`.silive.lateentryproject.adapters.VenueClickListenerInterface
 import `in`.silive.lateentryproject.adapters.VenueRecyclerAdapter
 import `in`.silive.lateentryproject.connectivity.ConnectivityLiveData
 import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
 import `in`.silive.lateentryproject.models.Datastore
 import `in`.silive.lateentryproject.sealed_class.Response
+import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
 import `in`.silive.lateentryproject.view_models.LateEntryViewModel
 import android.content.Context
@@ -15,6 +15,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast

@@ -1,21 +1,30 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
-import `in`.silive.lateentryproject.Utils
 import `in`.silive.lateentryproject.databinding.FragmentLoginBinding
 import `in`.silive.lateentryproject.models.Datastore
+import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.ui.activities.MainActivity
+import `in`.silive.lateentryproject.utils.Utils
+import `in`.silive.lateentryproject.view_model_factories.BulkDataViewModelFactory
+import `in`.silive.lateentryproject.view_models.BulkDataViewModel
 import `in`.silive.lateentryproject.view_models.LoginViewModel
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -26,14 +35,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var venue2: Map<Int, String>
     private var change: Boolean? = null
     private val viewModel by lazy { ViewModelProvider(this@LoginFragment)[LoginViewModel::class.java] }
-    private val bulkViewModel by lazy {
-
-        ViewModelProvider(
-            this,
+    private val bulkViewModel by lazy { ViewModelProvider(this,
             BulkDataViewModelFactory(StudentDatabase.getDatabase(requireContext()))
         )[BulkDataViewModel::class.java]
     }
-	requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,6 +46,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         venue = HashMap()
         venue2 = HashMap()
         datastore = Datastore(requireContext())
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         lifecycleScope.launch{
             Toast.makeText(context, datastore.isSync().toString(), Toast.LENGTH_SHORT).show()
         }
