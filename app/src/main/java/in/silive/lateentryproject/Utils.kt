@@ -2,11 +2,13 @@ package `in`.silive.lateentryproject
 
 import android.app.DownloadManager
 import android.content.Context
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Environment
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
+
 
 class Utils {
 	private val imageUri = Uri.parse("https://media.geeksforgeeks.org/wp-content/uploads/" +
@@ -41,4 +43,6 @@ class Utils {
 		val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 		imm.hideSoftInputFromWindow(view.windowToken, 0)
 	}
+
+
 }

@@ -7,6 +7,7 @@ import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.view_models.LoginViewModel
 import android.Manifest
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -25,6 +26,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding = FragmentLoginBinding.bind(view)
+
+		requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
 		binding.apply {
 			loginBtn.setOnClickListener {
 				emailTextInputLayout.helperText = null

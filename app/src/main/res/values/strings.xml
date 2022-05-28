@@ -6,4 +6,6 @@
     <string name="we_need_permission">We need camera permission to scan Bar codes. Go to App Settings and manage
         permissions</string>
     <string name="ok_btn_snackbar"><font color="#4890EE" size="15"><b>OK</b></font></string>
+    <string name="upload_data">User needs to upload new data every year and sync it to update every year’s batch list.</string>
+    <string name="sync_data">User needs to sync data every year to update the students list of each year.</string>
 </resources>

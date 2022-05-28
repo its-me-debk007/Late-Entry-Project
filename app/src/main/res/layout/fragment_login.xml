@@ -26,7 +26,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="65dp"
                     android:fontFamily="@font/source_sans_pro_bold"
                     android:text="LATE ENTRY\nSYSTEM"
                     android:textColor="@color/white"
@@ -37,6 +37,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_badge" />

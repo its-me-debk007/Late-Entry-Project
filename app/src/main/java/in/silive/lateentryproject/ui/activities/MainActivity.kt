@@ -10,18 +10,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+	private lateinit var binding: ActivityMainBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        super.onCreate(savedInstanceState)
+	override fun onCreate(savedInstanceState: Bundle?) {
+		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+		super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        supportFragmentManager.beginTransaction().replace(
-            R.id.fragmentContainerView,
-            BarcodeFragment()
-        ).commit()
-
-    }
+		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+		supportFragmentManager.beginTransaction()
+			.replace(R.id.fragmentContainerView, LoginFragment()
+			).commit()
+	}
 }
 
