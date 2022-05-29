@@ -1,6 +1,6 @@
 package `in`.silive.lateentryproject.ui.activities
 
-import `in`.silive.lateentryproject.models.Datastore
+import `in`.silive.lateentryproject.utils.Datastore
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle

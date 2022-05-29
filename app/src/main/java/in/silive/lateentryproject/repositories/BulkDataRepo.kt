@@ -21,7 +21,7 @@ class BulkDataRepo(private val studentDatabase: StudentDatabase) {
 		val call = ServiceBuilder.buildService().cacheData()
 
 		call.enqueue(object : Callback<BulkDataClass?> {
-		override fun onResponse(
+			override fun onResponse(
 				call: Call<BulkDataClass?>,
 				response: retrofit2.Response<BulkDataClass?>
 			) {

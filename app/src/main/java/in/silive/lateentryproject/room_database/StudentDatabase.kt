@@ -1,6 +1,6 @@
 package `in`.silive.lateentryproject.room_database
 
-import `in`.silive.lateentryproject.models.Student
+import `in`.silive.lateentryproject.entities.Student
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room

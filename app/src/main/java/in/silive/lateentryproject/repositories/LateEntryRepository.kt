@@ -1,18 +1,22 @@
 package `in`.silive.lateentryproject.repositories
 
-import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.models.LateEntryDataClass
 import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
+import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
+import `in`.silive.lateentryproject.utils.Utils
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 
-class LateEntryRepository {
+class LateEntryRepository() {
 	private val lateEntryLiveData = MutableLiveData<Response<MessageDataClass>>()
 
 	fun lateEntry(
@@ -31,20 +35,22 @@ class LateEntryRepository {
 					val responseBody = response.body()!!
 					lateEntryLiveData.postValue(Response.Success(responseBody))
 
-				}else if (response.code() == 400) {
-					val gson:Gson=GsonBuilder().create()
+				} else if (response.code() == 400) {
+					val gson: Gson = GsonBuilder().create()
 					val mError: ErrorPojoClass =
 						gson.fromJson(response.errorBody()?.string(), ErrorPojoClass::class.java)
-						lateEntryLiveData.postValue(mError.message?.let { Response.Error(it) })
-				}
-
-				else {
-					lateEntryLiveData.postValue(Response.Error(response.message()))
+					lateEntryLiveData.postValue(mError.message?.let { Response.Error(it) })
 				}
 			}
 
 			override fun onFailure(call: Call<MessageDataClass?>, t: Throwable) {
-				lateEntryLiveData.postValue(Response.Error("Something went wrong ${t.message}"))
+//				val errorMessage = if (t.message == ("Something went wrong\Unable to resolve " +
+//							"host \"lateentry" + ".azurewebsite)s.net\": No	address associated with hostname"))
+//					"Save to DB"
+//				else "Something went wrong ${t.message}"
+				val errorMessage = "Save to DB"
+				Log.e("dddd", t.message!!)
+				lateEntryLiveData.postValue(Response.Error(errorMessage))
 			}
 		})
 		return lateEntryLiveData

@@ -17,7 +17,7 @@ interface ApiInterface {
 	fun lateEntry(@Body body: LateEntryDataClass): Call<MessageDataClass>
 
 	@POST("/entry/bulk/")
-	fun bulkUpload(@Body body: BulkReqDataClass): Call<BulkReqDataClass>
+	fun bulkUpload(@Body body: BulkReqDataClass): Call<MessageDataClass>
 
 	@GET("/entry/syncall/")
 	fun cacheData():Call<BulkDataClass>

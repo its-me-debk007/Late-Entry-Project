@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class Utils {
 	private val baseUrl = "https://lateentry.azurewebsites.net"
@@ -54,6 +55,16 @@ class Utils {
 
 		format = format.substring(0, format.length - 2) + ':' + format.substring(format.length - 2)
 		return format
+	}
+
+	fun compareTime(currentTime: String, savedTime: String): Long {
+		val timeFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+		val sdf = SimpleDateFormat(timeFormat, Locale.UK)
+		val current = sdf.parse(currentTime)
+		val saved = sdf.parse(savedTime)
+
+		val duration = current!!.time - saved!!.time
+		return TimeUnit.MILLISECONDS.toHours(duration)
 	}
 
 	fun checkInternetAtStartup(applicationContext: Context): Boolean {

@@ -1,5 +1,5 @@
 package `in`.silive.lateentryproject.models
 
 data class BulkReqDataClass(
-    val entry: List<EntryDataClass>
+    val entry: List<LateEntryDataClass>
 )

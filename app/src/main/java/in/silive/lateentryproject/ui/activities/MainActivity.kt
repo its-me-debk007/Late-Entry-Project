@@ -18,46 +18,46 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+	private lateinit var binding: ActivityMainBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+	override fun onCreate(savedInstanceState: Bundle?) {
+		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+		super.onCreate(savedInstanceState)
+		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        if (login == true){
-            askPermission()
-        }
-        else gotToLoginFragment()
+		if (login == true){
+			askPermission()
+		}
+		else gotToLoginFragment()
 
-    }
-    private fun askPermission() {
-        requestPermission.launch(Manifest.permission.CAMERA)
-    }
+	}
+	private fun askPermission() {
+		requestPermission.launch(Manifest.permission.CAMERA)
+	}
 
-    private fun gotToBarcodeFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainerView, BarcodeFragment())
-            .commit()
-    }
-    private fun gotToLoginFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainerView, LoginFragment())
-            .commit()
-    }
+	private fun gotToBarcodeFragment() {
+		supportFragmentManager.beginTransaction()
+			.replace(R.id.fragmentContainerView, BarcodeFragment())
+			.commit()
+	}
+	private fun gotToLoginFragment() {
+		supportFragmentManager.beginTransaction()
+			.replace(R.id.fragmentContainerView, LoginFragment())
+			.commit()
+	}
 
-    private val requestPermission = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) {
-        if (it) {
-            gotToBarcodeFragment()
-        }
-        else {
-            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
-                showGoToAppSettingsDialog(this)
-            else askPermission()
-        }
-    }
+	private val requestPermission = registerForActivityResult(
+		ActivityResultContracts.RequestPermission()
+	) {
+		if (it) {
+			gotToBarcodeFragment()
+		}
+		else {
+			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+				showGoToAppSettingsDialog(this)
+			else askPermission()
+		}
+	}
 
 	private fun showGoToAppSettingsDialog(context: Context) {
 		MaterialAlertDialogBuilder(context, R.style.CustomAlertDialog)
@@ -81,4 +81,3 @@ class MainActivity : AppCompatActivity() {
 		startActivity(intent)
 	}
 }
-

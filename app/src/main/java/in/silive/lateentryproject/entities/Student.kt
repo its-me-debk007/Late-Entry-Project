@@ -1,4 +1,4 @@
-package `in`.silive.lateentryproject.models
+package `in`.silive.lateentryproject.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

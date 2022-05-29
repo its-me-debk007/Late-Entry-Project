@@ -1,6 +1,6 @@
 package `in`.silive.lateentryproject.room_database
 
-import `in`.silive.lateentryproject.models.Student
+import `in`.silive.lateentryproject.entities.Student
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query

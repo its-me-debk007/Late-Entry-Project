@@ -2,10 +2,9 @@ package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentLoginBinding
-import `in`.silive.lateentryproject.models.Datastore
+import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
-import `in`.silive.lateentryproject.ui.activities.MainActivity
 import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.view_model_factories.BulkDataViewModelFactory
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
@@ -46,7 +45,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         venue = HashMap()
         venue2 = HashMap()
         datastore = Datastore(requireContext())
-        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         lifecycleScope.launch{
             Toast.makeText(context, datastore.isSync().toString(), Toast.LENGTH_SHORT).show()
         }
