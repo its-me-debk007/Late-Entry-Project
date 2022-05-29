@@ -57,30 +57,4 @@ class Utils {
 		return format
 	}
 
-	fun compareTime(currentTime: String, savedTime: String): Long {
-		val timeFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-		val sdf = SimpleDateFormat(timeFormat, Locale.UK)
-		val current = sdf.parse(currentTime)
-		val saved = sdf.parse(savedTime)
-
-		val duration = current!!.time - saved!!.time
-		return TimeUnit.MILLISECONDS.toHours(duration)
-	}
-
-	fun checkInternetAtStartup(applicationContext: Context): Boolean {
-		var result = false
-		val connectivityManager = applicationContext.getSystemService(Context
-																		  .CONNECTIVITY_SERVICE)
-				as ConnectivityManager?
-		connectivityManager?.let {
-			it.getNetworkCapabilities(connectivityManager.activeNetwork)?.apply {
-				result = when{
-					hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-					hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-					else -> false
-				}
-			}
-		}
-		return result
-	}
 }

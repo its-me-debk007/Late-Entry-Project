@@ -19,13 +19,16 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -43,6 +46,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     private lateinit var datastore: Datastore
     private lateinit var venue: MutableMap<Int, String>
     private lateinit var venue2: Map<Int, String>
+    private var student_No: String? = null
 
     private val lateEntryViewModel by lazy {
         ViewModelProvider(this)[LateEntryViewModel::class.java]
@@ -159,6 +163,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     }
 
     override fun handleResult(rawResult: Result?) {
+        student_No = rawResult?.contents.toString()
         if (rawResult?.contents?.length == 7) showBottomSheet(requireContext(), rawResult.contents)
         else scannerView.resumeCameraPreview(this)
     }
@@ -178,6 +183,16 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         val submitLateEntryBtn =
             seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
         val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
+        val name = seeStudentDetailView.findViewById<MaterialTextView>(R.id.name)
+        val branch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.branch)
+        val batch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.batch)
+        val studentno = seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNo)
+        val studentImage = seeStudentDetailView.findViewById<ImageView>(R.id.studentImage)
+
+        val viewDetailConstraint =
+            seeStudentDetailView.findViewById<ConstraintLayout>(R.id.constraint)
+        val studentConstraint =
+            seeStudentDetailView.findViewById<ConstraintLayout>(R.id.studentConstraint)
 
         if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
         else {
@@ -215,7 +230,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         okButton.setOnClickListener {
             Utils().hideKeyboard(studentNo, activity)
             bottomSheetDialog.setContentView(seeStudentDetailView)
-
+            student_No = studentNo.text.toString()
             studentNoEditText.setText(studentNo.text!!.trim())
         }
 
@@ -235,7 +250,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
             var venueId: Int? = null
             lifecycleScope.launch {
                 venueId = datastore.getId("ID_KEY")!!
-                Log.i("venueidddd", "showBottomSheet: "+venueId)
                 lateEntryViewModel.venue.value = venueId
             }
             lateEntryViewModel.studentNo.value = student
@@ -258,6 +272,24 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 }, 2000)
 
             }
+        }
+        viewDetails.setOnClickListener {
+
+            viewDetailConstraint.visibility = View.GONE
+            studentConstraint.visibility = View.VISIBLE
+
+            val studentDatabase = StudentDatabase.getDatabase(requireContext())
+            studentDatabase.studentDao().getStudentDetails()
+                .observe(viewLifecycleOwner) { studentList ->
+                    for (student in studentList) {
+                        if (student.student_no == student_No) {
+                            name.text = student.name
+                            branch.text = student.branch
+                            studentno.text = student_No
+                            batch.text = student.batch.toString()
+                        }
+                    }
+                }
         }
     }
 
@@ -330,27 +362,31 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
     }
 
-	private fun saveToDb(studentNo: String, venue: Int) {
-		val studentDatabase = StudentDatabase.getDatabase(requireContext())
-		val currentTime = Utils().currentTime()
-		var flag = false
-		studentDatabase.studentDao().getStudentDetails().observe(viewLifecycleOwner) { studentList ->
-            for (student in studentList) {
-                if (student.student_no == studentNo) {
-                    flag = true
-                    break
+    private fun saveToDb(studentNo: String, venue: Int) {
+        val studentDatabase = StudentDatabase.getDatabase(requireContext())
+        val currentTime = Utils().currentTime()
+        var flag = false
+        studentDatabase.studentDao().getStudentDetails()
+            .observe(viewLifecycleOwner) { studentList ->
+                for (student in studentList) {
+                    if (student.student_no == studentNo) {
+                        flag = true
+                        break
+                    }
+                }
+                if (!flag) Toast.makeText(context, "The student doesn't exist", Toast.LENGTH_SHORT)
+                    .show()
+                else {
+                    lifecycleScope.launch {
+                        studentDatabase.offlineLateEntryDao()
+                            .addLateEntry(OfflineLateEntry(0, studentNo, currentTime, venue))
+                        Toast.makeText(
+                            context,
+                            "Late entry scanned successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
-            if (!flag) Toast.makeText(context, "The student doesn't exist", Toast.LENGTH_SHORT)
-                .show()
-            else{
-                lifecycleScope.launch {
-                    studentDatabase.offlineLateEntryDao()
-                        .addLateEntry(OfflineLateEntry(0, studentNo, currentTime, venue))
-                    Toast.makeText(context, "Late entry scanned successfully", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
     }
 }
