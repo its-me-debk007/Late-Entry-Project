@@ -35,6 +35,7 @@
         <item name="android:popupBackground">@drawable/popup_menu_background</item>
     </style>
 
+<!--    Rounded Bottom Sheet-->
     <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>

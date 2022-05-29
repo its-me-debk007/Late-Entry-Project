@@ -25,7 +25,6 @@ class FailedEntriesRepository {
 			) {
 				when {
 					response.isSuccessful -> {
-						Log.e("ddd", response.code().toString()+response.message())
 						liveData.postValue(Response.Success(response.body()!!))
 					}
 

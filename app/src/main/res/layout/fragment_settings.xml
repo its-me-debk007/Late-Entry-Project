@@ -117,10 +117,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:paddingVertical="9dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="16dp"
                 android:backgroundTint="#F3F8FF"
+                android:paddingVertical="9dp"
                 android:text="Upload Data"
                 android:textColor="@color/custom_blue"
                 app:cornerRadius="7dp"
@@ -132,43 +132,31 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/logoutConstraintLayout"
-            android:layout_width="0dp"
-            android:background="@drawable/settings_constraint_layout_edge"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/logoutBtn"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="24dp"
+            android:fontFamily="@font/source_sans_pro_semibold"
+            android:paddingVertical="14dp"
+            android:paddingStart="24dp"
+            android:text="Log Out"
+            android:textAlignment="textStart"
+            android:textColor="#767780"
+            android:textSize="16sp"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="12dp"
+            app:elevation="0dp"
+            app:icon="@drawable/ic_exit"
+            app:iconGravity="end"
+            app:iconTint="#767780"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/uploadConstraintLayout">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginBottom="14dp"
-                android:fontFamily="@font/source_sans_pro_semibold"
-                android:text="Log Out"
-                android:textColor="#767780"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_exit" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/uploadConstraintLayout"
+            app:strokeColor="#DCDDE2"
+            app:strokeWidth="1dp" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -178,6 +166,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ic_powered_by_si" />
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logoutBtn" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

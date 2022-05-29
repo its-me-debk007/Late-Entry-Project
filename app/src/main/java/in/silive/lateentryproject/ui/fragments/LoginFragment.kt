@@ -21,6 +21,7 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -148,10 +149,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
                 if (bool) {
                     progressBar.visibility = View.VISIBLE
-                    loginBtn.setTextColor(Color.parseColor("#7191A1"))
+                    loginBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabledSettingsBtnColor))
                 } else {
                     progressBar.visibility = View.INVISIBLE
-                    loginBtn.setTextColor(Color.parseColor("#0077B6"))
+                    loginBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
                     password.text?.clear()
                 }
             }

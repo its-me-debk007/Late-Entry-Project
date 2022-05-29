@@ -70,7 +70,6 @@
                     app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeWidth="0dp"
                     app:boxStrokeWidthFocused="0dp"
-                    app:endIconDrawable="@drawable/ic_email"
                     app:endIconMode="custom"
                     app:endIconTint="#0077B6"
                     app:helperTextTextColor="#FFFFFF"
@@ -128,14 +127,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/subHeading2"
                     app:passwordToggleEnabled="true"
-                    app:passwordToggleTint="#0077B6">
+                    app:passwordToggleTint="@color/custom_blue">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/password"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:fontFamily="@font/source_sans_pro"
-                        android:hint="  enter your password"
+                        android:hint="  Enter Password"
                         android:imeOptions="actionDone"
                         android:inputType="textPassword"
                         android:padding="16dp"

@@ -8,17 +8,20 @@ import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.view_models.FailedEntriesViewModel
-import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import kotlinx.coroutines.launch
+import java.io.File
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
 	private lateinit var binding: FragmentSettingsBinding
@@ -35,7 +38,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 			backBtn.setOnClickListener { goToNextFragment(BarcodeFragment()) }
 
-			logoutConstraintLayout.setOnClickListener {
+			logoutBtn.setOnClickListener {
 				datastore = Datastore(requireContext())
 				lifecycleScope.launch {
 					datastore.changeLoginState(false)
@@ -72,6 +75,18 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 					uploadBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
 					uploadBtn.setIconTintResource(R.color.custom_blue)
 				}
+			}
+
+			syncBtn.setOnClickListener {
+				val file = File(Environment.DIRECTORY_DOWNLOADS, "")
+				if (file.exists()){
+					Log.e("dddd", file.path)
+//					for (f in file.listFiles()!!) {
+//						Log.e("dddd", f.name)
+//					}
+				} else 	Log.e("dddd", "No")
+
+				img.load(file)
 			}
 		}
 	}

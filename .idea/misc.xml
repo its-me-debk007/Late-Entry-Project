@@ -7,6 +7,7 @@
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/constraint_layout_background.xml" value="0.2135" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/edit_text_curved_edge.xml" value="0.176" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_email.xml" value="0.245" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_ripple_effect.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/text_view_border.xml" value="0.154" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/textview_ripple_effect.xml" value="0.154" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/activity_main.xml" value="0.19615384615384615" />
@@ -16,6 +17,7 @@
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_login.xml" value="0.264" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_settings.xml" value="0.4" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_view_bottom_sheet_fragment.xml" value="0.4" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/layout/layout_entry_bottom_sheet.xml" value="0.19401709401709402" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/button_border.xml" value="0.175" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/constraint_layout_background.xml" value="0.175" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/ic_avatar.xml" value="0.175" />
