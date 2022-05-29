@@ -14,4 +14,7 @@ interface OfflineLateEntryDao {
 
 	@Query("SELECT * FROM OfflineLateEntry")
 	fun getLateEntryDetails(): LiveData<List<OfflineLateEntry>>
+
+	@Query("DELETE FROM OfflineLateEntry")
+	suspend fun clearLateEntryTable()
 }
