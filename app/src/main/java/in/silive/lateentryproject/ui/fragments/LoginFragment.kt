@@ -5,6 +5,7 @@ import `in`.silive.lateentryproject.databinding.FragmentLoginBinding
 import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
+import `in`.silive.lateentryproject.ui.activities.MainActivity
 import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.view_model_factories.BulkDataViewModelFactory
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
@@ -45,9 +46,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         venue = HashMap()
         venue2 = HashMap()
         datastore = Datastore(requireContext())
-        lifecycleScope.launch{
-            Toast.makeText(context, datastore.isSync().toString(), Toast.LENGTH_SHORT).show()
-        }
+//        lifecycleScope.launch{
+//            Toast.makeText(context, datastore.isSync().toString(), Toast.LENGTH_SHORT).show()
+//        }
         binding.apply {
             loginBtn.setOnClickListener {
 
@@ -119,6 +120,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                         venue2 = map
                                         datastore.saveId("ID_KEY", venue2.keys.toTypedArray()[0])
                                         datastore.saveDefaultVenue("DEFAULT_VENUE_KEY", venue2.values.toTypedArray()[0])
+                                    }
+
+                                    for (data in it.data.student_data) {
+                                        data.student_image?.let { imgUrl ->
+                                            Utils().download(activity, imgUrl, data.student_no)
+                                        }
                                     }
                                 }
                                 is Response.Error ->

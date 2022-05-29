@@ -1,6 +1,7 @@
 package `in`.silive.lateentryproject.entities
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "student")
@@ -10,5 +11,5 @@ data class Student(
     val batch: Int,
     val branch: String,
     val name: String,
-    
+    val student_image: String?
 )

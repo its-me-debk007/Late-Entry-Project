@@ -5,6 +5,8 @@ import `in`.silive.lateentryproject.adapters.VenueClickListenerInterface
 import `in`.silive.lateentryproject.adapters.VenueRecyclerAdapter
 import `in`.silive.lateentryproject.connectivity.ConnectivityLiveData
 import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
+import `in`.silive.lateentryproject.entities.OfflineLateEntry
+import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Utils
@@ -237,8 +239,13 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 				when (it) {
 					is Response.Success ->
 						Toast.makeText(context, it.data?.message, Toast.LENGTH_SHORT).show()
-					is Response.Error ->
-						Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT).show()
+					is Response.Error -> {
+						if (it.errorMessage == "Save to DB") {
+							saveToDb(student, 1)
+						}
+						else Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT).show()
+					}
+
 				}
 
 				submitLateEntryBtn.postDelayed({
@@ -315,6 +322,43 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 										 binding.location.text = venue
 
 									 }, 400)
+
+	}
+
+	private fun saveToDb(studentNo: String, venue: Int) {
+		val studentDatabase = StudentDatabase.getDatabase(requireContext())
+		val currentTime = Utils().currentTime()
+		var flag = false
+		studentDatabase.studentDao().getStudentDetails().observe(viewLifecycleOwner) { studentList ->
+			for (student in studentList) {
+				if (student.student_no == studentNo) {
+					flag = true
+					break
+				}
+			}
+			if (!flag) Toast.makeText(context, "The student doesn't exist", Toast.LENGTH_SHORT).show()
+			else {
+				var lateEntryFlag = true
+				studentDatabase.offlineLateEntryDao().getLateEntryDetails().observe(viewLifecycleOwner) { lateEntryList ->
+					for (data in lateEntryList) {
+						if (data.student_no == studentNo) {
+							if (Utils().compareTime(currentTime, data.timestamp) < 20) {
+								lateEntryFlag = false
+								Toast.makeText(context, "late entry already registered", Toast.LENGTH_SHORT).show()
+							}
+							break
+						}
+					}
+					if (lateEntryFlag) {
+						lifecycleScope.launch {
+							studentDatabase.offlineLateEntryDao().addLateEntry(OfflineLateEntry(0, studentNo, currentTime, venue))
+							Toast.makeText(context, "Late entry saved to database successfully", Toast.LENGTH_SHORT).show()
+						}
+					}
+				}
+			}
+		}
+
 
 	}
 

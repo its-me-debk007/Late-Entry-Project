@@ -44,10 +44,6 @@ class LateEntryRepository() {
 			}
 
 			override fun onFailure(call: Call<MessageDataClass?>, t: Throwable) {
-//				val errorMessage = if (t.message == ("Something went wrong\Unable to resolve " +
-//							"host \"lateentry" + ".azurewebsite)s.net\": No	address associated with hostname"))
-//					"Save to DB"
-//				else "Something went wrong ${t.message}"
 				val errorMessage = "Save to DB"
 				Log.e("dddd", t.message!!)
 				lateEntryLiveData.postValue(Response.Error(errorMessage))

@@ -35,7 +35,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 	private fun goToNextFragment(fragment: Fragment) {
 		activity?.supportFragmentManager?.beginTransaction()
-			?.setCustomAnimations(R.anim.long_fade_in, R.anim.slide_out)
+			?.setCustomAnimations(R.anim.fade_in, R.anim.slide_out)
 			?.replace(R.id.fragmentContainerView, fragment)
 			?.commit()
 	}

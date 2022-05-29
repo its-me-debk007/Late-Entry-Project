@@ -5,6 +5,8 @@ import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
+import `in`.silive.lateentryproject.ui.activities.MainActivity
+import `in`.silive.lateentryproject.utils.Utils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -29,6 +31,7 @@ class BulkDataRepo(private val studentDatabase: StudentDatabase) {
 					val responseBody = response.body()!!
 					GlobalScope.launch {
 						studentDatabase.studentDao().addStudent(responseBody.student_data)
+						Log.e("ROOM_DB", "Populating database")
 					}
 					bulkDataLiveData.postValue(Response.Success(responseBody))
 
