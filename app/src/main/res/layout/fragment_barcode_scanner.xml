@@ -105,7 +105,7 @@
             android:paddingVertical="8dp"
             android:text="No Connection"
             android:textSize="16sp"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:backgroundTint="#747474"
             app:cornerRadius="30dp"
             app:elevation="0dp"

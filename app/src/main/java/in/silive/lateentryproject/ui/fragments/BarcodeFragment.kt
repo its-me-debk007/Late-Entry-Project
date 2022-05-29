@@ -43,7 +43,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 	private lateinit var datastore: Datastore
 	private lateinit var venue: MutableMap<Int, String>
 	private lateinit var venue2: Map<Int, String>
-	private var change: Boolean? = null
 
 	private val lateEntryViewModel by lazy {
 		ViewModelProvider(this)[LateEntryViewModel::class.java]
@@ -59,16 +58,13 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		venue2 = HashMap()
 		onClicks()
 		initializeCamera()
-//		binding.scannerContainer.setOnClickListener {
-//			scannerView.resumeCameraPreview(this)
-//		}
 
 		val checkNetworkConnection = ConnectivityLiveData(requireActivity().application)
 		checkNetworkConnection.observe(viewLifecycleOwner) {
 			if (it) {
 				val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_out)
 				binding.noConnection.startAnimation(animation)
-				binding.noConnection.visibility = View.INVISIBLE
+				binding.noConnection.visibility = View.GONE
 			} else {
 				val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_in)
 				binding.noConnection.startAnimation(animation)
@@ -88,7 +84,13 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 												 }, 500)
 		}
 
-		binding.icOverflowMenu.setOnClickListener { showPopup(it, requireContext()) }
+		binding.icOverflowMenu.setOnClickListener {
+
+			binding.icOverflowMenu.postDelayed({
+				showPopup(it, requireContext())
+			},50)
+
+		}
 
 
 		lifecycleScope.launch {
@@ -241,7 +243,11 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 						Toast.makeText(context, it.data?.message, Toast.LENGTH_SHORT).show()
 					is Response.Error -> {
 						if (it.errorMessage == "Save to DB") {
-							saveToDb(student, 1)
+							lifecycleScope.launch{
+								val venueId= datastore.getId("ID_KEY")!!
+								saveToDb(student,venueId)
+							}
+
 						}
 						else Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT).show()
 					}
@@ -264,7 +270,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			when (menuItem.itemId) {
 				R.id.settings -> {
 					activity?.supportFragmentManager?.beginTransaction()
-						?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
 						?.replace(R.id.fragmentContainerView, SettingsFragment())
 						?.commit()
 				}
@@ -344,7 +349,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 						if (data.student_no == studentNo) {
 							if (Utils().compareTime(currentTime, data.timestamp) < 20) {
 								lateEntryFlag = false
-								Toast.makeText(context, "late entry already registered", Toast.LENGTH_SHORT).show()
+								Toast.makeText(context, "Late entry already registered", Toast.LENGTH_SHORT).show()
 							}
 							break
 						}
@@ -352,7 +357,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 					if (lateEntryFlag) {
 						lifecycleScope.launch {
 							studentDatabase.offlineLateEntryDao().addLateEntry(OfflineLateEntry(0, studentNo, currentTime, venue))
-							Toast.makeText(context, "Late entry saved to database successfully", Toast.LENGTH_SHORT).show()
+							Toast.makeText(context, "Late entry scanned successfully", Toast.LENGTH_SHORT).show()
 						}
 					}
 				}
