@@ -2,6 +2,7 @@ package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentSettingsBinding
+import `in`.silive.lateentryproject.entities.OfflineLateEntry
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.models.BulkReqDataClass
@@ -96,30 +97,28 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 				uploadBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabledSettingsBtnColor))
 				uploadBtn.setIconTintResource(R.color.disabledSettingsBtnColor)
 
-				val lateEntryList = mutableListOf<LateEntryDataClass>()
-				studentDatabase.offlineLateEntryDao().getLateEntryDetails().observe(viewLifecycleOwner) {
-					for (data in it)
-						lateEntryList.add(LateEntryDataClass(data.student_no, data.timestamp, data.venue))
-
-				}
-
-				viewModel.bulkUpload(BulkReqDataClass(lateEntryList))
-
-				viewModel.bulkLiveData.observe(viewLifecycleOwner) {
-					if (it is Response.Success) {
-						Toast.makeText(context, "Data uploaded successfully", Toast.LENGTH_SHORT)
-							.show()
-						lifecycleScope.launch {
-							studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+				var lateEntryList: List<OfflineLateEntry>
+				lifecycleScope.launch {
+					lateEntryList=studentDatabase.offlineLateEntryDao().getLateEntryDetails()
+					viewModel.bulkUpload(BulkReqDataClass(lateEntryList))
+					viewModel.bulkLiveData.observe(viewLifecycleOwner) {
+						if (it is Response.Success) {
+							Toast.makeText(context,"Data uploaded successfully", Toast.LENGTH_SHORT)
+								.show()
+							if (it.data?.result?.failed == 0) {
+								lifecycleScope.launch {
+									studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+								}
+							}
 						}
+
+						else
+							Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT).show()
+
+						uploadBtn.isEnabled = true
+						uploadBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
+						uploadBtn.setIconTintResource(R.color.custom_blue)
 					}
-
-					else
-						Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT).show()
-
-					uploadBtn.isEnabled = true
-					uploadBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
-					uploadBtn.setIconTintResource(R.color.custom_blue)
 				}
 			}
 

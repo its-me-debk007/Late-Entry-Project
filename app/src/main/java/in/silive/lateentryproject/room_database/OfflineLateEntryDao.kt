@@ -4,16 +4,17 @@ import `in`.silive.lateentryproject.entities.OfflineLateEntry
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
 interface OfflineLateEntryDao {
 
-	@Insert
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun addLateEntry(lateEntry: OfflineLateEntry)
 
 	@Query("SELECT * FROM OfflineLateEntry")
-	fun getLateEntryDetails(): LiveData<List<OfflineLateEntry>>
+	suspend fun getLateEntryDetails(): List<OfflineLateEntry>
 
 	@Query("DELETE FROM OfflineLateEntry")
 	suspend fun clearLateEntryTable()

@@ -379,7 +379,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 else {
                     lifecycleScope.launch {
                         studentDatabase.offlineLateEntryDao()
-                            .addLateEntry(OfflineLateEntry(0, studentNo, currentTime, venue))
+                            .addLateEntry(OfflineLateEntry(studentNo, currentTime, venue))
                         Toast.makeText(
                             context,
                             "Late entry scanned successfully",
