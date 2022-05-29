@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-		Toast.makeText(this, login.toString() , Toast.LENGTH_SHORT).show()
+//		Toast.makeText(this, login.toString() , Toast.LENGTH_SHORT).show()
 		if (login == true){
 			askPermission()
 		}

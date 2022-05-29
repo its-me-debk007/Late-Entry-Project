@@ -85,7 +85,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:fontFamily="@font/source_sans_pro_semibold"
@@ -96,8 +95,7 @@
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraint" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/studentConstraint"
@@ -122,20 +120,19 @@
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars"
-           />
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="7dp"
+            android:fontFamily="@font/source_sans_pro_semibold"
             android:text="Name : "
             android:textColor="@color/black"
             android:textSize="14sp"
-            android:fontFamily="@font/source_sans_pro_semibold"
-            android:layout_marginTop="7dp"
-            android:layout_marginStart="12dp"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toEndOf="@+id/studentImage"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView

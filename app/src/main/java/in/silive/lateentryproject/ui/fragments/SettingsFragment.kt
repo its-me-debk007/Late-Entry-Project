@@ -107,7 +107,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 				viewModel.bulkLiveData.observe(viewLifecycleOwner) {
 					if (it is Response.Success) {
-						Toast.makeText(context, "Data synced successfully", Toast.LENGTH_SHORT).show()
+						Toast.makeText(context, "Data uploaded successfully", Toast.LENGTH_SHORT)
+							.show()
 						lifecycleScope.launch {
 							studentDatabase.offlineLateEntryDao().clearLateEntryTable()
 						}
@@ -122,17 +123,17 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 				}
 			}
 
-			syncBtn.setOnClickListener {
-				val file = File(Environment.DIRECTORY_DOWNLOADS, "")
-				if (file.exists()){
-					Log.e("dddd", file.path)
+//			storage.setOnClickListener {
+//				val file = File(context?.filesDir, "")
+//				if (file.exists()){
+//					Log.e("dddd", file.path)
 //					for (f in file.listFiles()!!) {
 //						Log.e("dddd", f.name)
 //					}
-				} else 	Log.e("dddd", "No")
-
-				img.load(file)
-			}
+//				} else 	Log.e("dddd", "No")
+//
+//				img.load(file)
+//			}
 		}
 	}
 
