@@ -11,11 +11,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 	private lateinit var binding: ActivityMainBinding
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
+		Toast.makeText(this, login.toString() , Toast.LENGTH_SHORT).show()
 		if (login == true){
 			askPermission()
 		}

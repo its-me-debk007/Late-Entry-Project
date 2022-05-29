@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -14,41 +15,53 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_horizontal_bar" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/studentNoInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        app:boxBackgroundColor="#F7F7F7"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:boxStrokeWidth="0dp"
-        app:hintEnabled="false"
-        app:boxStrokeWidthFocused="0dp"
         app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalBar">
+        app:layout_constraintTop_toBottomOf="@+id/horizontalBar"
+        app:layout_constraintBottom_toTopOf="@id/submitLateEntryBtn">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/studentNoEditText"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/studentNoInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:ellipsize="end"
-            android:fontFamily="@font/source_sans_pro_semibold"
-            android:imeOptions="actionGo"
-            android:inputType="number"
-            android:maxLines="1"
-            android:paddingVertical="6dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="110dp"
-            android:textColor="#242E42"
-            android:textSize="24sp" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            app:boxBackgroundColor="#F7F7F7"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/studentNoEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:fontFamily="@font/source_sans_pro_semibold"
+                android:imeOptions="actionGo"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingVertical="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="110dp"
+                android:textColor="#242E42"
+                android:textSize="24sp" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/viewDetails"
@@ -65,10 +78,11 @@
         app:layout_constraintBottom_toBottomOf="@+id/studentNoInputLayout"
         app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"
         app:layout_constraintTop_toTopOf="@+id/studentNoInputLayout" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/submitLateEntryBtn"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
@@ -83,6 +97,126 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/studentNoInputLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/constraint" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/studentConstraint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/submitLateEntryBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalBar">
+
+        <ImageView
+            android:id="@+id/studentImage"
+            android:layout_width="94dp"
+            android:layout_height="120dp"
+            android:background="@drawable/student_image_background"
+            android:backgroundTint="@color/black"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars"
+           />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name : "
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/source_sans_pro_semibold"
+            android:layout_marginTop="7dp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/source_sans_pro_semibold"
+            android:text="Branch : "
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/textView4"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student No : "
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/source_sans_pro_semibold"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@+id/textView7"
+            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Batch : "
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/source_sans_pro_semibold"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@+id/textView5"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rahul"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/source_sans_pro"
+            app:layout_constraintStart_toEndOf="@+id/textView4"
+            app:layout_constraintTop_toTopOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/branch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IT"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/source_sans_pro"
+            app:layout_constraintStart_toEndOf="@+id/textView5"
+            app:layout_constraintTop_toTopOf="@+id/textView5" />
+
+        <TextView
+            android:id="@+id/batch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2020"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/source_sans_pro"
+            app:layout_constraintStart_toEndOf="@+id/textView7"
+            app:layout_constraintTop_toTopOf="@+id/textView7" />
+
+        <TextView
+            android:id="@+id/studentNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2015654"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/source_sans_pro"
+            app:layout_constraintStart_toEndOf="@+id/textView6"
+            app:layout_constraintTop_toTopOf="@+id/textView6"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
