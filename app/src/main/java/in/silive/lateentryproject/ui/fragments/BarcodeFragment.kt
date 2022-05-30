@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -300,6 +301,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                                 if (!student.image_downloaded) {
                                     val imgUrl = "https://lateentry.azurewebsites.net$it"
                                     Glide.with(requireActivity())
+                                        .applyDefaultRequestOptions(RequestOptions.placeholderOf(R.drawable.ic_placeholder).error(R.drawable.ic_placeholder))
                                         .load(imgUrl)
                                         .into(studentImage)
 
@@ -315,9 +317,12 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                                 else {
                                     val file = File(context.filesDir, "Images/")
                                     Glide.with(requireContext())
+                                        .applyDefaultRequestOptions(RequestOptions.placeholderOf(R.drawable.ic_placeholder).error(R.drawable.ic_placeholder))
                                         .load(file.absolutePath+"${student.student_no}_${student.name}.jpg")
                                         .into(studentImage)
+
                                 }
+
                             }
                         }
                     }
