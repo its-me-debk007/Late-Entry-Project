@@ -1,40 +1,36 @@
 package `in`.silive.lateentryproject.utils
 
-import android.app.DownloadManager
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.Uri
-import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.MutableLiveData
+import com.downloader.OnDownloadListener
+import com.downloader.PRDownloader
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
+
 
 class Utils {
-	private val baseUrl = "https://lateentry.azurewebsites.net"
 
-	fun download(activity: FragmentActivity?, imgUrl: String, imgName: String): Long {
-		val completeImgUrl = Uri.parse(baseUrl + imgUrl)
-		val request = DownloadManager.Request(completeImgUrl)
+	fun downloadImg(context: Context, imgUrl: String, dirPath: String, imgName: String): MutableLiveData<String> {
+		PRDownloader.initialize(context)
+		val resultLiveData = MutableLiveData<String>()
 
-		request.apply {
-			setTitle("Title")
-			setDescription("Downloading...")
-			setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-			setMimeType("image/jpg")
-			setDestinationInExternalFilesDir(activity, Environment.DIRECTORY_DOWNLOADS,
-											 "Cached Images/$imgName.jpg")
-			setAllowedOverRoaming(true)
-			setAllowedOverMetered(true)
-		}
+		PRDownloader.download(imgUrl, dirPath, imgName)
+			.build()
+			.start(object : OnDownloadListener {
+				override fun onDownloadComplete() {
+					Log.e("dddd", "Download complete")
+					resultLiveData.postValue("Download Complete")
+				}
 
-		val downloadManager =
-			activity?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
-		return downloadManager.enqueue(request)
+				override fun onError(p0: com.downloader.Error?) {
+					resultLiveData.postValue(p0.toString())
+				}
+			})
+		return resultLiveData
 	}
 
 	fun showKeyboard(view: View, activity: FragmentActivity?) {

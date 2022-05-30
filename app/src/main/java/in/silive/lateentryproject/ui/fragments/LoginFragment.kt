@@ -122,12 +122,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                         datastore.saveId("ID_KEY", venue2.keys.toTypedArray()[0])
                                         datastore.saveDefaultVenue("DEFAULT_VENUE_KEY", venue2.values.toTypedArray()[0])
                                     }
-
-                                    for (data in it.data.student_data) {
-                                        data.student_image?.let { imgUrl ->
-                                            Utils().download(activity, imgUrl, data.student_no)
-                                        }
-                                    }
                                 }
                                 is Response.Error ->
                                     Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT)
@@ -164,6 +158,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         private fun gotToBarcodeFragment() {
             activity?.supportFragmentManager?.beginTransaction()
+                ?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
                 ?.replace(R.id.fragmentContainerView, BarcodeFragment())
                 ?.commit()
         }

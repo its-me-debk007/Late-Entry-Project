@@ -11,5 +11,6 @@ data class Student(
     val batch: Int,
     val branch: String,
     val name: String,
-    val student_image: String?
+    val student_image: String?,
+    var image_downloaded: Boolean
 )

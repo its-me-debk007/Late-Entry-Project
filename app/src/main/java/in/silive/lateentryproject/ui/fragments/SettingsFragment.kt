@@ -23,9 +23,8 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import coil.load
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
-import java.io.File
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
 	private lateinit var binding: FragmentSettingsBinding
@@ -59,6 +58,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 			}
 
 			syncBtn.setOnClickListener {
+				disableBtn(syncBtn, true)
 				bulkViewModel.sendResult()
 				bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
 					when (it) {
@@ -80,22 +80,18 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 								datastore.saveId("ID_KEY", venue2.keys.toTypedArray()[0])
 								datastore.saveDefaultVenue("DEFAULT_VENUE_KEY", venue2.values.toTypedArray()[0])
 							}
-							for (data in it.data.student_data) {
-								data.student_image?.let { imgUrl ->
-									Utils().download(activity, imgUrl, data.student_no)
-								}
-							}
+							Toast.makeText(context, "Data synced successfully", Toast.LENGTH_SHORT)
+								.show()
 						}
 						is Response.Error ->
 							Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT)
 								.show()
 					}
+					disableBtn(syncBtn, false)
 				}
 			}
 			uploadBtn.setOnClickListener {
-				uploadBtn.isEnabled = false
-				uploadBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabledSettingsBtnColor))
-				uploadBtn.setIconTintResource(R.color.disabledSettingsBtnColor)
+				disableBtn(uploadBtn, true)
 
 				var lateEntryList: List<OfflineLateEntry>
 				lifecycleScope.launch {
@@ -115,30 +111,17 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 						else
 							Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT).show()
 
-						uploadBtn.isEnabled = true
-						uploadBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
-						uploadBtn.setIconTintResource(R.color.custom_blue)
+						disableBtn(uploadBtn, false)
 					}
 				}
 			}
-
-//			storage.setOnClickListener {
-//				val file = File(context?.filesDir, "")
-//				if (file.exists()){
-//					Log.e("dddd", file.path)
-//					for (f in file.listFiles()!!) {
-//						Log.e("dddd", f.name)
-//					}
-//				} else 	Log.e("dddd", "No")
-//
-//				img.load(file)
-//			}
 		}
 	}
 
 	private fun goToNextFragment(fragment: Fragment) {
 		activity?.supportFragmentManager?.beginTransaction()
 			?.replace(R.id.fragmentContainerView, fragment)
+			?.setCustomAnimations(R.anim.slide_out, R.anim.fade_in)
 			?.commit()
 	}
 
@@ -149,5 +132,20 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 				goToNextFragment(BarcodeFragment())
 			}
 		})
+	}
+
+	private fun disableBtn(btn: MaterialButton, bool: Boolean){
+		btn.isEnabled = !bool
+
+		if (bool) {
+			btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabledSettingsBtnColor))
+			btn.setIconTintResource(R.color.disabledSettingsBtnColor)
+			binding.progressBar.visibility = View.VISIBLE
+		}
+		else {
+			btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
+			btn.setIconTintResource(R.color.custom_blue)
+			binding.progressBar.visibility = View.INVISIBLE
+		}
 	}
 }
