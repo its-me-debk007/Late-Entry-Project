@@ -15,6 +15,8 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -51,6 +53,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     private lateinit var venue: MutableMap<Int, String>
     private lateinit var venue2: Map<Int, String>
     private var student_No: String? = null
+    private val popup by lazy { PopupMenu(requireContext(), binding.icOverflowMenu) }
 
     private val lateEntryViewModel by lazy {
         ViewModelProvider(this)[LateEntryViewModel::class.java]
@@ -59,6 +62,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBarcodeScannerBinding.bind(view)
+        popup.menuInflater.inflate(R.menu.scanner_menu, popup.menu)
 
         datastore = Datastore(requireContext())
 
@@ -93,11 +97,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         }
 
         binding.icOverflowMenu.setOnClickListener {
-
-            binding.icOverflowMenu.postDelayed({
-                showPopup(it, requireContext())
-            }, 50)
-
+            showPopup(it, requireContext())
         }
 
 
@@ -282,6 +282,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
             }
         }
         viewDetails.setOnClickListener {
+            viewDetails.isEnabled = false
+            viewDetails.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabledSettingsBtnColor))
+
             val studentDatabase = StudentDatabase.getDatabase(requireContext())
             studentDatabase.studentDao().getStudentDetails()
                 .observe(viewLifecycleOwner) { studentList ->
@@ -328,21 +331,28 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                     }
                     if (!flag) Toast.makeText(context, "The student no. doesn't exist\nIf this is" +
                             " not the case, then sync the data from Settings!",
-                                        Toast.LENGTH_LONG).show()
+                                        Toast.LENGTH_SHORT).show()
                 }
+
+            viewDetails.postDelayed({
+                                        viewDetails.isEnabled = true
+                                        viewDetails.setTextColor(ContextCompat.getColor
+                                            (requireContext(), R.color.custom_blue))
+                                    }, 2000)
         }
     }
 
     private fun showPopup(view: View, context: Context) {
-        val popup = PopupMenu(requireContext(), view)
-        popup.menuInflater.inflate(R.menu.scanner_menu, popup.menu)
         popup.setOnMenuItemClickListener { menuItem ->
+            popup.dismiss()
             when (menuItem.itemId) {
                 R.id.settings -> {
-                    activity?.supportFragmentManager?.beginTransaction()
-                        ?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
-                        ?.replace(R.id.fragmentContainerView, SettingsFragment())
-                        ?.commit()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                                                                    activity?.supportFragmentManager?.beginTransaction()
+                                                                        ?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
+                                                                        ?.replace(R.id.fragmentContainerView, SettingsFragment())
+                                                                        ?.commit()
+                                                                }, 30)
                 }
 
                 R.id.venue -> {
