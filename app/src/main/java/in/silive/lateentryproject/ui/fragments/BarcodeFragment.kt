@@ -283,9 +283,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                     showToast("The student no. doesn't exist\nIf this is" +
                             " not the case, then sync the data from Settings!")
                 else{
-                    okButton.setTextColor(Color.parseColor("#3392C5"))
-                    submitLateEntryBtn.isEnabled = false
-                    progressBar.visibility = View.VISIBLE
                     lateEntryViewModel.studentNo.value = student
                     lateEntryViewModel.submitResult()
                     lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
@@ -307,15 +304,14 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                             }
 
                         }
-
-                        progressBar.visibility = View.INVISIBLE
-                        submitLateEntryBtn.postDelayed({
-                            submitLateEntryBtn.isEnabled = true
-                            okButton.setTextColor(Color.parseColor("#FFFFFF"))
-                        }, 2000)
-
                     }
                 }
+
+                progressBar.visibility = View.INVISIBLE
+                submitLateEntryBtn.postDelayed({
+                                                   submitLateEntryBtn.isEnabled = true
+                                                   okButton.setTextColor(Color.parseColor("#FFFFFF"))
+                                               }, 2000)
             }
         }
         viewDetails.setOnClickListener {
