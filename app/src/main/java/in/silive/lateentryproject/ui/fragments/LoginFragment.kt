@@ -32,6 +32,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var venue: MutableMap<Int, String>
     private lateinit var venue2: Map<Int, String>
     private var change: Boolean? = null
+    private lateinit var toast:Toast
     private val viewModel by lazy { ViewModelProvider(this@LoginFragment)[LoginViewModel::class.java] }
     private val bulkViewModel by lazy {
         ViewModelProvider(
@@ -43,6 +44,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
+        toast=Toast.makeText(context, "", Toast.LENGTH_SHORT)
         venue = HashMap()
         venue2 = HashMap()
         datastore = Datastore(requireContext())
@@ -124,8 +126,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                     }
                                 }
                                 is Response.Error ->
-                                    Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT)
-                                        .show()
+                                    it.errorMessage?.let { it1 -> showToast(it1) }
                             }
                         }
                     }
@@ -133,6 +134,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
 
         }
+    }
+    private fun showToast(text: String) {
+        toast.cancel()
+        toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
+        toast.show()
     }
 
     private fun disableViews(bool: Boolean) {
@@ -204,4 +210,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         startActivity(intent)
     }
 
+    override fun onPause() {
+        super.onPause()
+        toast.cancel()
+    }
 }

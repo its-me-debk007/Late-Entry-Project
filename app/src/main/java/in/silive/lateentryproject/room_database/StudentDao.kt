@@ -14,6 +14,6 @@ interface StudentDao {
     suspend fun addStudent(studentData:List<Student>)
 
     @Query("SELECT * FROM student")
-    fun getStudentDetails():LiveData<List<Student>>
+    suspend fun getStudentDetails():List<Student>
 
 }
