@@ -6,6 +6,8 @@ import `in`.silive.lateentryproject.adapters.VenueRecyclerAdapter
 import `in`.silive.lateentryproject.connectivity.ConnectivityLiveData
 import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
 import `in`.silive.lateentryproject.entities.OfflineLateEntry
+import `in`.silive.lateentryproject.entities.Student
+import `in`.silive.lateentryproject.models.BulkReqDataClass
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
@@ -48,9 +50,11 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     private lateinit var scannerView: ZBarScannerView
     private lateinit var venueBottomSheetDialog: BottomSheetDialog
     private lateinit var datastore: Datastore
+    private lateinit var studentDatabase: StudentDatabase
     private lateinit var venue: MutableMap<Int, String>
     private lateinit var venue2: Map<Int, String>
     private var student_No: String? = null
+    private lateinit var toast: Toast
 
     private val lateEntryViewModel by lazy {
         ViewModelProvider(this)[LateEntryViewModel::class.java]
@@ -61,7 +65,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         binding = FragmentBarcodeScannerBinding.bind(view)
 
         datastore = Datastore(requireContext())
-
+        studentDatabase = StudentDatabase.getDatabase(requireContext())
+        toast=Toast.makeText(context, "", Toast.LENGTH_SHORT)
         venue = HashMap()
         venue2 = HashMap()
         onClicks()
@@ -112,7 +117,11 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
             binding.location.text = datastore.getVenueDetails("DEFAULT_VENUE_KEY")
         }
     }
-
+    private fun showToast(text: String) {
+        toast.cancel()
+        toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
+        toast.show()
+    }
     private fun initializeCamera() {
         scannerView = ZBarScannerView(context)
         scannerView.setResultHandler(this)
@@ -161,6 +170,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
     override fun onPause() {
         super.onPause()
+        toast.cancel()
         binding.scannerContainer.postDelayed({
             scannerView.stopCamera()
         }, 500)
@@ -249,52 +259,78 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         }
 
         submitLateEntryBtn.setOnClickListener {
-            submitLateEntryBtn.isEnabled = false
-            progressBar.visibility = View.VISIBLE
 
-            okButton.setTextColor(Color.parseColor("#3392C5"))
             val student = studentNoEditText.text.toString().trim()
             var venueId: Int? = null
             lifecycleScope.launch {
                 venueId = datastore.getId("ID_KEY")!!
                 lateEntryViewModel.venue.value = venueId
             }
-            lateEntryViewModel.studentNo.value = student
-            lateEntryViewModel.submitResult()
-            lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
-                when (it) {
-                    is Response.Success ->
-                        Toast.makeText(context, it.data?.message, Toast.LENGTH_SHORT).show()
-                    is Response.Error -> {
-                        if (it.errorMessage == "Save to DB") {
-                            saveToDb(student, venueId!!)
-                        } else Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT).show()
+            var lateEntryList: List<Student>
+            var flag = false
+            lifecycleScope.launch {
+                lateEntryList = studentDatabase.studentDao().getStudentDetails()
+                for (i in lateEntryList) {
+                    if (i.student_no == student) {
+                        flag = true
+                        break
                     }
-
                 }
 
-                progressBar.visibility = View.INVISIBLE
-                submitLateEntryBtn.postDelayed({
-                    submitLateEntryBtn.isEnabled = true
-                    okButton.setTextColor(Color.parseColor("#FFFFFF"))
-                }, 2000)
+                if (!flag)
+                    showToast("The student no. doesn't exist\nIf this is" +
+                            " not the case, then sync the data from Settings!")
+                else{
+                    okButton.setTextColor(Color.parseColor("#3392C5"))
+                    submitLateEntryBtn.isEnabled = false
+                    progressBar.visibility = View.VISIBLE
+                    lateEntryViewModel.studentNo.value = student
+                    lateEntryViewModel.submitResult()
+                    lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
+                        when (it) {
+                            is Response.Success -> {
+                                it.data?.message?.let { it1 -> showToast(it1) }
+                            }
+                            is Response.Error -> {
+                                if (it.errorMessage == "Save to DB") {
+                                    lifecycleScope.launch {
+                                        val studentDatabase = StudentDatabase.getDatabase(requireContext())
+                                        val currentTime = Utils().currentTime()
+                                        studentDatabase.offlineLateEntryDao()
+                                            .addLateEntry(OfflineLateEntry(student, currentTime, venueId!!))
+                                        showToast("Late entry scanned successfully")
 
+                                    }
+                                } else it.errorMessage?.let { it1 -> showToast(it1) }
+                            }
+
+                        }
+
+                        progressBar.visibility = View.INVISIBLE
+                        submitLateEntryBtn.postDelayed({
+                            submitLateEntryBtn.isEnabled = true
+                            okButton.setTextColor(Color.parseColor("#FFFFFF"))
+                        }, 2000)
+
+                    }
+                }
             }
         }
         viewDetails.setOnClickListener {
-            val studentDatabase = StudentDatabase.getDatabase(requireContext())
-            studentDatabase.studentDao().getStudentDetails()
-                .observe(viewLifecycleOwner) { studentList ->
+            var lateEntryList: List<Student>
+            lifecycleScope.launch {
+            lateEntryList = studentDatabase.studentDao().getStudentDetails()
                     var flag = false
-                    for (student in studentList) {
-                        if (student.student_no == student_No) {
+                val studentNumber2 = studentNoEditText.text.toString().trim()
+                    for (student in lateEntryList) {
+                        if (student.student_no == studentNumber2) {
                             flag = true
                             viewDetailConstraint.visibility = View.GONE
                             studentConstraint.visibility = View.VISIBLE
 
                             name.text = student.name
                             branch.text = student.branch
-                            studentno.text = student_No
+                            studentno.text = studentNumber2
                             batch.text = student.batch.toString()
 
                             student.student_image?.let {
@@ -326,9 +362,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                             }
                         }
                     }
-                    if (!flag) Toast.makeText(context, "The student no. doesn't exist\nIf this is" +
-                            " not the case, then sync the data from Settings!",
-                                        Toast.LENGTH_LONG).show()
+                    if (!flag) showToast("The student no. doesn't exist\nIf this is" +
+                            " not the case, then sync the data from Settings!")
                 }
         }
     }
@@ -340,7 +375,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
             when (menuItem.itemId) {
                 R.id.settings -> {
                     activity?.supportFragmentManager?.beginTransaction()
-                        ?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
                         ?.replace(R.id.fragmentContainerView, SettingsFragment())
                         ?.commit()
                 }
@@ -403,33 +437,5 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
     }
 
-    private fun saveToDb(studentNo: String, venue: Int) {
-        val studentDatabase = StudentDatabase.getDatabase(requireContext())
-        val currentTime = Utils().currentTime()
-        var flag = false
-        studentDatabase.studentDao().getStudentDetails()
-            .observe(viewLifecycleOwner) { studentList ->
-                for (student in studentList) {
-                    if (student.student_no == studentNo) {
-                        flag = true
-                        break
-                    }
-                }
 
-                if (!flag) Toast.makeText(context, "The student no. doesn't exist\nIf this is" +
-                        " not the case, then sync the data from Settings!", Toast.LENGTH_SHORT)
-                    .show()
-                else {
-                    lifecycleScope.launch {
-                        studentDatabase.offlineLateEntryDao()
-                            .addLateEntry(OfflineLateEntry(studentNo, currentTime, venue))
-                        Toast.makeText(
-                            context,
-                            "Late entry scanned successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-    }
 }

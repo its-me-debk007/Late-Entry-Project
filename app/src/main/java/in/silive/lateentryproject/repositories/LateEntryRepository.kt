@@ -35,6 +35,7 @@ class LateEntryRepository() {
 					val responseBody = response.body()!!
 					lateEntryLiveData.postValue(Response.Success(responseBody))
 
+
 				} else if (response.code() == 400) {
 					val gson: Gson = GsonBuilder().create()
 					val mError: ErrorPojoClass =
@@ -45,7 +46,6 @@ class LateEntryRepository() {
 
 			override fun onFailure(call: Call<MessageDataClass?>, t: Throwable) {
 				val errorMessage = "Save to DB"
-				Log.e("dddd", t.message!!)
 				lateEntryLiveData.postValue(Response.Error(errorMessage))
 			}
 		})

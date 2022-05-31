@@ -31,7 +31,6 @@ class BulkDataRepo(private val studentDatabase: StudentDatabase) {
 					val responseBody = response.body()!!
 					GlobalScope.launch {
 						studentDatabase.studentDao().addStudent(responseBody.student_data)
-						Log.e("ROOM_DB", "Populating database")
 					}
 					bulkDataLiveData.postValue(Response.Success(responseBody))
 

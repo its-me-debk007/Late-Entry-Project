@@ -26,6 +26,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private lateinit var datastore: Datastore
     private lateinit var venue: MutableMap<Int, String>
     private lateinit var venue2: Map<Int, String>
+    private lateinit var toast: Toast
     private val bulkViewModel by lazy {
         ViewModelProvider(
             this,
@@ -38,6 +39,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSettingsBinding.bind(view)
+        toast=Toast.makeText(context, "", Toast.LENGTH_SHORT)
         venue = HashMap()
         venue2 = HashMap()
         datastore = Datastore(requireContext())
@@ -48,10 +50,14 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             backBtn.setOnClickListener { goToNextFragment(BarcodeFragment()) }
 
             logoutConstraintLayout.setOnClickListener {
-                lifecycleScope.launch {
-                    datastore.changeLoginState(false)
+                lifecycleScope.launchWhenStarted {
+                    try {
+                        datastore.changeLoginState(false)
+                    } finally {
+                        goToNextFragment(LoginFragment())
+                    }
                 }
-                goToNextFragment(LoginFragment())
+
             }
 
             syncBtn.setOnClickListener {
@@ -80,12 +86,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                                     venue2.values.toTypedArray()[0]
                                 )
                             }
-                            Toast.makeText(context, "Data synced successfully", Toast.LENGTH_SHORT)
-                                .show()
+                            showToast("Data synced successfully")
+
                         }
                         is Response.Error ->
-                            Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT)
-                                .show()
+                            it.errorMessage?.let { it1 -> showToast(it1) }
+
                     }
                     disableBtn(syncBtn, false)
                 }
@@ -99,19 +105,14 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     viewModel.bulkUpload(BulkReqDataClass(lateEntryList))
                     viewModel.bulkLiveData.observe(viewLifecycleOwner) {
                         if (it is Response.Success) {
-                            Toast.makeText(
-                                context,
-                                "Data uploaded successfully",
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
+                            showToast("Data uploaded successfully")
+
                             if (it.data?.result?.failed == 0) {
                                 lifecycleScope.launch {
                                     studentDatabase.offlineLateEntryDao().clearLateEntryTable()
                                 }
                             }
-                        } else
-                            Toast.makeText(context, it.errorMessage, Toast.LENGTH_SHORT).show()
+                        } else it.errorMessage?.let { it1 -> showToast(it1) }
 
                         disableBtn(uploadBtn, false)
                     }
@@ -123,7 +124,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private fun goToNextFragment(fragment: Fragment) {
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(R.id.fragmentContainerView, fragment)
-            ?.setCustomAnimations(R.anim.slide_out, R.anim.fade_in)
             ?.commit()
     }
 
@@ -153,5 +153,15 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             btn.setIconTintResource(R.color.custom_blue)
             binding.progressBar.visibility = View.INVISIBLE
         }
+    }
+    private fun showToast(text: String) {
+        toast.cancel() // cancel previous toast
+        toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
+        toast.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        toast.cancel()
     }
 }
