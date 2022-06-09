@@ -7,9 +7,12 @@ import `in`.silive.lateentryproject.models.BulkReqDataClass
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
+import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.view_model_factories.BulkDataViewModelFactory
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
 import `in`.silive.lateentryproject.view_models.FailedEntriesViewModel
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -19,13 +22,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private lateinit var binding: FragmentSettingsBinding
-    private lateinit var datastore: Datastore
-    private lateinit var venue: MutableMap<Int, String>
-    private lateinit var venue2: Map<Int, String>
+    private val datastore by lazy { Datastore(requireContext()) }
     private lateinit var toast: Toast
     private val bulkViewModel by lazy {
         ViewModelProvider(
@@ -34,68 +36,59 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         )[BulkDataViewModel::class.java]
     }
     private val viewModel by lazy { ViewModelProvider(this)[FailedEntriesViewModel::class.java] }
-    private lateinit var studentDatabase: StudentDatabase
+    private val studentDatabase by lazy { StudentDatabase.getDatabase(requireContext()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSettingsBinding.bind(view)
         toast=Toast.makeText(context, "", Toast.LENGTH_SHORT)
-        venue = HashMap()
-        venue2 = HashMap()
-        datastore = Datastore(requireContext())
-        studentDatabase = StudentDatabase.getDatabase(requireContext())
-
         binding.apply {
+
+            lifecycleScope.launch {
+                lastSyncTime.text = "Last synced: ${datastore.getSyncTime()}"
+                lastUploadTime.text = "Last uploaded: ${datastore.getUploadTime()}"
+            }
 
             backBtn.setOnClickListener { goToNextFragment(BarcodeFragment()) }
 
-            logoutConstraintLayout.setOnClickListener {
-                lifecycleScope.launchWhenStarted {
-                    try {
-                        datastore.changeLoginState(false)
-                    } finally {
-                        goToNextFragment(LoginFragment())
-                    }
-                }
-
-            }
+            logoutBtn.setOnClickListener { showLogoutDialog() }
 
             syncBtn.setOnClickListener {
                 disableBtn(syncBtn, true)
                 bulkViewModel.sendResult()
                 bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
-                    when (it) {
-                        is Response.Success -> {
-                            for (i in it.data?.venue_data!!) {
-                                venue.put(i.id!!, i.venue!!)
-                            }
+                    if (it is Response.Success) {
+                        val venueMap = mutableMapOf<Int, String>()
 
-                            lifecycleScope.launch {
-                                datastore.saveVenueDetails("VENUE_KEY", venue)
-                                val map =
-                                    datastore.getVenueDetails("VENUE_KEY")
-                                        ?.replace("\\s".toRegex(), "")!!
-                                        .split(",").associateTo(HashMap()) {
-                                            val (left, right) = it.split("=")
-                                            left.toInt() to right
-                                        }
-                                venue2 = map
-                                datastore.saveId("ID_KEY", venue2.keys.toTypedArray()[0])
-                                datastore.saveDefaultVenue(
-                                    "DEFAULT_VENUE_KEY",
-                                    venue2.values.toTypedArray()[0]
-                                )
-                            }
-                            showToast("Data synced successfully")
-
+                        it.data?.venue_data!!.forEach { venueData ->
+                            venueMap[venueData.id] = venueData.venue
                         }
-                        is Response.Error ->
-                            it.errorMessage?.let { it1 -> showToast(it1) }
+
+                        lifecycleScope.launch {
+                            datastore.saveVenueDetails(venueMap)
+                            val venue =
+                                datastore.getVenueDetails()
+                                    ?.replace("\\s".toRegex(), "")!!
+                                    .split(",").associateTo(mutableMapOf()) { str ->
+                                        val (left, right) = str.split("=")
+                                        left.toInt() to right
+                                    }
+                            datastore.saveId("ID_KEY", venue.keys.toTypedArray()[0])
+
+                            val currentTime = Utils().currentTime()
+                            datastore.saveSyncTime(Utils().currentTime())
+                            lastSyncTime.text = "Last synced: $currentTime"
+                        }
+
+                        showToast("Data synced successfully")
 
                     }
+                    else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
+
                     disableBtn(syncBtn, false)
                 }
             }
+
             uploadBtn.setOnClickListener {
                 disableBtn(uploadBtn, true)
 
@@ -107,12 +100,16 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                         if (it is Response.Success) {
                             showToast("Data uploaded successfully")
 
-                            if (it.data?.result?.failed == 0) {
-                                lifecycleScope.launch {
+                            lifecycleScope.launch {
+                            if (it.data?.result?.failed == 0)
                                     studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-                                }
+
+                                val currentTime = Utils().currentTime()
+                                datastore.saveUploadTime(currentTime)
+                                lastUploadTime.text = "Last uploaded: $currentTime"
                             }
-                        } else it.errorMessage?.let { it1 -> showToast(it1) }
+                        }
+                        else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
 
                         disableBtn(uploadBtn, false)
                     }
@@ -121,8 +118,33 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         }
     }
 
+    private fun showLogoutDialog() {
+        val customView = layoutInflater.inflate(R.layout.logout_dialog, null)
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        builder.setView(customView)
+        builder.background = ColorDrawable(Color.TRANSPARENT)
+        val dialog = builder.show()
+
+        val logout = customView.findViewById<MaterialButton>(R.id.logout)
+        val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+
+        logout.setOnClickListener {
+            lifecycleScope.launchWhenStarted {
+                try {
+                    datastore.changeLoginState(false)
+                } finally {
+                    goToNextFragment(LoginFragment())
+                }
+            }
+            dialog.dismiss()
+        }
+
+        cancel.setOnClickListener { dialog.dismiss() }
+    }
+
     private fun goToNextFragment(fragment: Fragment) {
         activity?.supportFragmentManager?.beginTransaction()
+            ?.setCustomAnimations(R.anim.fade_in, R.anim.slide_out)
             ?.replace(R.id.fragmentContainerView, fragment)
             ?.commit()
     }
@@ -154,6 +176,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             binding.progressBar.visibility = View.INVISIBLE
         }
     }
+
     private fun showToast(text: String) {
         toast.cancel() // cancel previous toast
         toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)

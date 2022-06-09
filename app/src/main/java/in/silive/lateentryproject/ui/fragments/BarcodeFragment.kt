@@ -7,16 +7,15 @@ import `in`.silive.lateentryproject.connectivity.ConnectivityLiveData
 import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
 import `in`.silive.lateentryproject.entities.OfflineLateEntry
 import `in`.silive.lateentryproject.entities.Student
-import `in`.silive.lateentryproject.models.BulkReqDataClass
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.view_models.LateEntryViewModel
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
@@ -48,402 +47,444 @@ import java.io.File
 
 class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView
 .ResultHandler, VenueClickListenerInterface {
-    private lateinit var binding: FragmentBarcodeScannerBinding
-    private lateinit var scannerView: ZBarScannerView
-    private lateinit var venueBottomSheetDialog: BottomSheetDialog
-    private lateinit var datastore: Datastore
-    private lateinit var studentDatabase: StudentDatabase
-    private lateinit var venue: MutableMap<Int, String>
-    private lateinit var venue2: Map<Int, String>
-    private var student_No: String? = null
-    private val popup by lazy { PopupMenu(requireContext(), binding.icOverflowMenu) }
-    private lateinit var toast: Toast
+	private lateinit var binding: FragmentBarcodeScannerBinding
+	private lateinit var scannerView: ZBarScannerView
+	private lateinit var venueBottomSheetDialog: BottomSheetDialog
+	private lateinit var datastore: Datastore
+	private lateinit var studentDatabase: StudentDatabase
+	private lateinit var venue: MutableMap<Int, String>
+	private lateinit var venue2: Map<Int, String>
+	private var student_No: String? = null
+	private val popup by lazy { PopupMenu(requireContext(), binding.icOverflowMenu) }
+	private lateinit var toast: Toast
+	private val lateEntryViewModel by lazy {
+		ViewModelProvider(this)[LateEntryViewModel::class.java]
+	}
 
-    private val lateEntryViewModel by lazy {
-        ViewModelProvider(this)[LateEntryViewModel::class.java]
-    }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		binding = FragmentBarcodeScannerBinding.bind(view)
+		popup.menuInflater.inflate(R.menu.scanner_menu, popup.menu)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding = FragmentBarcodeScannerBinding.bind(view)
-        popup.menuInflater.inflate(R.menu.scanner_menu, popup.menu)
+		datastore = Datastore(requireContext())
+		studentDatabase = StudentDatabase.getDatabase(requireContext())
+		toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
+		venue = HashMap()
+		venue2 = HashMap()
+		onClicks()
+		initializeCamera()
 
-        datastore = Datastore(requireContext())
-        studentDatabase = StudentDatabase.getDatabase(requireContext())
-        toast=Toast.makeText(context, "", Toast.LENGTH_SHORT)
-        venue = HashMap()
-        venue2 = HashMap()
-        onClicks()
-        initializeCamera()
+		val checkNetworkConnection = ConnectivityLiveData(requireActivity().application)
+		checkNetworkConnection.observe(viewLifecycleOwner) {
+			if (it) {
+				val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_out)
+				binding.noConnection.startAnimation(animation)
+				binding.noConnection.visibility = View.GONE
+			} else {
+				val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_in)
+				binding.noConnection.startAnimation(animation)
+				binding.noConnection.visibility = View.VISIBLE
+			}
+		}
 
-        val checkNetworkConnection = ConnectivityLiveData(requireActivity().application)
-        checkNetworkConnection.observe(viewLifecycleOwner) {
-            if (it) {
-                val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_out)
-                binding.noConnection.startAnimation(animation)
-                binding.noConnection.visibility = View.GONE
-            } else {
-                val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_in)
-                binding.noConnection.startAnimation(animation)
-                binding.noConnection.visibility = View.VISIBLE
-            }
-        }
+		binding.enterStudentNoBtn.setOnClickListener {
+			if (binding.enterStudentNoBtn.isEnabled)
+				showBottomSheet(requireContext(), null)
 
-        binding.enterStudentNoBtn.setOnClickListener {
-            if (binding.enterStudentNoBtn.isEnabled)
-                showBottomSheet(requireContext(), null)
+			binding.enterStudentNoBtn.isEnabled = false
+			binding.enterStudentNoBtn.isClickable = false
 
-            binding.enterStudentNoBtn.isEnabled = false
-            binding.enterStudentNoBtn.isClickable = false
+			binding.scannerContainer.postDelayed({
+													 scannerView.stopCamera()
+												 }, 400)
+		}
 
-            binding.scannerContainer.postDelayed({
-                scannerView.stopCamera()
-            }, 500)
-        }
-
-        binding.icOverflowMenu.setOnClickListener {
-            showPopup(it, requireContext())
-        }
+		binding.icOverflowMenu.setOnClickListener {
+			showPopup(requireContext())
+		}
 
 
-        lifecycleScope.launch {
-            val map =
-                datastore.getVenueDetails("VENUE_KEY")?.replace("\\s".toRegex(), "")!!
-                    .split(",").associateTo(HashMap()) {
-                        val (left, right) = it.split("=")
-                        left.toInt() to right
-                    }
-            venue2 = map
-            binding.location.text = datastore.getVenueDetails("DEFAULT_VENUE_KEY")
-        }
-    }
-    private fun showToast(text: String) {
-        toast.cancel()
-        toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
-        toast.show()
-    }
-    private fun initializeCamera() {
-        scannerView = ZBarScannerView(context)
-        scannerView.setResultHandler(this)
+		lifecycleScope.launch {
+			venue2 =
+				datastore.getVenueDetails()?.replace("\\s".toRegex(), "")!!
+					.split(",").associateTo(HashMap()) {
+						val (left, right) = it.split("=")
+						left.toInt() to right
+					}
+			binding.location.text = datastore.getDefaultVenue()
+		}
+	}
 
-        scannerView.apply {
-            setBorderColor(ContextCompat.getColor(requireContext(), R.color.white))
-            setLaserColor(ContextCompat.getColor(requireContext(), R.color.black))
-            setBorderStrokeWidth(13)
-            setMaskColor(ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
-            setLaserEnabled(true)
-            setBorderLineLength(200)
-            setupScanner()
-            setAutoFocus(true)
-        }
+	private fun showToast(text: String) {
+		toast.cancel()
+		toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
+		toast.show()
+	}
 
-        startCamera()
-        binding.scannerContainer.addView(scannerView)
-    }
+	private fun initializeCamera() {
+		scannerView = ZBarScannerView(context)
+		scannerView.setResultHandler(this)
 
-    private fun startCamera() {
-        scannerView.startCamera()
-    }
+		scannerView.apply {
+			setBorderColor(ContextCompat.getColor(requireContext(), R.color.white))
+			setLaserColor(ContextCompat.getColor(requireContext(), R.color.black))
+			setBorderStrokeWidth(13)
+			setMaskColor(ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
+			setLaserEnabled(true)
+			setBorderLineLength(200)
+			setupScanner()
+			setAutoFocus(true)
+		}
 
-    private fun onClicks() {
-        binding.flashToggle.setOnClickListener {
-            if (binding.flashToggle.isSelected) offFlashLight()
-            else onFlashLight()
-        }
-    }
+		startCamera()
+		binding.scannerContainer.addView(scannerView)
+	}
 
-    private fun onFlashLight() {
-        binding.flashToggle.isSelected = true
-        scannerView.flash = true
-    }
+	private fun startCamera() {
+		scannerView.startCamera()
+	}
 
-    private fun offFlashLight() {
-        binding.flashToggle.isSelected = false
-        scannerView.flash = false
-    }
+	private fun onClicks() {
+		binding.flashToggle.setOnClickListener {
+			if (binding.flashToggle.isSelected) {
+				offFlashLight()
+				binding.flashToggle.apply {
+					backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(
+						requireContext(), R.color.colorTransparent))
+					imageTintList = ColorStateList.valueOf(ContextCompat.getColor(
+						requireContext(), R.color.white))
+				}
+			} else {
+				binding.flashToggle.apply {
+					backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(
+						requireContext(), R.color.white))
+					imageTintList = ColorStateList.valueOf(ContextCompat.getColor(
+						requireContext(), R.color.black))
+				}
+				onFlashLight()
+			}
+		}
+	}
 
-    override fun onResume() {
-        super.onResume()
-        scannerView.setResultHandler(this)
-        scannerView.startCamera()
-    }
+	private fun onFlashLight() {
+		binding.flashToggle.isSelected = true
+		scannerView.flash = true
+	}
 
-    override fun onPause() {
-        super.onPause()
-        toast.cancel()
-        binding.scannerContainer.postDelayed({
-            scannerView.stopCamera()
-        }, 500)
-    }
+	private fun offFlashLight() {
+		binding.flashToggle.isSelected = false
+		scannerView.flash = false
+	}
 
-    override fun handleResult(rawResult: Result?) {
-        student_No = rawResult?.contents.toString()
-        if (rawResult?.contents?.length == 7) showBottomSheet(requireContext(), rawResult.contents)
-        else scannerView.resumeCameraPreview(this)
-    }
+	override fun onResume() {
+		super.onResume()
+		scannerView.setResultHandler(this)
+		scannerView.startCamera()
+	}
 
-    private fun showBottomSheet(context: Context, studentNumber: String?) {
-        val bottomSheetDialog = BottomSheetDialog(context)
-        val enterStudentNoView = layoutInflater.inflate(R.layout.layout_input_bottom_sheet, null)
-        val seeStudentDetailView =
-            layoutInflater.inflate(R.layout.layout_entry_bottom_sheet, null)
+	override fun onPause() {
+		super.onPause()
+		toast.cancel()
+		binding.scannerContainer.postDelayed({
+												 scannerView.stopCamera()
+											 }, 500)
+	}
 
-        val studentNo = enterStudentNoView.findViewById<TextInputEditText>(R.id.studentNo)
-        val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
-        val studentNoTextInputLayout =
-            enterStudentNoView.findViewById<TextInputLayout>(R.id.studentNoTextInputLayout)
-        val studentNoEditText =
-            seeStudentDetailView.findViewById<TextInputEditText>(R.id.studentNoEditText)
-        val submitLateEntryBtn =
-            seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
-        val progressBar = seeStudentDetailView.findViewById<LinearProgressIndicator>(R.id.progressBar)
-        val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
-        val name = seeStudentDetailView.findViewById<MaterialTextView>(R.id.name)
-        val branch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.branch)
-        val batch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.batch)
-        val studentno = seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNo)
-        val studentImage = seeStudentDetailView.findViewById<ImageView>(R.id.studentImage)
+	override fun handleResult(rawResult: Result?) {
+		student_No = rawResult?.contents.toString()
+		if (rawResult?.contents?.length == 7) showBottomSheet(requireContext(), rawResult.contents)
+		else scannerView.resumeCameraPreview(this)
+	}
 
-        val viewDetailConstraint =
-            seeStudentDetailView.findViewById<ConstraintLayout>(R.id.constraint)
-        val studentConstraint =
-            seeStudentDetailView.findViewById<ConstraintLayout>(R.id.studentConstraint)
+	private fun showBottomSheet(context: Context, studentNumber: String?) {
+		val bottomSheetDialog = BottomSheetDialog(context)
+		val enterStudentNoView = layoutInflater.inflate(R.layout.layout_input_bottom_sheet, null)
+		val seeStudentDetailView =
+			layoutInflater.inflate(R.layout.layout_entry_bottom_sheet, null)
 
-        if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
-        else {
-            bottomSheetDialog.setContentView(seeStudentDetailView)
-            studentNoEditText.setText(studentNumber)
-        }
+		val studentNo = enterStudentNoView.findViewById<TextInputEditText>(R.id.studentNo)
+		val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
+		val studentNoTextInputLayout =
+			enterStudentNoView.findViewById<TextInputLayout>(R.id.studentNoTextInputLayout)
+		val studentNoEditText =
+			seeStudentDetailView.findViewById<TextInputEditText>(R.id.studentNoEditText)
+		val submitLateEntryBtn =
+			seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
+		val progressBar =
+			seeStudentDetailView.findViewById<LinearProgressIndicator>(R.id.progressBar)
+		val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
+		val name = seeStudentDetailView.findViewById<MaterialTextView>(R.id.name)
+		val branch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.branch)
+		val batch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.batch)
+		val studentno = seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNo)
+		val studentImage = seeStudentDetailView.findViewById<ImageView>(R.id.studentImage)
 
-        bottomSheetDialog.show()
+		val viewDetailConstraint =
+			seeStudentDetailView.findViewById<ConstraintLayout>(R.id.constraint)
+		val studentConstraint =
+			seeStudentDetailView.findViewById<ConstraintLayout>(R.id.studentConstraint)
 
-        studentNo.requestFocus()
-        studentNo.postDelayed({
-            Utils().showKeyboard(studentNo, activity)
-            binding.enterStudentNoBtn.isEnabled = true
-            binding.enterStudentNoBtn.isClickable = true
-        }, 200)
+		if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
+		else {
+			bottomSheetDialog.setContentView(seeStudentDetailView)
+			studentNoEditText.setText(studentNumber)
+		}
 
-        studentNo.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+		bottomSheetDialog.show()
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (p0 == null || p0.length < 7) {
-                    okButton.isEnabled = false
-                    okButton.setTextColor(Color.parseColor("#3392C5"))
-                    studentNoTextInputLayout.helperText = "Wrong student number"
-                } else {
-                    okButton.isEnabled = true
-                    okButton.setTextColor(Color.parseColor("#FFFFFF"))
-                    studentNoTextInputLayout.helperText = " "
-                }
-            }
+		studentNo.requestFocus()
+		studentNo.postDelayed({
+								  Utils().showKeyboard(studentNo, activity)
+								  binding.enterStudentNoBtn.isEnabled = true
+								  binding.enterStudentNoBtn.isClickable = true
+							  }, 200)
 
-            override fun afterTextChanged(p0: Editable?) {}
-        })
+		studentNo.addTextChangedListener(object : TextWatcher {
+			override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-        okButton.setOnClickListener {
-            Utils().hideKeyboard(studentNo, activity)
-            bottomSheetDialog.setContentView(seeStudentDetailView)
-            student_No = studentNo.text.toString()
-            studentNoEditText.setText(studentNo.text!!.trim())
-        }
+			override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+				if (p0 == null || p0.length < 7) {
+					okButton.isEnabled = false
+					okButton.setTextColor(Color.parseColor("#3392C5"))
+					studentNoTextInputLayout.helperText = " "
+				} else {
+					okButton.isEnabled = true
+					okButton.setTextColor(Color.parseColor("#FFFFFF"))
+					studentNoTextInputLayout.helperText = " "
+				}
+			}
 
-        bottomSheetDialog.setOnCancelListener {
-            scannerView.postDelayed({
-                Utils().hideKeyboard(requireView(), activity)
-                scannerView.setResultHandler(this)
-                startCamera()
-            }, 100)
+			override fun afterTextChanged(p0: Editable?) {}
+		})
 
-        }
+		okButton.setOnClickListener {
+			lifecycleScope.launch {
+				var flag = false
+				val studentList = studentDatabase.studentDao().getStudentDetails()
+				studentList.forEach {
+					if (it.student_no == studentNo.text.toString()) {
+						flag = true
+						return@forEach
+					}
+				}
 
-        submitLateEntryBtn.setOnClickListener {
-            submitLateEntryBtn.isEnabled = false
-            progressBar.visibility = View.VISIBLE
+				if (!flag) {
+					studentNoTextInputLayout.helperText = "Enter correct student no. or sync data"
+					okButton.isEnabled = false
+				}
+				else {
+					Utils().hideKeyboard(studentNo, activity)
+					bottomSheetDialog.setContentView(seeStudentDetailView)
+					student_No = studentNo.text.toString()
+					studentNoEditText.setText(studentNo.text!!.trim())
+					return@launch
+				}
+			}
+		}
 
-            val student = studentNoEditText.text.toString().trim()
-            var venueId: Int? = null
-            lifecycleScope.launch {
-                venueId = datastore.getId("ID_KEY")!!
-                lateEntryViewModel.venue.value = venueId
-            }
-            var lateEntryList: List<Student>
-            var flag = false
-            lifecycleScope.launch {
-                lateEntryList = studentDatabase.studentDao().getStudentDetails()
-                for (i in lateEntryList) {
-                    if (i.student_no == student) {
-                        flag = true
-                        break
-                    }
-                }
+		bottomSheetDialog.setOnCancelListener {
+			scannerView.postDelayed({
+										Utils().hideKeyboard(requireView(), activity)
+										scannerView.setResultHandler(this)
+										startCamera()
+									}, 100)
 
-                if (!flag)
-                    showToast("The student no. doesn't exist\nIf this is" +
-                            " not the case, then sync the data from Settings!")
-                else{
-                    lateEntryViewModel.studentNo.value = student
-                    lateEntryViewModel.submitResult()
-                    lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
-                        when (it) {
-                            is Response.Success -> {
-                                it.data?.message?.let { it1 -> showToast(it1) }
-                            }
-                            is Response.Error -> {
-                                if (it.errorMessage == "Save to DB") {
-                                    lifecycleScope.launch {
-                                        val studentDatabase = StudentDatabase.getDatabase(requireContext())
-                                        val currentTime = Utils().currentTime()
-                                        studentDatabase.offlineLateEntryDao()
-                                            .addLateEntry(OfflineLateEntry(student, currentTime, venueId!!))
-                                        showToast("Late entry scanned successfully")
+		}
 
-                                    }
-                                } else it.errorMessage?.let { it1 -> showToast(it1) }
-                            }
+		submitLateEntryBtn.setOnClickListener {
+			submitLateEntryBtn.isEnabled = false
+			progressBar.visibility = View.VISIBLE
 
-                        }
-                    }
-                }
+			val student = studentNoEditText.text.toString().trim()
+			var venueId: Int? = null
+			lifecycleScope.launch {
+				venueId = datastore.getId("ID_KEY")!!
+				lateEntryViewModel.venue.value = venueId
+			}
+			var lateEntryList: List<Student>
+			var flag = false
+			lifecycleScope.launch {
+				lateEntryList = studentDatabase.studentDao().getStudentDetails()
+				for (i in lateEntryList) {
+					if (i.student_no == student) {
+						flag = true
+						break
+					}
+				}
 
-                progressBar.visibility = View.INVISIBLE
-                submitLateEntryBtn.postDelayed({
-                                                   submitLateEntryBtn.isEnabled = true
-                                                   okButton.setTextColor(Color.parseColor("#FFFFFF"))
-                                               }, 2000)
-            }
-        }
-        viewDetails.setOnClickListener {
-            viewDetails.isEnabled = false
-            viewDetails.setTextColor(ContextCompat.getColor(requireContext(), R.color.disabledSettingsBtnColor))
+				if (!flag) {
+					showToast("The student no. doesn't exist\nIf this is" +
+									  " not the case, then sync the data from Settings!")
+					studentNoTextInputLayout.helperText = "Wrong student number"
+				}
+				else {
+					lateEntryViewModel.studentNo.value = student
+					lateEntryViewModel.submitResult()
+					lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
+						when (it) {
+							is Response.Success -> {
+								it.data?.message?.let { it1 -> showToast(it1) }
+							}
+							is Response.Error -> {
+								if (it.errorMessage == "Save to DB") {
+									lifecycleScope.launch {
+										val studentDatabase =
+											StudentDatabase.getDatabase(requireContext())
+										val currentTime = Utils().currentTimeInIsoFormat()
+										studentDatabase.offlineLateEntryDao()
+											.addLateEntry(OfflineLateEntry(student,
+																		   currentTime,
+																		   venueId!!))
+										showToast("Late entry scanned successfully")
 
-            var lateEntryList: List<Student>
-            lifecycleScope.launch {
-            lateEntryList = studentDatabase.studentDao().getStudentDetails()
-                    var flag = false
-                val studentNumber2 = studentNoEditText.text.toString().trim()
-                    for (student in lateEntryList) {
-                        if (student.student_no == studentNumber2) {
-                            flag = true
-                            viewDetailConstraint.visibility = View.GONE
-                            studentConstraint.visibility = View.VISIBLE
+									}
+								} else it.errorMessage?.let { it1 -> showToast(it1) }
+							}
 
-                            name.text = student.name
-                            branch.text = student.branch
-                            studentno.text = studentNumber2
-                            batch.text = student.batch.toString()
+						}
+					}
+				}
 
-                            student.student_image?.let {
-                                if (!student.image_downloaded) {
-                                    val imgUrl = "https://lateentry.azurewebsites.net$it"
-                                    Glide.with(requireActivity())
-                                        .applyDefaultRequestOptions(RequestOptions.placeholderOf(R.drawable.ic_placeholder).error(R.drawable.ic_placeholder))
-                                        .load(imgUrl)
-                                        .into(studentImage)
+				progressBar.visibility = View.INVISIBLE
+				submitLateEntryBtn.postDelayed({
+												   submitLateEntryBtn.isEnabled = true
+											   }, 2000)
+			}
+		}
+		viewDetails.setOnClickListener {
+			viewDetails.isEnabled = false
+			viewDetails.setTextColor(ContextCompat.getColor(requireContext(),
+															R.color.disabledSettingsBtnColor))
 
-                                    Utils().downloadImg(requireContext(), imgUrl,
-                                                        "${context.filesDir}/Images/",
-                                                        "${student.student_no}_${student.name}" +
-                                                                ".jpg").observe(viewLifecycleOwner) { result ->
-                                        if (result == "Download complete")
-                                            student.image_downloaded = true
-                                        Log.e("dddd", student.image_downloaded.toString())
-                                    }
-                                }
-                                else {
-                                    val file = File(context.filesDir, "Images/")
-                                    Glide.with(requireContext())
-                                        .applyDefaultRequestOptions(RequestOptions.placeholderOf(R.drawable.ic_placeholder).error(R.drawable.ic_placeholder))
-                                        .load(file.absolutePath+"${student.student_no}_${student.name}.jpg")
-                                        .into(studentImage)
+			var lateEntryList: List<Student>
+			lifecycleScope.launch {
+				lateEntryList = studentDatabase.studentDao().getStudentDetails()
+				var flag = false
+				val studentNumber2 = studentNoEditText.text.toString().trim()
+				for (student in lateEntryList) {
+					if (student.student_no == studentNumber2) {
+						flag = true
+						viewDetailConstraint.visibility = View.GONE
+						studentConstraint.visibility = View.VISIBLE
 
-                                }
+						name.text = student.name
+						branch.text = student.branch
+						studentno.text = studentNumber2
+						batch.text = student.batch.toString()
 
-                            }
-                        }
-                    }
-                    if (!flag) showToast("The student no. doesn't exist\nIf this is" +
-                            " not the case, then sync the data from Settings!")
-                }
+						student.student_image?.let {
+							if (!student.image_downloaded) {
+								val imgUrl = "https://lateentry.azurewebsites.net$it"
+								Glide.with(requireActivity())
+									.applyDefaultRequestOptions(RequestOptions.placeholderOf(R.drawable.ic_placeholder)
+																	.error(R.drawable.ic_placeholder))
+									.load(imgUrl)
+									.into(studentImage)
 
-            viewDetails.postDelayed({
-                                        viewDetails.isEnabled = true
-                                        viewDetails.setTextColor(ContextCompat.getColor
-                                            (requireContext(), R.color.custom_blue))
-                                    }, 2000)
-        }
-    }
+								Utils().downloadImg(requireContext(), imgUrl,
+													"${context.filesDir}/Images/",
+													"${student.student_no}_${student.name}" +
+															".jpg")
+									.observe(viewLifecycleOwner) { result ->
+										if (result == "Download complete")
+											student.image_downloaded = true
+									}
+							} else {
+								val file = File(context.filesDir, "Images/")
+								Glide.with(requireContext())
+									.applyDefaultRequestOptions(RequestOptions.placeholderOf(R.drawable.ic_placeholder)
+																	.error(R.drawable.ic_placeholder))
+									.load(file.absolutePath + "${student.student_no}_${student.name}.jpg")
+									.into(studentImage)
 
-    private fun showPopup(view: View, context: Context) {
-        popup.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.settings -> {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                                                                    activity?.supportFragmentManager?.beginTransaction()
-                                                                        ?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out)
-                                                                        ?.replace(R.id.fragmentContainerView, SettingsFragment())
-                                                                        ?.commit()
-                                                                }, 30)
-                }
+							}
 
-                R.id.venue -> {
-                    venueBottomSheetDialog = BottomSheetDialog(context)
-                    val venueItems =
-                        layoutInflater.inflate(R.layout.layout_venue_bottom_sheet, null)
-                    venueBottomSheetDialog.setContentView(venueItems)
-                    venueBottomSheetDialog.show()
+						}
+					}
+				}
+				if (!flag)
+					showToast("The student no. doesn't exist\nIf this is" +
+									  " not the case, then sync the data from Settings!")
+			}
 
-                    binding.scannerContainer.postDelayed({
-                        scannerView.stopCamera()
-                    }, 500)
+			viewDetails.postDelayed({
+										viewDetails.isEnabled = true
+										viewDetails.setTextColor(ContextCompat.getColor
+											(requireContext(), R.color.custom_blue))
+									}, 2000)
+		}
+	}
 
-                    val adapter =
-                        VenueRecyclerAdapter(venue2, binding.location.text.toString(), this)
-                    val recyclerView = venueItems.findViewById<RecyclerView>(R.id.recyclerView)
-                    recyclerView.adapter = adapter
+	private fun showPopup(context: Context) {
+		popup.setOnMenuItemClickListener { menuItem ->
+			when (menuItem.itemId) {
+				R.id.settings -> {
+					Handler(Looper.getMainLooper()).postDelayed({
+							activity?.supportFragmentManager?.beginTransaction()
+								?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out,
+													  R.anim.fade_in, R.anim.slide_out)
+								?.replace(R.id.fragmentContainerView,
+										  SettingsFragment())
+								?.commit()
+							}, 30)
+				}
 
-                    venueBottomSheetDialog.setOnCancelListener {
-                        scannerView.setResultHandler(this)
-                        startCamera()
-                    }
-                }
-                R.id.history -> {
+				R.id.venue -> {
+					venueBottomSheetDialog = BottomSheetDialog(context)
+					val venueItems =
+						layoutInflater.inflate(R.layout.layout_venue_bottom_sheet, null)
+					venueBottomSheetDialog.setContentView(venueItems)
+					venueBottomSheetDialog.show()
 
-                }
-            }
-            true
-        }
+					binding.scannerContainer.postDelayed({
+															 scannerView.stopCamera()
+														 }, 500)
 
-        val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
-        fieldMPopup.isAccessible = true
-        val mPopup = fieldMPopup.get(popup)
-        mPopup.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java)
-            .invoke(mPopup, true)
+					val adapter =
+						VenueRecyclerAdapter(venue2, binding.location.text.toString(), this)
+					val recyclerView = venueItems.findViewById<RecyclerView>(R.id.recyclerView)
+					recyclerView.adapter = adapter
 
-        popup.show()
-    }
+					venueBottomSheetDialog.setOnCancelListener {
+						scannerView.setResultHandler(this)
+						startCamera()
+					}
+				}
+				R.id.history -> {
 
-    override fun venueClickListener(venue: String, id: Int) {
-        lifecycleScope.launch {
-            datastore.saveId("ID_KEY", id)
-            datastore.saveDefaultVenue("DEFAULT_VENUE_KEY", venue)
-        }
-        scannerView.setResultHandler(this)
-        startCamera()
-        binding.location.postDelayed({
-            venueBottomSheetDialog.dismiss()
-            val animation =
-                AnimationUtils.loadAnimation(
-                    context,
-                    R.anim.long_fade_in
-                )
-            binding.location.startAnimation(animation)
-            binding.location.text = venue
+				}
+			}
+			true
+		}
 
-        }, 400)
+		val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+		fieldMPopup.isAccessible = true
+		val mPopup = fieldMPopup.get(popup)
+		mPopup.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+			.invoke(mPopup, true)
 
-    }
+		popup.show()
+	}
 
+	override fun venueClickListener(venue: String, id: Int) {
+		lifecycleScope.launch {
+			datastore.saveId("ID_KEY", id)
+			datastore.saveDefaultVenue(venue)
+		}
+		scannerView.setResultHandler(this)
+		startCamera()
+		binding.location.postDelayed({
+										 venueBottomSheetDialog.dismiss()
+										 val animation =
+											 AnimationUtils.loadAnimation(
+												 context,
+												 R.anim.long_fade_in
+											 )
+										 binding.location.startAnimation(animation)
+										 binding.location.text = venue
+
+									 }, 400)
+
+	}
 
 }

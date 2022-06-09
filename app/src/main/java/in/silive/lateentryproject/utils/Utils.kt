@@ -1,14 +1,19 @@
 package `in`.silive.lateentryproject.utils
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 
 
@@ -43,7 +48,7 @@ class Utils {
 		imm.hideSoftInputFromWindow(view.windowToken, 0)
 	}
 
-	fun currentTime(): String {
+	fun currentTimeInIsoFormat(): String {
 		val ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSZ"
 
 		val sdf = SimpleDateFormat(ISO_8601_24H_FULL_FORMAT, Locale.UK)
@@ -51,6 +56,13 @@ class Utils {
 
 		format = format.substring(0, format.length - 2) + ':' + format.substring(format.length - 2)
 		return format
+	}
+
+	fun currentTime(): String {
+		val current = LocalDateTime.now()
+		val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+
+		return current.format(formatter)
 	}
 
 }

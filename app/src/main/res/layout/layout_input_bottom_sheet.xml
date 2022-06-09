@@ -31,6 +31,7 @@
         app:boxStrokeColor="@color/custom_blue"
         app:boxStrokeWidth="1dp"
         app:boxStrokeWidthFocused="1dp"
+        app:helperText=" "
         app:helperTextTextAppearance="@font/source_sans_pro_semibold"
         app:helperTextTextColor="#F13A3A"
         app:hintEnabled="false"
@@ -48,7 +49,7 @@
             android:imeOptions="actionGo"
             android:inputType="number"
             android:padding="16dp"
-            android:paddingEnd="94dp"
+            android:paddingEnd="91dp"
             android:textColor="#242E42"
             android:textColorHint="#BDC0C6"
             android:textSize="18sp" />
@@ -57,15 +58,17 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/okButton"
         android:layout_width="wrap_content"
-        android:layout_height="56dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="29dp"
         android:background="@drawable/ok_button_curved_edge"
         android:enabled="false"
         android:fontFamily="@font/source_sans_pro_semibold"
-        android:paddingHorizontal="24dp"
+        android:paddingHorizontal="21dp"
         android:text="OK"
         android:textColor="#6882EF"
         android:textSize="20sp"
         app:backgroundTint="@color/custom_blue"
+        app:layout_constraintBottom_toBottomOf="@+id/studentNoTextInputLayout"
         app:layout_constraintEnd_toEndOf="@+id/studentNoTextInputLayout"
         app:layout_constraintTop_toTopOf="@+id/studentNoTextInputLayout" />
 

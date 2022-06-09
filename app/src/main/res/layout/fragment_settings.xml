@@ -67,21 +67,33 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/syncBtn"
-                android:paddingVertical="9dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="16dp"
                 android:backgroundTint="#F3F8FF"
+                android:paddingVertical="9dp"
                 android:text="Sync Data"
                 android:textColor="@color/custom_blue"
                 app:cornerRadius="7dp"
                 app:icon="@drawable/ic_sync"
                 app:iconTint="@color/custom_blue"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/materialTextView" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/lastSyncTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/source_sans_pro"
+                android:textColor="#767780"
+                android:text="Last synced: Never"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/syncBtn" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -118,7 +130,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="16dp"
                 android:backgroundTint="#F3F8FF"
                 android:paddingVertical="9dp"
                 android:text="Upload Data"
@@ -126,49 +137,52 @@
                 app:cornerRadius="7dp"
                 app:icon="@drawable/ic_upload"
                 app:iconTint="@color/custom_blue"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/materialTextView2" />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/lastUploadTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/source_sans_pro"
+                android:text="Last uploaded: Never"
+                android:textColor="#767780"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/uploadBtn" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/logoutConstraintLayout"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/logoutBtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/settings_constraint_layout_edge"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:fontFamily="@font/source_sans_pro_semibold"
+            android:paddingVertical="14dp"
+            android:paddingStart="24dp"
+            android:stateListAnimator="@null"
+            android:text="Log Out"
+            android:textAlignment="textStart"
+            android:textColor="#767780"
+            android:textSize="16sp"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_exit"
+            app:iconGravity="end"
+            app:iconSize="19dp"
+            app:iconTint="#767780"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/uploadConstraintLayout">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginBottom="14dp"
-                android:fontFamily="@font/source_sans_pro_semibold"
-                android:text="Log Out"
-                android:textColor="#767780"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_exit" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/uploadConstraintLayout"
+            app:rippleColor="#E8E8E8"
+            app:strokeColor="#DCDDE2"
+            app:strokeWidth="1dp" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressBar"
@@ -180,7 +194,7 @@
             app:indicatorColor="@color/custom_blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logoutConstraintLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/logoutBtn" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -192,4 +206,5 @@
             app:srcCompat="@drawable/ic_powered_by_si" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

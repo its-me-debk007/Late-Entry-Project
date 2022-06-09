@@ -11,7 +11,7 @@
     <color name="darkBrown">#2B2828</color>
     <color name="colorPrimary">#2196f3</color>
     <color name="colorTranslucent">#50000000</color>
-    <color name="colorTransparent">#00FFFFFF</color>
+    <color name="colorTransparent">#00000000</color>
     <color name="darkSnackbar">#0F0F0F</color>
     <color name="background">#065AC9</color>
     <color name="disabledSettingsBtnColor">#371A73E8</color>

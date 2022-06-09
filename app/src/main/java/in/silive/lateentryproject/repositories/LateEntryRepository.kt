@@ -3,16 +3,12 @@ package `in`.silive.lateentryproject.repositories
 import `in`.silive.lateentryproject.models.LateEntryDataClass
 import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
-import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Utils
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 
@@ -24,7 +20,7 @@ class LateEntryRepository() {
 		venue: Int
 	): MutableLiveData<Response<MessageDataClass>> {
 		val call = ServiceBuilder.buildService()
-			.lateEntry(LateEntryDataClass(studentNo, Utils().currentTime(), venue))
+			.lateEntry(LateEntryDataClass(studentNo, Utils().currentTimeInIsoFormat(), venue))
 
 		call.enqueue(object : Callback<MessageDataClass?> {
 			override fun onResponse(

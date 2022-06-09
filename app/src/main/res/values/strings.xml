@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Late Entry Project</string>
+    <string name="app_name">Late Entry System</string>
     <string name="grant">Grant</string>
     <string name="cancel">Cancel</string>
     <string name="grant_permissions">Grant Permissions</string>

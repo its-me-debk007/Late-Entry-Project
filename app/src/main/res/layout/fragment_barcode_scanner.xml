@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#1B1B1B">
+        android:background="@color/black">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/scannerContainer"
@@ -28,6 +28,7 @@
             android:fontFamily="@font/source_sans_pro_semibold"
             android:paddingVertical="14dp"
             android:paddingEnd="16dp"
+            android:letterSpacing="0.09"
             android:text="Enter student number"
             android:textColor="#242E42"
             android:textSize="16sp"
@@ -39,33 +40,37 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/flashToggle"
+            android:stateListAnimator="@null"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="41dp"
-            android:clickable="true"
-            android:foreground="@drawable/ic_ripple_effect"
-            android:padding="15dp"
-            android:src="@drawable/selector"
+            android:layout_marginTop="36dp"
+            android:contentDescription="flash icon"
+            app:backgroundTint="@color/colorTransparent"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/scannerContainer" />
+            app:layout_constraintTop_toTopOf="@+id/scannerContainer"
+            app:maxImageSize="20dp"
+            app:rippleColor="@color/colorTransparent"
+            app:srcCompat="@drawable/ic_flash_on"
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="51dp"
-            android:text="CS/IT"
-            android:drawableStart="@drawable/ic_location"
             android:drawablePadding="6dp"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:drawableStartCompat="@drawable/ic_location" />
 
         <ImageView
             android:id="@+id/icOverflowMenu"

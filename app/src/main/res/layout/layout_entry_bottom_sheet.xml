@@ -89,7 +89,7 @@
         android:layout_marginBottom="24dp"
         android:fontFamily="@font/source_sans_pro_semibold"
         android:paddingVertical="14dp"
-        android:text="Submit late entry"
+        android:text="Submit Late Entry"
         android:textSize="18sp"
         app:backgroundTint="@color/custom_blue"
         app:cornerRadius="8dp"
@@ -119,8 +119,7 @@
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8Percent"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView4"

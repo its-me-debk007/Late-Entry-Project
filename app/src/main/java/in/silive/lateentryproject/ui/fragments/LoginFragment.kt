@@ -28,11 +28,8 @@ import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var binding: FragmentLoginBinding
-    lateinit var datastore: Datastore
-    private lateinit var venue: MutableMap<Int, String>
-    private lateinit var venue2: Map<Int, String>
-    private var change: Boolean? = null
     private lateinit var toast:Toast
+    private val datastore by lazy { Datastore(requireContext()) }
     private val viewModel by lazy { ViewModelProvider(this@LoginFragment)[LoginViewModel::class.java] }
     private val bulkViewModel by lazy {
         ViewModelProvider(
@@ -45,9 +42,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
         toast=Toast.makeText(context, "", Toast.LENGTH_SHORT)
-        venue = HashMap()
-        venue2 = HashMap()
-        datastore = Datastore(requireContext())
 
         binding.apply {
             loginBtn.setOnClickListener {
@@ -95,43 +89,34 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
 
             lifecycleScope.launchWhenStarted {
-                try {
-                    change = datastore.isSync()
-                } finally {
-                    if (change == true) {
+                    if (datastore.isSync()) {
                         bulkViewModel.sendResult()
                         bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
-                            when (it) {
-                                is Response.Success -> {
-                                    for (i in it.data?.venue_data!!) {
-                                        venue.put(i.id!!, i.venue!!)
-                                    }
+                            if (it is Response.Success) {
+                                val venueMap = mutableMapOf<Int, String>()
 
-                                    lifecycleScope.launch {
-                                        datastore.changeSyncState(false)
-                                        datastore.saveVenueDetails("VENUE_KEY", venue)
-                                        val map =
-                                            datastore.getVenueDetails("VENUE_KEY")
-                                                ?.replace("\\s".toRegex(), "")!!
-                                                .split(",").associateTo(HashMap()) {
-                                                    val (left, right) = it.split("=")
-                                                    left.toInt() to right
-                                                }
-                                        venue2 = map
-                                        datastore.saveId("ID_KEY", venue2.keys.toTypedArray()[0])
-                                        datastore.saveDefaultVenue(
-                                            "DEFAULT_VENUE_KEY",
-                                            venue2.values.toTypedArray()[0]
-                                        )
-                                    }
+                                it.data?.venue_data!!.forEach { venueData ->
+                                    venueMap[venueData.id] = venueData.venue
                                 }
-                                is Response.Error ->
-                                    it.errorMessage?.let { it1 -> showToast(it1) }
+
+                                lifecycleScope.launch {
+                                    datastore.changeSyncState(false)
+                                    datastore.saveVenueDetails(venueMap)
+                                    val venue =
+                                        datastore.getVenueDetails()
+                                            ?.replace("\\s".toRegex(), "")!!
+                                            .split(",").associateTo(mutableMapOf()) { str ->
+                                                val (left, right) = str.split("=")
+                                                left.toInt() to right
+                                            }
+                                    datastore.saveId("ID_KEY", venue.keys.toTypedArray()[0])
+                                    datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
+                                }
                             }
+                            else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
                         }
                     }
                 }
-            }
 
         }
     }
@@ -169,6 +154,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun gotToBarcodeFragment() {
         activity?.supportFragmentManager?.beginTransaction()
+            ?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
             ?.replace(R.id.fragmentContainerView, BarcodeFragment())
             ?.commit()
     }
@@ -198,7 +184,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
             .show()
     }
-
 
     private fun goToAppSettings() {
         val intent = Intent(
