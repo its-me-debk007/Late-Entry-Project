@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
@@ -119,15 +120,19 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun showLogoutDialog() {
-        val customView = layoutInflater.inflate(R.layout.logout_dialog, null)
-        val builder = MaterialAlertDialogBuilder(requireContext())
-        builder.setView(customView)
-        builder.background = ColorDrawable(Color.TRANSPARENT)
+        val customView = layoutInflater.inflate(R.layout.dialog, null)
+        val builder = MaterialAlertDialogBuilder(requireContext()).apply {
+            setView(customView)
+            background = ColorDrawable(Color.TRANSPARENT)
+        }
+
         val dialog = builder.show()
 
-        val logout = customView.findViewById<MaterialButton>(R.id.logout)
+        customView.findViewById<MaterialTextView>(R.id.dialogMessage).setText(R.string.logoutMessage)
+        val logout = customView.findViewById<MaterialButton>(R.id.positiveBtn)
         val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
 
+        logout.text = "LogOut"
         logout.setOnClickListener {
             lifecycleScope.launchWhenStarted {
                 try {
@@ -144,7 +149,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private fun goToNextFragment(fragment: Fragment) {
         activity?.supportFragmentManager?.beginTransaction()
-            ?.setCustomAnimations(R.anim.fade_in, R.anim.slide_out)
             ?.replace(R.id.fragmentContainerView, fragment)
             ?.commit()
     }

@@ -1,15 +1,23 @@
 package `in`.silive.lateentryproject.utils
 
+import `in`.silive.lateentryproject.R
+import `in`.silive.lateentryproject.ui.fragments.BarcodeFragment
 import android.content.Context
-import android.os.Build
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -64,5 +72,4 @@ class Utils {
 
 		return current.format(formatter)
 	}
-
 }

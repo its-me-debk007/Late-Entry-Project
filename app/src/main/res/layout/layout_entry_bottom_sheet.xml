@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -19,19 +18,20 @@
         android:id="@+id/constraint"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="12dp"
         android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/submitLateEntryBtn"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalBar"
-        app:layout_constraintBottom_toTopOf="@id/submitLateEntryBtn">
+        app:layout_constraintTop_toBottomOf="@+id/horizontalBar">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/studentNoInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="24dp"
+            android:layout_marginTop="18dp"
             android:layout_marginEnd="24dp"
             app:boxBackgroundColor="#F7F7F7"
             app:boxCornerRadiusBottomEnd="12dp"
@@ -54,30 +54,48 @@
                 android:imeOptions="actionGo"
                 android:inputType="number"
                 android:maxLines="1"
-                android:paddingVertical="6dp"
+                android:maxLength="15"
                 android:paddingStart="12dp"
+                android:paddingTop="6dp"
                 android:paddingEnd="110dp"
+                android:paddingBottom="8dp"
                 android:textColor="#242E42"
                 android:textSize="24sp" />
 
 
         </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/viewDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:fontFamily="@font/source_sans_pro_semibold"
-        android:foreground="@drawable/view_details_textview_ripple_effect"
-        android:padding="12dp"
-        android:text="View Details"
-        android:textColor="@color/custom_blue"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/studentNoInputLayout"
-        app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"
-        app:layout_constraintTop_toTopOf="@+id/studentNoInputLayout" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/viewDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/source_sans_pro_semibold"
+            android:foreground="@drawable/view_details_textview_ripple_effect"
+            android:padding="12dp"
+            android:text="View Details"
+            android:textColor="@color/custom_blue"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/studentNoInputLayout"
+            app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"
+            app:layout_constraintTop_toTopOf="@+id/studentNoInputLayout" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="-4dp"
+            android:layout_marginEnd="6dp"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            app:indicatorColor="@color/custom_blue"
+            app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"
+            app:layout_constraintStart_toStartOf="@+id/studentNoInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/studentNoInputLayout"
+            app:trackColor="#F7F7F7"
+            app:trackCornerRadius="12dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -102,9 +120,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="14dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/submitLateEntryBtn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -115,11 +133,11 @@
             android:id="@+id/studentImage"
             android:layout_width="105dp"
             android:layout_height="131dp"
-            app:srcCompat="@drawable/ic_placeholder"
-            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8Percent"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8Percent"
+            app:srcCompat="@drawable/ic_placeholder" />
 
         <TextView
             android:id="@+id/textView4"
@@ -174,10 +192,9 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rahul"
+            android:fontFamily="@font/source_sans_pro"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:fontFamily="@font/source_sans_pro"
             app:layout_constraintStart_toEndOf="@+id/textView4"
             app:layout_constraintTop_toTopOf="@+id/textView4" />
 
@@ -185,10 +202,9 @@
             android:id="@+id/branch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="IT"
+            android:fontFamily="@font/source_sans_pro"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:fontFamily="@font/source_sans_pro"
             app:layout_constraintStart_toEndOf="@+id/textView5"
             app:layout_constraintTop_toTopOf="@+id/textView5" />
 
@@ -196,10 +212,9 @@
             android:id="@+id/batch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2020"
+            android:fontFamily="@font/source_sans_pro"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:fontFamily="@font/source_sans_pro"
             app:layout_constraintStart_toEndOf="@+id/textView7"
             app:layout_constraintTop_toTopOf="@+id/textView7" />
 
@@ -207,22 +222,25 @@
             android:id="@+id/studentNo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2015654"
+            android:fontFamily="@font/source_sans_pro"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:fontFamily="@font/source_sans_pro"
             app:layout_constraintStart_toEndOf="@+id/textView6"
-            app:layout_constraintTop_toTopOf="@+id/textView6"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="@+id/textView6" />
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progressBar"
-        android:layout_width="match_parent"
-        android:visibility="invisible"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:layout_marginTop="4dp"
-        app:indicatorColor="@color/custom_blue"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalBar" />
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/profileProgressBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            app:indicatorColor="@color/custom_blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/studentImage"
+            app:trackColor="#F7F7F7"
+            app:trackCornerRadius="12dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

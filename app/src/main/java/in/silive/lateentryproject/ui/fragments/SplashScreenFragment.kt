@@ -6,6 +6,8 @@ import `in`.silive.lateentryproject.utils.Datastore
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -15,6 +17,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
@@ -47,7 +50,7 @@ class SplashScreenFragment: Fragment(R.layout.activity_splash_screen) {
 		if (it) {
 			Handler(Looper.getMainLooper()).postDelayed({
 															goToNextFragment(BarcodeFragment())
-														}, 1500)
+														}, 1400)
 		} else {
 			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
 				showGoToAppSettingsDialog(requireContext())
@@ -56,17 +59,23 @@ class SplashScreenFragment: Fragment(R.layout.activity_splash_screen) {
 	}
 
 	private fun showGoToAppSettingsDialog(context: Context) {
-		MaterialAlertDialogBuilder(context, R.style.CustomAlertDialog)
-			.setTitle(R.string.grant_permissions)
-			.setMessage(R.string.we_need_permission)
-			.setPositiveButton(R.string.grant) { _, _ ->
-				goToAppSettings()
-				activity?.finish()
-			}
-			.setNegativeButton(R.string.cancel) { _, _ ->
-				activity?.finish()
-			}
+		val customView = layoutInflater.inflate(R.layout.camera_permission_dialog, null)
+
+		MaterialAlertDialogBuilder(context)
+			.setView(customView)
+			.setCancelable(false)
+			.setBackground(ColorDrawable(Color.TRANSPARENT))
 			.show()
+
+		val grant = customView.findViewById<MaterialButton>(R.id.grant)
+		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+
+		grant.setOnClickListener {
+			goToAppSettings()
+			activity?.finishAffinity()
+		}
+
+		cancel.setOnClickListener { activity?.finishAffinity() }
 	}
 
 	private fun goToAppSettings() {
@@ -81,7 +90,7 @@ class SplashScreenFragment: Fragment(R.layout.activity_splash_screen) {
 
 	private fun goToNextFragment(fragment: Fragment) {
 		activity?.supportFragmentManager?.beginTransaction()
-			?.setCustomAnimations(R.anim.fade_in, R.anim.long_fade_out)
+			?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
 			?.replace(R.id.fragmentContainerView, fragment)
 			?.commit()
 	}

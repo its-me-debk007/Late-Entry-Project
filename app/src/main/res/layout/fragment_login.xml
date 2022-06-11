@@ -28,7 +28,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="65dp"
                     android:fontFamily="@font/source_sans_pro_bold"
-                    android:text="LATE ENTRY\nSYSTEM"
+                    android:text="LATE ENTRY"
                     android:textColor="@color/white"
                     android:textSize="36sp"
                     app:layout_constraintStart_toStartOf="parent"

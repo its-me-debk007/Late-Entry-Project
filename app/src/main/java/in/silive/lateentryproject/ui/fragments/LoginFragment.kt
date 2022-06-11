@@ -12,18 +12,23 @@ import `in`.silive.lateentryproject.view_models.LoginViewModel
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -172,17 +177,23 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun showGoToAppSettingsDialog(context: Context) {
-        MaterialAlertDialogBuilder(context, R.style.CustomAlertDialog)
-            .setTitle(R.string.grant_permissions)
-            .setMessage(R.string.we_need_permission)
-            .setPositiveButton(R.string.grant) { _, _ ->
-                goToAppSettings()
-                activity?.finish()
-            }
-            .setNegativeButton(R.string.cancel) { _, _ ->
-                activity?.finish()
-            }
+        val customView = layoutInflater.inflate(R.layout.camera_permission_dialog, null)
+
+        MaterialAlertDialogBuilder(context)
+            .setView(customView)
+            .setCancelable(false)
+            .setBackground(ColorDrawable(Color.TRANSPARENT))
             .show()
+
+        val grant = customView.findViewById<MaterialButton>(R.id.grant)
+        val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+
+        grant.setOnClickListener {
+            goToAppSettings()
+            activity?.finishAffinity()
+        }
+
+        cancel.setOnClickListener { activity?.finishAffinity() }
     }
 
     private fun goToAppSettings() {
@@ -199,4 +210,30 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onPause()
         toast.cancel()
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showExitDialog()
+            }
+        })
+    }
+
+    private fun showExitDialog() {
+        val customView = layoutInflater.inflate(R.layout.dialog, null)
+        val builder = MaterialAlertDialogBuilder(requireContext()).apply {
+            setView(customView)
+            background = ColorDrawable(Color.TRANSPARENT)
+        }
+        val dialog = builder.show()
+
+        val exit = customView.findViewById<MaterialButton>(R.id.positiveBtn)
+        val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+
+        exit.setOnClickListener { activity?.finishAffinity() }
+
+        cancel.setOnClickListener { dialog.dismiss() }
+    }
+
 }

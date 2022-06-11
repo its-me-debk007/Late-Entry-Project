@@ -2,24 +2,21 @@ package `in`.silive.lateentryproject.ui.activities
 
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.ui.fragments.BarcodeFragment
+import `in`.silive.lateentryproject.ui.fragments.LoginFragment
 import `in`.silive.lateentryproject.ui.fragments.SplashScreenFragment
-import `in`.silive.lateentryproject.utils.Datastore
-import `in`.silive.lateentryproject.utils.Utils
-import android.Manifest
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.provider.Settings
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import android.view.MotionEvent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
 
 class MainActivity : AppCompatActivity() {
-    lateinit var datastore: Datastore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +26,15 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView, SplashScreenFragment())
                 .commit()
+        }
+    }
+
+    override fun onBackPressed() {
+        when (supportFragmentManager.findFragmentById(R.id.fragmentContainerView)) {
+
+            is SplashScreenFragment -> {}
+
+            else -> super.onBackPressed()
         }
     }
 }
