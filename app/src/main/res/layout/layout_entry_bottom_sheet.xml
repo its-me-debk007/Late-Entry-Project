@@ -81,21 +81,21 @@
             app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"
             app:layout_constraintTop_toTopOf="@+id/studentNoInputLayout" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progressBar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="-4dp"
-            android:layout_marginEnd="6dp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            app:indicatorColor="@color/custom_blue"
-            app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"
-            app:layout_constraintStart_toStartOf="@+id/studentNoInputLayout"
-            app:layout_constraintTop_toBottomOf="@id/studentNoInputLayout"
-            app:trackColor="#F7F7F7"
-            app:trackCornerRadius="12dp" />
+<!--        <com.google.android.material.progressindicator.LinearProgressIndicator-->
+<!--            android:id="@+id/progressBar"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="6dp"-->
+<!--            android:layout_marginTop="-4dp"-->
+<!--            android:layout_marginEnd="6dp"-->
+<!--            android:indeterminate="true"-->
+<!--            android:visibility="invisible"-->
+<!--            app:indicatorColor="@color/custom_blue"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/studentNoInputLayout"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/studentNoInputLayout"-->
+<!--            app:trackColor="#F7F7F7"-->
+<!--            app:trackCornerRadius="12dp" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -228,19 +228,19 @@
             app:layout_constraintStart_toEndOf="@+id/textView6"
             app:layout_constraintTop_toTopOf="@+id/textView6" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/profileProgressBar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            app:indicatorColor="@color/custom_blue"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studentImage"
-            app:trackColor="#F7F7F7"
-            app:trackCornerRadius="12dp" />
+<!--        <com.google.android.material.progressindicator.LinearProgressIndicator-->
+<!--            android:id="@+id/profileProgressBar"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="4dp"-->
+<!--            android:indeterminate="true"-->
+<!--            android:visibility="invisible"-->
+<!--            app:indicatorColor="@color/custom_blue"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/studentImage"-->
+<!--            app:trackColor="#F7F7F7"-->
+<!--            app:trackCornerRadius="12dp" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

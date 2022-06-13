@@ -6,13 +6,11 @@ import `in`.silive.lateentryproject.adapters.VenueRecyclerAdapter
 import `in`.silive.lateentryproject.connectivity.ConnectivityLiveData
 import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
 import `in`.silive.lateentryproject.entities.OfflineLateEntry
-import `in`.silive.lateentryproject.entities.Student
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.utils.Utils
 import `in`.silive.lateentryproject.view_models.LateEntryViewModel
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -23,15 +21,12 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -40,7 +35,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -53,9 +47,9 @@ import java.io.File
 class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView
 .ResultHandler, VenueClickListenerInterface {
 	private lateinit var binding: FragmentBarcodeScannerBinding
-	private lateinit var venueBottomSheetDialog: BottomSheetDialog
-	private lateinit var datastore: Datastore
-	private lateinit var studentDatabase: StudentDatabase
+	private val venueBottomSheetDialog by lazy { BottomSheetDialog(requireContext()) }
+	private val datastore by lazy { Datastore(requireContext()) }
+	private val studentDatabase by lazy { StudentDatabase.getDatabase(requireContext()) }
 	private lateinit var venue: MutableMap<Int, String>
 	private lateinit var venue2: Map<Int, String>
 	private var student_No: String? = null
@@ -76,9 +70,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		binding = FragmentBarcodeScannerBinding.bind(view)
 		popup.menuInflater.inflate(R.menu.scanner_menu, popup.menu)
 
-		datastore = Datastore(requireContext())
-		studentDatabase = StudentDatabase.getDatabase(requireContext())
-//		toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
 		venue = HashMap()
 		venue2 = HashMap()
 		onClicks()
@@ -109,10 +100,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 												 }, 400)
 		}
 
-		binding.icOverflowMenu.setOnClickListener {
-			showPopup(requireContext())
-		}
-
+		binding.icOverflowMenu.setOnClickListener { showPopup() }
 
 		lifecycleScope.launch {
 			venue2 =
@@ -141,7 +129,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		val color = if (text == "Late entry registered") "#0BA712" else "#E81A1A"
 
 		Snackbar.make(seeStudentDetailView, text, Snackbar.LENGTH_SHORT)
-			.setDuration(1900)
+			.setDuration(1800)
 			.setAnchorView(seeStudentDetailView)
 			.setTextMaxLines(2)
 			.setBackgroundTint(Color.parseColor(color))
@@ -217,7 +205,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 	override fun handleResult(rawResult: Result?) {
 		student_No = rawResult?.contents.toString()
 		rawResult?.contents?.let {
-			if (it.length >= 7) showBottomSheet(rawResult.contents)
+			if (it.length in 7..15) showBottomSheet(rawResult.contents)
 			else scannerView.resumeCameraPreview(this)
 		}
 	}
@@ -235,11 +223,10 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			seeStudentDetailView.findViewById<TextInputEditText>(R.id.studentNoEditText)
 		val submitLateEntryBtn =
 			seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
-		val horizontalBar = seeStudentDetailView.findViewById<ImageView>(R.id.horizontalBar)
-		val progressBar =
-			seeStudentDetailView.findViewById<LinearProgressIndicator>(R.id.progressBar)
-		val profileProgressBar =
-			seeStudentDetailView.findViewById<LinearProgressIndicator>(R.id.profileProgressBar)
+//		val progressBar =
+//			seeStudentDetailView.findViewById<LinearProgressIndicator>(R.id.progressBar)
+//		val profileProgressBar =
+//			seeStudentDetailView.findViewById<LinearProgressIndicator>(R.id.profileProgressBar)
 		val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
 		val name = seeStudentDetailView.findViewById<MaterialTextView>(R.id.name)
 		val branch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.branch)
@@ -314,7 +301,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
 			override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-				if (p0 == null || p0.length < 7) {
+				if (p0 == null || p0.length !in 7..15) {
 					viewDetails.isEnabled = false
 					viewDetails.setTextColor(ContextCompat.getColor(requireContext(),
 																	R.color.disabledSettingsBtnColor))
@@ -341,84 +328,69 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 		submitLateEntryBtn.setOnClickListener {
 			submitLateEntryBtn.isEnabled = false
-			val linearProgressBar = if (studentConstraint.visibility == View.VISIBLE) profileProgressBar
-									else progressBar
+//			val linearProgressBar = if (studentConstraint.visibility == View.VISIBLE) profileProgressBar
+//									else progressBar
 
-			linearProgressBar.visibility = View.VISIBLE
+//			linearProgressBar.visibility = View.VISIBLE
 
 			val student = studentNoEditText.text.toString().trim()
-			var venueId: Int? = null
+			var venueId: Int?
 			lifecycleScope.launch {
 				venueId = datastore.getId("ID_KEY")!!
 				lateEntryViewModel.venue.value = venueId
-			}
-			var lateEntryList: List<Student>
-			var flag = false
-			lifecycleScope.launch {
-				lateEntryList = studentDatabase.studentDao().getStudentDetails()
-				for (i in lateEntryList) {
-					if (i.student_no == student) {
+
+				var flag = false
+				studentDatabase.studentDao().getStudentDetails().forEach {
+					if (it.student_no == student) {
 						flag = true
-						break
+						return@forEach
 					}
 				}
 
-				if (!flag) {
-//					showToast("The student no. doesn't exist\nIf this is" +
-//									  " not the case, then sync the data from Settings!")
+				if (!flag)
 					showSnackbar("The student no. doesn't exist. If this is not the case, then " +
 										 "sync the data from Settings!")
 
-				}
 				else {
-					lateEntryViewModel.studentNo.value = student
-					lateEntryViewModel.submitResult()
-					lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
-						when (it) {
-							is Response.Success -> {
-								it.data?.message?.let { it1 ->
-//									showToast(it1)
-									showSnackbar(it1)
-								}
-							}
-							is Response.Error -> {
-								if (it.errorMessage == "Save to DB") {
-									lifecycleScope.launch {
-										val studentDatabase =
-											StudentDatabase.getDatabase(requireContext())
-										val currentTime = Utils().currentTimeInIsoFormat()
-										studentDatabase.offlineLateEntryDao()
-											.addLateEntry(OfflineLateEntry(student,
-																		   currentTime,
-																		   venueId!!))
-//										showToast("Late entry scanned successfully")
-										showSnackbar("Late entry scanned successfully")
-
-									}
-								} else it.errorMessage?.let { it1 ->
-//									showToast(it1)
-									showSnackbar(it1)
-								}
-							}
-
+					var lateEntryFlag = true
+					studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
+						if (student == it.student_no) {
+							if (Utils().compareTimeInHrs(it.timestamp, Utils().currentTimeInIsoFormat
+									()) < 20) lateEntryFlag = false
+							return@forEach
 						}
 					}
-				}
 
-				linearProgressBar.visibility = View.INVISIBLE
+					if (lateEntryFlag) {
+						showSnackbar("Late entry registered")
+						lateEntryViewModel.studentNo.value = student
+						lateEntryViewModel.submitResult()
+						lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
+							lifecycleScope.launch {
+								val currentTime = Utils().currentTimeInIsoFormat()
+								studentDatabase.offlineLateEntryDao().addLateEntry(
+									OfflineLateEntry(student, currentTime, venueId!!))
+							}
+						}
+					}
+					else showSnackbar("Late entry already registered")
+				}
+			}
+
+//				linearProgressBar.visibility = View.INVISIBLE
 				submitLateEntryBtn.postDelayed({
 												   submitLateEntryBtn.isEnabled = true
 											   }, 2100)
-			}
+//			}
 		}
+
 		viewDetails.setOnClickListener {
 			viewDetails.isEnabled = false
 			viewDetails.setTextColor(ContextCompat.getColor(requireContext(),
 															R.color.disabledSettingsBtnColor))
 
-			var lateEntryList: List<Student>
 			lifecycleScope.launch {
-				lateEntryList = studentDatabase.studentDao().getStudentDetails()
+				val lateEntryList = studentDatabase.studentDao().getStudentDetails()
 				var flag = false
 				val studentNumber2 = studentNoEditText.text.toString().trim()
 				for (student in lateEntryList) {
@@ -456,15 +428,11 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 																	.error(R.drawable.ic_placeholder))
 									.load(file.absolutePath + "${student.student_no}_${student.name}.jpg")
 									.into(studentImage)
-
 							}
-
 						}
 					}
 				}
 				if (!flag)
-//					showToast("The student no. doesn't exist\nIf this is" +
-//									  " not the case, then sync the data from Settings!")
 					showSnackbar("The student no. doesn't exist. If this is" +
 										 " not the case, then sync the data from Settings!")
 			}
@@ -477,7 +445,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		}
 	}
 
-	private fun showPopup(context: Context) {
+	private fun showPopup() {
 		popup.setOnMenuItemClickListener { menuItem ->
 			when (menuItem.itemId) {
 				R.id.settings -> {
@@ -492,7 +460,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 				}
 
 				R.id.venue -> {
-					venueBottomSheetDialog = BottomSheetDialog(context)
 					val venueItems =
 						layoutInflater.inflate(R.layout.layout_venue_bottom_sheet, null)
 					venueBottomSheetDialog.setContentView(venueItems)
@@ -511,9 +478,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 						scannerView.setResultHandler(this)
 						scannerView.startCamera()
 					}
-				}
-				R.id.history -> {
-
 				}
 			}
 			true

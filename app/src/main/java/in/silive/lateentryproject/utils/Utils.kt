@@ -1,33 +1,26 @@
 package `in`.silive.lateentryproject.utils
 
-import `in`.silive.lateentryproject.R
-import `in`.silive.lateentryproject.ui.fragments.BarcodeFragment
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textview.MaterialTextView
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
-
+import java.util.concurrent.TimeUnit
 
 class Utils {
 
-	fun downloadImg(context: Context, imgUrl: String, dirPath: String, imgName: String): MutableLiveData<String> {
+	fun downloadImg(context: Context,
+					imgUrl: String,
+					dirPath: String,
+					imgName: String): MutableLiveData<String> {
 		PRDownloader.initialize(context)
 		val resultLiveData = MutableLiveData<String>()
 
@@ -71,5 +64,15 @@ class Utils {
 		val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
 
 		return current.format(formatter)
+	}
+
+	fun compareTimeInHrs(t1: String, t2: String): Long {
+		val ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
+		val sdf = SimpleDateFormat(ISO_8601_24H_FULL_FORMAT, Locale.UK)
+		val time1 = sdf.parse(t1)
+		val time2 = sdf.parse(t2)
+
+		val diff = time2!!.time - time1!!.time
+		return TimeUnit.MILLISECONDS.toHours(diff)
 	}
 }

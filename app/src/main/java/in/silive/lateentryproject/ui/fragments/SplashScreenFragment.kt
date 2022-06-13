@@ -1,7 +1,7 @@
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
-import `in`.silive.lateentryproject.ui.activities.MainActivity
+import `in`.silive.lateentryproject.databinding.SplashScreenBinding
 import `in`.silive.lateentryproject.utils.Datastore
 import android.Manifest
 import android.content.Context
@@ -15,28 +15,47 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SplashScreenFragment: Fragment(R.layout.activity_splash_screen) {
-	lateinit var datastore: Datastore
+class SplashScreenFragment: Fragment(R.layout.splash_screen) {
+	private lateinit var datastore: Datastore
+	private lateinit var binding : SplashScreenBinding
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-
+		binding = SplashScreenBinding.bind(view)
 		datastore = Datastore(requireContext())
 
-		lifecycleScope.launch {
-			if (datastore.isLogin()) askPermission()
-			else {
-				Handler(Looper.getMainLooper()).postDelayed({
-																goToNextFragment(LoginFragment())
-															}, 1400)
+		binding.motionLayout.apply {
+			startLayoutAnimation()
+			setTransitionListener(object : MotionLayout.TransitionListener{
+				override fun onTransitionStarted(motionLayout: MotionLayout?,
+												 startId: Int,
+												 endId: Int) {}
 
-			}
+				override fun onTransitionChange(motionLayout: MotionLayout?,
+												startId: Int,
+												endId: Int,
+												progress: Float) {}
+
+				override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+					lifecycleScope.launch {
+						if (datastore.isLogin()) askPermission()
+						else goToNextFragment(LoginFragment())
+					}
+				}
+
+				override fun onTransitionTrigger(motionLayout: MotionLayout?,
+												 triggerId: Int,
+												 positive: Boolean,
+												 progress: Float) {}
+			})
 		}
 	}
 
@@ -45,13 +64,9 @@ class SplashScreenFragment: Fragment(R.layout.activity_splash_screen) {
 	}
 
 	private val requestPermission = registerForActivityResult(
-		ActivityResultContracts.RequestPermission()
-	) {
-		if (it) {
-			Handler(Looper.getMainLooper()).postDelayed({
-															goToNextFragment(BarcodeFragment())
-														}, 1400)
-		} else {
+		ActivityResultContracts.RequestPermission()) {
+		if (it) goToNextFragment(BarcodeFragment())
+		else {
 			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
 				showGoToAppSettingsDialog(requireContext())
 			else askPermission()

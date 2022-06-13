@@ -10,7 +10,7 @@ import androidx.room.Query
 @Dao
 interface OfflineLateEntryDao {
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	@Insert(onConflict = OnConflictStrategy.ABORT)
 	suspend fun addLateEntry(lateEntry: OfflineLateEntry)
 
 	@Query("SELECT * FROM OfflineLateEntry")

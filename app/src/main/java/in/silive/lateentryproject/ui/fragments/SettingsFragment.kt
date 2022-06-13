@@ -132,7 +132,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val logout = customView.findViewById<MaterialButton>(R.id.positiveBtn)
         val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
 
-        logout.text = "LogOut"
+        logout.text = "Logout"
         logout.setOnClickListener {
             lifecycleScope.launchWhenStarted {
                 try {
