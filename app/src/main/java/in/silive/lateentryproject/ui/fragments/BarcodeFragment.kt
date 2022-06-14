@@ -42,6 +42,7 @@ import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
+import okhttp3.internal.Util
 import java.io.File
 
 class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView
@@ -326,18 +327,14 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 		}
 
+		var student = ""
+		var venueId = -1
 		submitLateEntryBtn.setOnClickListener {
 			submitLateEntryBtn.isEnabled = false
-//			val linearProgressBar = if (studentConstraint.visibility == View.VISIBLE) profileProgressBar
-//									else progressBar
 
-//			linearProgressBar.visibility = View.VISIBLE
-
-			val student = studentNoEditText.text.toString().trim()
-			var venueId: Int?
+			student = studentNoEditText.text.toString().trim()
 			lifecycleScope.launch {
 				venueId = datastore.getId("ID_KEY")!!
-				lateEntryViewModel.venue.value = venueId
 
 				var flag = false
 				studentDatabase.studentDao().getStudentDetails().forEach {
@@ -363,28 +360,30 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 					if (lateEntryFlag) {
 						showSnackbar("Late entry registered")
-						lateEntryViewModel.studentNo.value = student
-						lateEntryViewModel.submitResult()
-						lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
-							lifecycleScope.launch {
-								val currentTime = Utils().currentTimeInIsoFormat()
-								studentDatabase.offlineLateEntryDao().addLateEntry(
-									OfflineLateEntry(student, currentTime, venueId!!))
-							}
-						}
+						lateEntryViewModel.submitResult(student, venueId)
+						lateEntryViewModel.addToDbLiveData.postValue(student to venueId)
 					}
 					else showSnackbar("Late entry already registered")
 				}
 			}
 
-//				linearProgressBar.visibility = View.INVISIBLE
-				submitLateEntryBtn.postDelayed({
-												   submitLateEntryBtn.isEnabled = true
-											   }, 2100)
-//			}
+			submitLateEntryBtn.postDelayed({
+											   submitLateEntryBtn.isEnabled = true
+										   }, 2100)
+		}
+
+		lateEntryViewModel.addToDbLiveData.observe(viewLifecycleOwner) {
+			lifecycleScope.launch {
+				val currentTime = Utils().currentTimeInIsoFormat()
+				if (it.second != -1)
+					studentDatabase.offlineLateEntryDao().addLateEntry(
+					OfflineLateEntry(it.first, currentTime, it.second)) //it.first = student_no,
+																		// it.second = venue
+			}
 		}
 
 		viewDetails.setOnClickListener {
+			Utils().hideKeyboard(it, activity)
 			viewDetails.isEnabled = false
 			viewDetails.setTextColor(ContextCompat.getColor(requireContext(),
 															R.color.disabledSettingsBtnColor))

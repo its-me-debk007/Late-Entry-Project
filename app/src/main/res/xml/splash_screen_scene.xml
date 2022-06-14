@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<MotionScene 
+<MotionScene
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
 
@@ -8,16 +8,16 @@
         motion:constraintSetStart="@id/start"
         motion:duration="1200"
         motion:autoTransition="animateToEnd">
-       <KeyFrameSet>
-           <KeyAttribute
-               motion:motionTarget="@+id/floatingActionButton"
-               motion:framePosition="100"
-               android:scaleX="18" />
-           <KeyAttribute
-               motion:motionTarget="@+id/floatingActionButton"
-               motion:framePosition="100"
-               android:scaleY="18" />
-       </KeyFrameSet>
+        <KeyFrameSet>
+            <KeyAttribute
+                motion:motionTarget="@+id/floatingActionButton"
+                motion:framePosition="100"
+                android:scaleX="18" />
+            <KeyAttribute
+                motion:motionTarget="@+id/floatingActionButton"
+                motion:framePosition="100"
+                android:scaleY="18" />
+        </KeyFrameSet>
     </Transition>
 
     <ConstraintSet android:id="@+id/start">

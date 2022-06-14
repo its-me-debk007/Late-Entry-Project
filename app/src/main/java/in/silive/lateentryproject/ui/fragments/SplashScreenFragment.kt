@@ -105,7 +105,7 @@ class SplashScreenFragment: Fragment(R.layout.splash_screen) {
 
 	private fun goToNextFragment(fragment: Fragment) {
 		activity?.supportFragmentManager?.beginTransaction()
-			?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
+//			?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
 			?.replace(R.id.fragmentContainerView, fragment)
 			?.commit()
 	}
