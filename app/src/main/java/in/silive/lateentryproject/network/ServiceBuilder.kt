@@ -11,7 +11,7 @@ object ServiceBuilder {
 		.addInterceptor { chain ->
 			val request = chain.request()
 				.newBuilder()
-				.addHeader("Authorization", "Bearer ${9}")
+				.addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjU1NDgzOTA0LCJpYXQiOjE2NTUzOTc1MDQsImp0aSI6IjI2YjE3YzE1M2Y4MjRkYjZhNmVmZGQ3ZDY5MTYyZDNkIiwidXNlcl9pZCI6MX0.4HAaQEZBKBU2ST0mfi7t8LtLxdV-dpZ-yBU_HryQM-o")
 				.build()
 
 			chain.proceed(request)

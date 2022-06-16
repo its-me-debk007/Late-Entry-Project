@@ -6,6 +6,7 @@ import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Utils
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -41,8 +42,8 @@ class LateEntryRepository() {
 			}
 
 			override fun onFailure(call: Call<MessageDataClass?>, t: Throwable) {
-				val errorMessage = "Save to DB"
-				lateEntryLiveData.postValue(Response.Error(errorMessage))
+				lateEntryLiveData.postValue(Response.Error("Save to DB"))
+				Log.i("dddd", "Save to DB")
 			}
 		})
 		return lateEntryLiveData

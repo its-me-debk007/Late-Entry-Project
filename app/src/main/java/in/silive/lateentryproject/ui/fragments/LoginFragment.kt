@@ -70,7 +70,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 viewModel.loginLiveData.observe(viewLifecycleOwner) {
                     disableViews(false)
 
-
                     if (it is Response.Success) {
                         lifecycleScope.launch {
                             datastore.changeLoginState(true)
@@ -92,7 +91,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }
                 }
             }
-
 
             lifecycleScope.launchWhenStarted {
                     if (datastore.isSync()) {

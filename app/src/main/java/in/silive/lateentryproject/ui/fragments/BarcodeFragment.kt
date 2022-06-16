@@ -19,13 +19,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +35,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textview.MaterialTextView
@@ -321,28 +320,32 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         }
 
         var student: String
-        var venueId: Int
+        var venueId = -1
 
         submitLateEntryBtn.setOnClickListener {
+            showToast("Late entry registered")
+            bottomSheetDialog.cancel()
             student = studentNoEditText.text.toString().trim()
-            lifecycleScope.launch {
+
+            lifecycleScope.launchWhenStarted {
                 venueId = datastore.getId("ID_KEY")!!
-                showToast("Late entry registered")
-                bottomSheetDialog.cancel()
-                lateEntryViewModel.submitResult(student, venueId)
-                lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
-                    if (it is Response.Error && it.errorMessage == "Save to DB") {
-                        lifecycleScope.launch {
-                            val currentTime = Utils().currentTimeInIsoFormat()
-                            studentDatabase.offlineLateEntryDao()
-                                .addLateEntry(
-                                    OfflineLateEntry(
-                                        student_no = student,
-                                        timestamp = currentTime,
-                                        venue = venueId
-                                    )
+            }
+
+            lateEntryViewModel.submitResult(student, venueId)
+            lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
+                Log.i("dddd", "Observer")
+                if (it is Response.Error && it.errorMessage == "Save to DB") {
+                    Log.i("dddd", "Save to DB in Fragment")
+                    lifecycleScope.launch {
+                        val currentTime = Utils().currentTimeInIsoFormat()
+                        studentDatabase.offlineLateEntryDao()
+                            .addLateEntry(
+                                OfflineLateEntry(
+                                    student_no = student,
+                                    timestamp = currentTime,
+                                    venue = venueId
                                 )
-                        }
+                            )
                     }
                 }
             }
