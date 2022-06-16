@@ -17,6 +17,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -68,14 +69,46 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 viewModel.login(email.text?.trim().toString(), password.text?.trim().toString())
 
                 viewModel.loginLiveData.observe(viewLifecycleOwner) {
-                    disableViews(false)
+
 
                     if (it is Response.Success) {
-                        lifecycleScope.launch {
-                            datastore.changeLoginState(true)
-                            datastore.saveSyncTime(Utils().currentTime())
-                            askPermission()
-                        }
+                        var sync=false
+                         lifecycleScope.launch {
+                             sync=datastore.isSync()
+                         }
+                            if (sync) {
+                                bulkViewModel.sendResult()
+                                bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
+
+                                    if (it is Response.Success) {
+                                        val venueMap = mutableMapOf<Int, String>()
+
+                                        it.data?.venue_data!!.forEach { venueData ->
+                                            venueMap[venueData.id] = venueData.venue
+                                        }
+                                        lifecycleScope.launch {
+                                            datastore.changeSyncState(false)
+                                            datastore.saveVenueDetails(venueMap)
+                                            val venue = datastore.getVenueDetails()?.replace("\\s".toRegex(), "")!!
+                                                .split(",").associateTo(mutableMapOf()) { str ->
+                                                    val (left, right) = str.split("=")
+                                                    left.toInt() to right
+                                                }
+                                            datastore.saveId("ID_KEY", venue.keys.toTypedArray()[0])
+                                            datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
+                                            datastore.changeLoginState(true)
+                                            datastore.saveSyncTime(Utils().currentTime())
+                                            disableViews(false)
+                                            askPermission()
+                                        }
+                                    }
+                                    else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
+                                }
+                            }
+                        else {
+                                disableViews(false)
+                                askPermission()
+                            }
                     } else if (it is Response.Error) {
                         val snackBar = Snackbar.make(
                             loginBtn, it.errorMessage!!, Snackbar
@@ -92,35 +125,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
             }
 
-            lifecycleScope.launchWhenStarted {
-                    if (datastore.isSync()) {
-                        bulkViewModel.sendResult()
-                        bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
-                            if (it is Response.Success) {
-                                val venueMap = mutableMapOf<Int, String>()
 
-                                it.data?.venue_data!!.forEach { venueData ->
-                                    venueMap[venueData.id] = venueData.venue
-                                }
-
-                                lifecycleScope.launch {
-                                    datastore.changeSyncState(false)
-                                    datastore.saveVenueDetails(venueMap)
-                                    val venue =
-                                        datastore.getVenueDetails()
-                                            ?.replace("\\s".toRegex(), "")!!
-                                            .split(",").associateTo(mutableMapOf()) { str ->
-                                                val (left, right) = str.split("=")
-                                                left.toInt() to right
-                                            }
-                                    datastore.saveId("ID_KEY", venue.keys.toTypedArray()[0])
-                                    datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
-                                }
-                            }
-                            else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
-                        }
-                    }
-                }
 
         }
     }
@@ -158,7 +163,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun gotToBarcodeFragment() {
         activity?.supportFragmentManager?.beginTransaction()
-            ?.setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
             ?.replace(R.id.fragmentContainerView, BarcodeFragment())
             ?.commit()
     }

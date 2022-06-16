@@ -327,15 +327,13 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
             bottomSheetDialog.cancel()
             student = studentNoEditText.text.toString().trim()
 
-            lifecycleScope.launchWhenStarted {
+            lifecycleScope.launch {
                 venueId = datastore.getId("ID_KEY")!!
             }
 
             lateEntryViewModel.submitResult(student, venueId)
             lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
-                Log.i("dddd", "Observer")
                 if (it is Response.Error && it.errorMessage == "Save to DB") {
-                    Log.i("dddd", "Save to DB in Fragment")
                     lifecycleScope.launch {
                         val currentTime = Utils().currentTimeInIsoFormat()
                         studentDatabase.offlineLateEntryDao()

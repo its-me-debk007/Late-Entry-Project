@@ -43,7 +43,6 @@ class LateEntryRepository() {
 
 			override fun onFailure(call: Call<MessageDataClass?>, t: Throwable) {
 				lateEntryLiveData.postValue(Response.Error("Save to DB"))
-				Log.i("dddd", "Save to DB")
 			}
 		})
 		return lateEntryLiveData

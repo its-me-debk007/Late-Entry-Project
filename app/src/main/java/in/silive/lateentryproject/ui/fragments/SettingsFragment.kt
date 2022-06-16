@@ -104,7 +104,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                             )
                         )
                     }
-                    if (entries != null)
+                    if (entries == null)
+                    {
+                        showToast("No failed entries exist")
+                        disableBtn(uploadBtn, false)
+                    }
+                    else
                         viewModel.bulkUpload(BulkReqDataClass(entries!!)).observe(viewLifecycleOwner){
                             if (it is Response.Success) {
 
