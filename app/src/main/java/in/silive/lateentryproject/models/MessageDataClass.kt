@@ -4,5 +4,7 @@ data class MessageDataClass(
 	val message: String? = null,
 	val status:Boolean?=null,
 	val status_code:Int?=null,
-	val result: ResultDataClass
+	val result: ResultDataClass,
+	val refresh: String,
+	val access: String
 )

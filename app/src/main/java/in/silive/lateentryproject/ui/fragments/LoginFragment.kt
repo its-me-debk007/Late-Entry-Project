@@ -75,6 +75,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         var sync=false
                          lifecycleScope.launch {
                              sync=datastore.isSync()
+                             datastore.saveRefreshToken(it.data!!.refresh)
+                             datastore.saveAccessToken(it.data.access)
+                             SplashScreenFragment.ACCESS_TOKEN = it.data.access
+                             SplashScreenFragment.REFRESH_TOKEN = it.data.refresh
                          }
                             if (sync) {
                                 bulkViewModel.sendResult()
@@ -124,9 +128,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }
                 }
             }
-
-
-
         }
     }
     private fun showToast(text: String) {

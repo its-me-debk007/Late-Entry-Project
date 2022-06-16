@@ -149,6 +149,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             lifecycleScope.launchWhenStarted {
                 try {
                     datastore.changeLoginState(false)
+                    SplashScreenFragment.ACCESS_TOKEN = "_"
+                    SplashScreenFragment.REFRESH_TOKEN = "_"
                     var lateEntryList: List<OfflineLateEntry>
                     var entries: List<LateEntryDataClass>? = null
                     lifecycleScope.launch {

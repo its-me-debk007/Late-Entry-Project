@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.motion.widget.MotionLayout
@@ -26,11 +27,20 @@ import kotlinx.coroutines.launch
 class SplashScreenFragment: Fragment(R.layout.splash_screen) {
 	private lateinit var datastore: Datastore
 	private lateinit var binding : SplashScreenBinding
+	companion object {
+		var ACCESS_TOKEN : String? = null
+		var REFRESH_TOKEN: String? = null
+	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding = SplashScreenBinding.bind(view)
 		datastore = Datastore(requireContext())
+		lifecycleScope.launch {
+			ACCESS_TOKEN = datastore.getAccessToken()
+			REFRESH_TOKEN = datastore.getRefreshToken()
+			Log.e("dddd", ACCESS_TOKEN.toString()+"\n"+ REFRESH_TOKEN)
+		}
 
 		binding.motionLayout.apply {
 			startLayoutAnimation()

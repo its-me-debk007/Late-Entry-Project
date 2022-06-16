@@ -17,6 +17,8 @@ class Datastore(val context: Context) {
 		val SYNCED_TIME_KEY = stringPreferencesKey("sync_time")
 		val VENUE_KEY = stringPreferencesKey("venue_key")
 		val DEFAULT_VENUE_KEY = stringPreferencesKey("default_venue_key")
+		val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token_key")
+		val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token_key")
 	}
 
 	suspend fun saveId(key: String, value: Int?) {
@@ -71,4 +73,19 @@ class Datastore(val context: Context) {
 	}
 
 	suspend fun getSyncTime() = context.datastore.data.first()[SYNCED_TIME_KEY] ?: "Never"
+
+	suspend fun saveAccessToken(value: String) {
+		context.datastore.edit {
+			it[ACCESS_TOKEN_KEY] = value
+		}
+	}
+
+	suspend fun saveRefreshToken(value: String) {
+		context.datastore.edit {
+			it[REFRESH_TOKEN_KEY] = value
+		}
+	}
+
+	suspend fun getAccessToken() = context.datastore.data.first()[ACCESS_TOKEN_KEY]
+	suspend fun getRefreshToken() = context.datastore.data.first()[REFRESH_TOKEN_KEY]
 }
