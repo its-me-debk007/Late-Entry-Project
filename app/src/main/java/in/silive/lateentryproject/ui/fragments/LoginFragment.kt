@@ -74,6 +74,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     if (it is Response.Success) {
                         lifecycleScope.launch {
                             datastore.changeLoginState(true)
+                            datastore.saveSyncTime(Utils().currentTime())
                             askPermission()
                         }
                     } else if (it is Response.Error) {

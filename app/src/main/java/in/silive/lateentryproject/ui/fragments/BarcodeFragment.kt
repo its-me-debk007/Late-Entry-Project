@@ -21,6 +21,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -56,7 +57,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 	private var student_No: String? = null
 	private val bottomSheetDialog by lazy { BottomSheetDialog(requireContext()) }
 	private val popup by lazy { PopupMenu(requireContext(), binding.icOverflowMenu) }
-//	private lateinit var toast: Toast
+	private lateinit var toast: Toast
 	private val lateEntryViewModel by lazy {
 		ViewModelProvider(this)[LateEntryViewModel::class.java]
 	}
@@ -114,29 +115,26 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		}
 	}
 
-//	private fun showToast(text: String) {
+	private fun showToast(text: String) {
+		toast.cancel()
+		toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
+		toast.show()
+	}
+
+//	private fun showSnackbar(text: String) {
 //		val vibrator = getSystemService(requireContext(), Vibrator::class.java)
 //		vibrator?.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE))
 //
-//		toast.cancel()
-//		toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
-//		toast.show()
+//		val color = if (text == "Late entry registered") "#0BA712" else "#E81A1A"
+//
+//		Snackbar.make(seeStudentDetailView, text, Snackbar.LENGTH_SHORT)
+//			.setDuration(1800)
+//			.setAnchorView(seeStudentDetailView)
+//			.setTextMaxLines(2)
+//			.setBackgroundTint(Color.parseColor(color))
+//			.setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+//			.show()
 //	}
-
-	private fun showSnackbar(text: String) {
-		val vibrator = getSystemService(requireContext(), Vibrator::class.java)
-		vibrator?.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE))
-
-		val color = if (text == "Late entry registered") "#0BA712" else "#E81A1A"
-
-		Snackbar.make(seeStudentDetailView, text, Snackbar.LENGTH_SHORT)
-			.setDuration(1800)
-			.setAnchorView(seeStudentDetailView)
-			.setTextMaxLines(2)
-			.setBackgroundTint(Color.parseColor(color))
-			.setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
-			.show()
-	}
 
 	private fun initializeCamera() {
 		scannerView = ZBarScannerView(context)
@@ -327,8 +325,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 		}
 
-		var student = ""
-		var venueId = -1
+		var student: String
+		var venueId: Int
 		submitLateEntryBtn.setOnClickListener {
 			submitLateEntryBtn.isEnabled = false
 
@@ -345,8 +343,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 				}
 
 				if (!flag)
-					showSnackbar("The student no. doesn't exist. If this is not the case, then " +
-										 "sync the data from Settings!")
+					showToast("Invalid student number or sync settings")
 
 				else {
 					var lateEntryFlag = true
@@ -432,8 +429,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 					}
 				}
 				if (!flag)
-					showSnackbar("The student no. doesn't exist. If this is" +
-										 " not the case, then sync the data from Settings!")
+					showToast("Invalid student number or sync settings")
 			}
 
 			viewDetails.postDelayed({

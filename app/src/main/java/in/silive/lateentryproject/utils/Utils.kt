@@ -63,7 +63,7 @@ class Utils {
 		val current = LocalDateTime.now()
 		val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
 
-		return current.format(formatter)
+		return current.format(formatter).substring(0, 11)
 	}
 
 	fun compareTimeInHrs(t1: String, t2: String): Long {

@@ -18,11 +18,11 @@
         <item name="colorControlActivated">@color/custom_blue</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLightStatusBar">true</item> <!-- To make status bar icons grey -->
 
         <!-- For Popup Menu-->
         <item name="popupMenuStyle">@style/popupMenuBackground</item>
         <item name="textAppearanceLargePopupMenu">@style/popupMenuTextView</item>
-
     </style>
 
     <!-- Change Overflow Menu ListView Text Size and Text Size -->
