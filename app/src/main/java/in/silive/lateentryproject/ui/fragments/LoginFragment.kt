@@ -73,12 +73,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
                     if (it is Response.Success) {
                         var sync=false
+                        SplashScreenFragment.ACCESS_TOKEN = it.data?.access
+                        SplashScreenFragment.REFRESH_TOKEN = it.data?.refresh
                          lifecycleScope.launch {
                              sync=datastore.isSync()
                              datastore.saveRefreshToken(it.data!!.refresh)
                              datastore.saveAccessToken(it.data.access)
-                             SplashScreenFragment.ACCESS_TOKEN = it.data.access
-                             SplashScreenFragment.REFRESH_TOKEN = it.data.refresh
                          }
                             if (sync) {
                                 bulkViewModel.sendResult()
@@ -118,6 +118,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             loginBtn, it.errorMessage!!, Snackbar
                                 .LENGTH_SHORT
                         )
+                        Log.e("eeee", it.errorMessage!!)
                         snackBar.apply {
                             setAction(R.string.ok_btn_snackbar) {
                                 dismiss()
@@ -125,6 +126,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             animationMode = Snackbar.ANIMATION_MODE_SLIDE
                             show()
                         }
+                        disableViews(false)
                     }
                 }
             }
