@@ -48,6 +48,7 @@
             android:layout_marginTop="36dp"
             android:contentDescription="flash icon"
             android:stateListAnimator="@null"
+            android:foreground="@drawable/ic_ripple_effect"
             app:backgroundTint="@color/colorTransparent"
             app:borderWidth="0dp"
             app:elevation="0dp"
@@ -62,8 +63,9 @@
             android:id="@+id/location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="51dp"
+            android:layout_marginTop="36dp"
             android:drawablePadding="6dp"
+            android:padding="20dp"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -73,7 +75,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/icOverflowMenu"
+            android:id="@+id/setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="41dp"
@@ -83,7 +85,7 @@
             android:padding="11dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_overflow_menu" />
+            app:srcCompat="@drawable/ic_settings" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/materialTextView3"

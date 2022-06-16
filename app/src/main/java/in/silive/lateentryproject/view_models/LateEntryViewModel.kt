@@ -11,7 +11,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class LateEntryViewModel() : ViewModel() {
-	val addToDbLiveData = MutableLiveData<Pair<String, Int>>()
+//	val addToDbLiveData = MutableLiveData<Pair<String, Int>>()
 	private var lateEntryResult: MutableLiveData<Response<MessageDataClass>> = MutableLiveData()
 	val _lateEntryResult: LiveData<Response<MessageDataClass>>
 		get() = lateEntryResult

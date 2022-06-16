@@ -58,7 +58,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     emailTextInputLayout.helperText = "Please enter an email"
                     return@setOnClickListener
                 } else if (password.text?.trim().isNullOrEmpty()) {
-                    passwordTextInputLayout.helperText = "Please enter an password"
+                    passwordTextInputLayout.helperText = "Please enter a password"
                     return@setOnClickListener
                 }
 

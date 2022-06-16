@@ -1,9 +1,12 @@
 package `in`.silive.lateentryproject.adapters
 
+import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.LayoutVenueItemsBinding
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 
@@ -32,6 +35,7 @@ String, private val listener: VenueClickListenerInterface) :
 				highlight(selectedVenueBtn, false)
 				selectedVenueBtn = venue
 				highlight(venue, true)
+
 			}
 		}
 	}

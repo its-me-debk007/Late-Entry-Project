@@ -18,6 +18,7 @@ class FailedEntriesRepository {
         val liveData = MutableLiveData<Response<MessageDataClass>>()
         val call = ServiceBuilder.buildService().bulkUpload(body)
 
+		Log.i("Hello", "bulkUpload: "+body)
 		call.enqueue(object : Callback<MessageDataClass> {
 			override fun onResponse(
 				call: Call<MessageDataClass>,
