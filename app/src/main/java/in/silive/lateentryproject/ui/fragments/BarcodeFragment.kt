@@ -71,6 +71,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         venue2 = HashMap()
         onClicks()
         initializeCamera()
+        toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
 
         val checkNetworkConnection = ConnectivityLiveData(requireActivity().application)
         checkNetworkConnection.observe(viewLifecycleOwner) {
@@ -98,14 +99,12 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         }
 
         binding.setting.setOnClickListener {
-            Handler(Looper.getMainLooper()).postDelayed({
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(
                         R.id.fragmentContainerView,
                         SettingsFragment()
                     )
                     ?.commit()
-            }, 30)
         }
 
         lifecycleScope.launch {
@@ -145,18 +144,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
 		toast.show()
 	}
-
-//    private fun showSnackbar(text: String) {
-//        val color = "#0BA712"
-//
-//        Snackbar.make(seeStudentDetailView, text, Snackbar.LENGTH_SHORT)
-//            .setDuration(1800)
-//            .setAnchorView(seeStudentDetailView)
-//            .setTextMaxLines(2)
-//            .setBackgroundTint(Color.parseColor(color))
-//            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
-//            .show()
-//    }
 
     private fun initializeCamera() {
         scannerView = ZBarScannerView(context)
@@ -315,8 +302,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 }
 
                 if (!flag) {
-                    studentNoTextInputLayout.helperText =
-                        "Student no. doesn't exist. If this is not the case, then sync the data from Settings!"
+                    studentNoTextInputLayout.helperText = "Invalid student number"
                     okButton.isEnabled = false
                 } else {
                     Utils().hideKeyboard(studentNo, activity)
@@ -327,54 +313,39 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 }
             }
         }
+
         bottomSheetDialog.setOnCancelListener {
-            scannerView.postDelayed({
                 Utils().hideKeyboard(requireView(), activity)
                 scannerView.setResultHandler(this)
                 scannerView.startCamera()
-            }, 100)
-
         }
 
-        var student = ""
-        var venueId = -1
-
+        var student: String
+        var venueId: Int
 
         submitLateEntryBtn.setOnClickListener {
             student = studentNoEditText.text.toString().trim()
             lifecycleScope.launch {
                 venueId = datastore.getId("ID_KEY")!!
                 showToast("Late entry registered")
-                bottomSheetDialog.dismiss()
+                bottomSheetDialog.cancel()
                 lateEntryViewModel.submitResult(student, venueId)
                 lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
-                    when (it) {
-                        is Response.Error -> {
-                            if (it.errorMessage == "Save to DB") {
-                                lifecycleScope.launch {
-                                    val studentDatabase =
-                                        StudentDatabase.getDatabase(requireContext())
-                                    val currentTime = Utils().currentTimeInIsoFormat()
-                                    studentDatabase.offlineLateEntryDao()
-                                        .addLateEntry(
-                                            OfflineLateEntry(
-                                                student_no = student,
-                                                timestamp = currentTime,
-                                                venue = venueId
-                                            )
-                                        )
-                                }
-                            }
+                    if (it is Response.Error && it.errorMessage == "Save to DB") {
+                        lifecycleScope.launch {
+                            val currentTime = Utils().currentTimeInIsoFormat()
+                            studentDatabase.offlineLateEntryDao()
+                                .addLateEntry(
+                                    OfflineLateEntry(
+                                        student_no = student,
+                                        timestamp = currentTime,
+                                        venue = venueId
+                                    )
+                                )
                         }
                     }
-
-
                 }
-
-
             }
-
-
         }
 
         viewDetails.setOnClickListener {
@@ -438,14 +409,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 }
                 if (!flag) showToast("Invalid student number")
             }
-
-            viewDetails.postDelayed({
-                viewDetails.isEnabled = true
-                viewDetails.setTextColor(
-                    ContextCompat.getColor
-                        (requireContext(), R.color.custom_blue)
-                )
-            }, 2100)
         }
     }
 
@@ -467,8 +430,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
             )
         binding.location.startAnimation(animation)
         binding.location.text = venue
-
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

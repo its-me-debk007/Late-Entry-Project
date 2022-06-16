@@ -15,7 +15,6 @@ class Datastore(val context: Context) {
 		val LOGIN_KEY = booleanPreferencesKey("login_key")
 		val SYNC_KEY = booleanPreferencesKey("sync_key")
 		val SYNCED_TIME_KEY = stringPreferencesKey("sync_time")
-		val UPLOAD_TIME_KEY = stringPreferencesKey("upload_time")
 		val VENUE_KEY = stringPreferencesKey("venue_key")
 		val DEFAULT_VENUE_KEY = stringPreferencesKey("default_venue_key")
 	}
@@ -72,12 +71,4 @@ class Datastore(val context: Context) {
 	}
 
 	suspend fun getSyncTime() = context.datastore.data.first()[SYNCED_TIME_KEY] ?: "Never"
-
-	suspend fun saveUploadTime(time: String) {
-		context.datastore.edit {
-			it[UPLOAD_TIME_KEY] = time
-		}
-	}
-
-	suspend fun getUploadTime() = context.datastore.data.first()[UPLOAD_TIME_KEY] ?: "Never"
 }

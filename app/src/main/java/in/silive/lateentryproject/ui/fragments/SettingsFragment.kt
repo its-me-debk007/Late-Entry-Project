@@ -82,7 +82,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                             lastSyncTime.text = "Last synced: $currentTime"
                         }
 
-                        showToast("Data synced successfully")
+                        showToast("Data fetched successfully")
 
                     } else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
 
@@ -109,11 +109,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                             if (it is Response.Success) {
 
                                 lifecycleScope.launch {
-                                    showToast("Data uploaded successfully")
+                                    showToast("Failed entries registered")
                                     studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-
-                                    val currentTime = Utils().currentTime()
-                                    datastore.saveUploadTime(currentTime)
                                     lastUploadTime.text = "Failed entries count: ${
                                         studentDatabase.offlineLateEntryDao().getCount()
                                     }"
