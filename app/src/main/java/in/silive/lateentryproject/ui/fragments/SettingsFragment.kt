@@ -4,6 +4,7 @@ import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentSettingsBinding
 import `in`.silive.lateentryproject.entities.OfflineLateEntry
 import `in`.silive.lateentryproject.models.BulkReqDataClass
+import `in`.silive.lateentryproject.models.LateEntryDataClass
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
@@ -42,14 +43,14 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSettingsBinding.bind(view)
-        toast=Toast.makeText(context, "", Toast.LENGTH_SHORT)
+        toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
         binding.apply {
 
             lifecycleScope.launch {
                 lastSyncTime.text = "Last synced: ${datastore.getSyncTime()}"
-                lastUploadTime.text = "Last uploaded: ${datastore.getUploadTime()}"
+                lastUploadTime.text =
+                    "Failed entries count: ${studentDatabase.offlineLateEntryDao().getCount()}"
             }
-
             backBtn.setOnClickListener { goToNextFragment(BarcodeFragment()) }
 
             logoutBtn.setOnClickListener { showLogoutDialog() }
@@ -83,8 +84,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
                         showToast("Data synced successfully")
 
-                    }
-                    else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
+                    } else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
 
                     disableBtn(syncBtn, false)
                 }
@@ -94,26 +94,35 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 disableBtn(uploadBtn, true)
 
                 var lateEntryList: List<OfflineLateEntry>
+                var entries: List<LateEntryDataClass>? = null
                 lifecycleScope.launch {
                     lateEntryList = studentDatabase.offlineLateEntryDao().getLateEntryDetails()
-                    viewModel.bulkUpload(BulkReqDataClass(lateEntryList))
-                    viewModel.bulkLiveData.observe(viewLifecycleOwner) {
-                        if (it is Response.Success) {
-                            showToast("Data uploaded successfully")
+                    for (i in lateEntryList) {
+                        entries = listOf(
+                            LateEntryDataClass(
+                                i.student_no!!, i.timestamp!!, i.venue!!
+                            )
+                        )
+                    }
+                    if (entries != null)
+                        viewModel.bulkUpload(BulkReqDataClass(entries!!)).observe(viewLifecycleOwner){
+                            if (it is Response.Success) {
 
-                            lifecycleScope.launch {
-                            if (it.data?.result?.failed == 0)
+                                lifecycleScope.launch {
+                                    showToast("Data uploaded successfully")
                                     studentDatabase.offlineLateEntryDao().clearLateEntryTable()
 
-                                val currentTime = Utils().currentTime()
-                                datastore.saveUploadTime(currentTime)
-                                lastUploadTime.text = "Last uploaded: $currentTime"
-                            }
-                        }
-                        else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
+                                    val currentTime = Utils().currentTime()
+                                    datastore.saveUploadTime(currentTime)
+                                    lastUploadTime.text = "Failed entries count: ${
+                                        studentDatabase.offlineLateEntryDao().getCount()
+                                    }"
+                                }
+                            } else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
 
-                        disableBtn(uploadBtn, false)
-                    }
+                            disableBtn(uploadBtn, false)
+                        }
+
                 }
             }
         }
@@ -128,7 +137,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         val dialog = builder.show()
 
-        customView.findViewById<MaterialTextView>(R.id.dialogMessage).setText(R.string.logoutMessage)
+        customView.findViewById<MaterialTextView>(R.id.dialogMessage)
+            .setText(R.string.logoutMessage)
         val logout = customView.findViewById<MaterialButton>(R.id.positiveBtn)
         val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
 
@@ -137,6 +147,27 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             lifecycleScope.launchWhenStarted {
                 try {
                     datastore.changeLoginState(false)
+                    var lateEntryList: List<OfflineLateEntry>
+                    var entries: List<LateEntryDataClass>? = null
+                    lifecycleScope.launch {
+                        lateEntryList = studentDatabase.offlineLateEntryDao().getLateEntryDetails()
+                        for (i in lateEntryList) {
+                            entries = listOf(
+                                LateEntryDataClass(
+                                    i.student_no!!, i.timestamp!!, i.venue!!
+                                )
+                            )
+                        }
+                        if (entries != null) {
+                            viewModel.bulkUpload(BulkReqDataClass(entries!!)).observe(viewLifecycleOwner){
+                                if (it is Response.Success) {
+                                    lifecycleScope.launch {
+                                        studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 } finally {
                     goToNextFragment(LoginFragment())
                 }
@@ -182,7 +213,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun showToast(text: String) {
-        toast.cancel() // cancel previous toast
+        toast.cancel()
         toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
         toast.show()
     }

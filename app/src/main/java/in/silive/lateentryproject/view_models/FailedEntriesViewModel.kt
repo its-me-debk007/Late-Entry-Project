@@ -13,7 +13,11 @@ class FailedEntriesViewModel : ViewModel() {
 
 	var bulkLiveData = MutableLiveData<Response<MessageDataClass>>()
 
-	fun bulkUpload(body: BulkReqDataClass) = viewModelScope.launch {
-		bulkLiveData = FailedEntriesRepository().bulkUpload(body)
+	fun bulkUpload(body: BulkReqDataClass): MutableLiveData<Response<MessageDataClass>> {
+		viewModelScope.launch {
+			bulkLiveData = FailedEntriesRepository().bulkUpload(body)
+		}
+		return bulkLiveData
+
 	}
 }

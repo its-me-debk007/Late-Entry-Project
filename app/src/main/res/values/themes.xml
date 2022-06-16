@@ -19,23 +19,9 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:windowTranslucentStatus">true</item>
 
-        <!-- For Popup Menu-->
-        <item name="popupMenuStyle">@style/popupMenuBackground</item>
-        <item name="textAppearanceLargePopupMenu">@style/popupMenuTextView</item>
 
     </style>
 
-    <!-- Change Overflow Menu ListView Text Size and Text Size -->
-    <style name="popupMenuTextView" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="fontFamily">@font/source_sans_pro</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">#242E42</item>
-    </style>
-
-    <!-- Change popup menu border Radius -->
-    <style name="popupMenuBackground" parent="Widget.MaterialComponents.PopupMenu.ListPopupWindow">
-        <item name="android:popupBackground">@drawable/popup_menu_background</item>
-    </style>
 
 <!--    Rounded Bottom Sheet-->
     <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
