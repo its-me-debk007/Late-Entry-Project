@@ -27,79 +27,131 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalBar">
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/studentNoInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="18dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/source_sans_pro_semibold"
-            android:padding="10dp"
-            android:text=""
-            android:textColor="#242E42"
-            android:background="@drawable/student_number_text_bg"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-             />
-
-        <!--        <com.google.android.material.textfield.TextInputLayout-->
+<!--        <com.google.android.material.textview.MaterialTextView-->
 <!--            android:id="@+id/studentNoInputLayout"-->
-<!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="24dp"-->
+<!--            android:layout_marginHorizontal="24dp"-->
 <!--            android:layout_marginTop="18dp"-->
-<!--            android:layout_marginEnd="24dp"-->
-<!--            app:boxBackgroundColor="#F7F7F7"-->
-<!--            app:boxCornerRadiusBottomEnd="12dp"-->
-<!--            app:boxCornerRadiusBottomStart="12dp"-->
-<!--            app:boxCornerRadiusTopEnd="12dp"-->
-<!--            app:boxCornerRadiusTopStart="12dp"-->
-<!--            app:boxStrokeWidth="0dp"-->
-<!--            app:boxStrokeWidthFocused="0dp"-->
-<!--            app:hintEnabled="false"-->
+<!--            android:ellipsize="end"-->
+<!--            android:fontFamily="@font/source_sans_pro_semibold"-->
+<!--            android:padding="10dp"-->
+<!--            android:text=""-->
+<!--            android:textColor="#242E42"-->
+<!--            android:background="@drawable/student_number_text_bg"-->
+<!--            android:textSize="18sp"-->
 <!--            app:layout_constraintEnd_toEndOf="parent"-->
 <!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent">-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--             />-->
 
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/studentNoEditText"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:ellipsize="end"-->
-<!--                android:fontFamily="@font/source_sans_pro_semibold"-->
-<!--                android:imeOptions="actionGo"-->
-<!--                android:inputType="number"-->
-<!--                android:maxLines="1"-->
-<!--                android:maxLength="15"-->
-<!--                android:paddingStart="12dp"-->
-<!--                android:paddingTop="6dp"-->
-<!--                android:paddingEnd="110dp"-->
-<!--                android:paddingBottom="8dp"-->
-<!--                android:textColor="#242E42"-->
-<!--                android:textSize="24sp" />-->
+            <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/studentNoInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="24dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:hintEnabled="false"
+            app:helperTextTextAppearance="@font/source_sans_pro_semibold"
+            app:helperTextTextColor="#F13A3A"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+<!--                        <com.google.android.material.button.MaterialButton-->
+<!--                            android:id="@+id/okButton"-->
+<!--                            android:layout_width="74dp"-->
+<!--                            android:layout_height="56dp"-->
+<!--                            android:layout_alignParentEnd="true"-->
+<!--                            android:background="@drawable/ok_button_curved_edge"-->
+<!--                            android:enabled="false"-->
+<!--                            android:fontFamily="@font/source_sans_pro_semibold"-->
+<!--                            android:text="OK"-->
+<!--                            android:textColor="#BFBFBF"-->
+<!--                            android:textSize="20sp"-->
+<!--                            />-->
+
+                        <!--                        <com.google.android.material.textfield.TextInputEditText-->
+                        <!--                            android:id="@+id/studentNo"-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="56dp"-->
+                        <!--                            android:layout_marginEnd="74dp"-->
+                        <!--                            android:fontFamily="@font/source_sans_pro_semibold"-->
+                        <!--                            android:hint="  Student No."-->
+                        <!--                            android:imeOptions="actionGo"-->
+                        <!--                            android:inputType="number"-->
+                        <!--                            android:maxLength="15"-->
+                        <!--                            android:padding="16dp"-->
+                        <!--                            android:paddingEnd="91dp"-->
+                        <!--                            android:textColor="#242E42"-->
+                        <!--                            android:textColorHint="#BDC0C6"-->
+                        <!--                            android:textSize="18sp" />-->
 
 
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/studentNoEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="47dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/source_sans_pro_semibold"
+                            android:imeOptions="actionGo"
+                            android:inputType="number"
+                            android:maxLength="15"
+                            android:maxLines="1"
+                            android:paddingStart="12dp"
+                            android:paddingTop="6dp"
+                            android:paddingEnd="110dp"
+                            android:paddingBottom="8dp"
+                            android:textColor="#242E42"
+                            android:textSize="24sp" />
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/viewDetails"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginBottom="3dp"
+                            android:fontFamily="@font/source_sans_pro_semibold"
+                            android:foreground="@drawable/view_details_textview_ripple_effect"
+                            android:padding="12dp"
+                            android:text="View Details"
+                            android:textColor="@color/custom_blue"
+                            android:textSize="16sp" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/viewDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:fontFamily="@font/source_sans_pro_semibold"
-            android:foreground="@drawable/view_details_textview_ripple_effect"
-            android:padding="12dp"
-            android:text="View Details"
-            android:textColor="@color/custom_blue"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/studentNoInputLayout"
-            app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"
-            app:layout_constraintTop_toTopOf="@+id/studentNoInputLayout" />
+                    </RelativeLayout>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+<!--        <com.google.android.material.textview.MaterialTextView-->
+<!--            android:id="@+id/viewDetails"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:layout_marginBottom="3dp"-->
+<!--            android:fontFamily="@font/source_sans_pro_semibold"-->
+<!--            android:foreground="@drawable/view_details_textview_ripple_effect"-->
+<!--            android:padding="12dp"-->
+<!--            android:text="View Details"-->
+<!--            android:textColor="@color/custom_blue"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/studentNoInputLayout"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/studentNoInputLayout" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
