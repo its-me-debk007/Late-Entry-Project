@@ -238,8 +238,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
         val studentNoTextInputLayout =
             enterStudentNoView.findViewById<TextInputLayout>(R.id.studentNoTextInputLayout)
-        val studentNoEditText =
-            seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNoInputLayout)
+        val studentNoEditText = seeStudentDetailView.findViewById<TextInputEditText>(R.id.studentNoEditText)
+        val studentNoInputLayout = seeStudentDetailView.findViewById<TextInputLayout>(R.id.studentNoInputLayout)
         val submitLateEntryBtn =
             seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
         val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
@@ -323,30 +323,56 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         var venueId = -1
 
         submitLateEntryBtn.setOnClickListener {
-            showToast("Late entry registered")
-            bottomSheetDialog.cancel()
-            student = studentNoEditText.text.toString().trim()
+            lifecycleScope.launchWhenStarted {
+                var flag = false
+                val studentList = studentDatabase.studentDao().getStudentDetails()
+                studentList.forEach {
+                    if (it.student_no == studentNo.text.toString()) {
+                        flag = true
+                        return@forEach
+                    }
+                }
 
-            lifecycleScope.launch {
-                venueId = datastore.getId("ID_KEY")!!
-            }
+                if (!flag) {
+                    studentNoInputLayout.helperText = "Sync your data"
+                    submitLateEntryBtn.isEnabled = false
+                    viewDetails.isEnabled = false
+                    viewDetails.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.disabledSettingsBtnColor
+                        )
+                    )
+                }
+                else
+                {
+                    showToast("Late entry registered")
+                    bottomSheetDialog.cancel()
+                    student = studentNoEditText.text.toString().trim()
 
-            lateEntryViewModel.submitResult(student, venueId)
-            lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
-                if (it is Response.Error && it.errorMessage == "Save to DB") {
                     lifecycleScope.launch {
-                        val currentTime = Utils().currentTimeInIsoFormat()
-                        studentDatabase.offlineLateEntryDao()
-                            .addLateEntry(
-                                OfflineLateEntry(
-                                    student_no = student,
-                                    timestamp = currentTime,
-                                    venue = venueId
-                                )
-                            )
+                        venueId = datastore.getId("ID_KEY")!!
+                    }
+
+                    lateEntryViewModel.submitResult(student, venueId)
+                    lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
+                        if (it is Response.Error && it.errorMessage == "Save to DB") {
+                            lifecycleScope.launch {
+                                val currentTime = Utils().currentTimeInIsoFormat()
+                                studentDatabase.offlineLateEntryDao()
+                                    .addLateEntry(
+                                        OfflineLateEntry(
+                                            student_no = student,
+                                            timestamp = currentTime,
+                                            venue = venueId
+                                        )
+                                    )
+                            }
+                        }
                     }
                 }
             }
+
         }
 
         viewDetails.setOnClickListener {
@@ -468,3 +494,4 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         }
     }
 }
+

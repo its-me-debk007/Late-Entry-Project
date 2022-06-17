@@ -18,13 +18,12 @@
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/camera_permission_dialog.xml" value="0.19401709401709402" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/dialog.xml" value="0.4" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_barcode_sanner.xml" value="0.19615384615384615" />
-        <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_barcode_scanner.xml" value="0.4" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_barcode_scanner.xml" value="0.2" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_enter_bottom_sheet.xml" value="0.4" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_login.xml" value="0.176" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_settings.xml" value="0.2570781426953567" />
-        <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_splash_screen.xml" value="0.19410004275331338" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_view_bottom_sheet_fragment.xml" value="0.4" />
-        <entry key="..\:/JellyBean-App/app/src/main/res/layout/layout_entry_bottom_sheet.xml" value="0.6013289036544851" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/layout/layout_entry_bottom_sheet.xml" value="0.6317934782608695" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/layout_input_bottom_sheet.xml" value="0.4370179948586118" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/layout_venue_bottom_sheet.xml" value="0.1" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/logout_dialog.xml" value="0.536" />
@@ -64,7 +63,7 @@
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/fragment_login.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/fragment_settings.xml" value="0.22" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/fragment_view_bottom_sheet_fragment.xml" value="0.17552083333333332" />
-        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/layout_entry_bottom_sheet.xml" value="0.4339360222531293" />
+        <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/layout_entry_bottom_sheet.xml" value="0.5" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/layout_entry_bottom_sheet_fragment.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/layout_input_bottom_sheet.xml" value="0.3588235294117647" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/layout/layout_venue_bottom_sheet.xml" value="0.17552083333333332" />
