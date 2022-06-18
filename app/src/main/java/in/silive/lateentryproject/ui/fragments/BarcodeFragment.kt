@@ -335,14 +335,14 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
                 if (!flag) {
                     studentNoInputLayout.helperText = "Sync your data"
-                    submitLateEntryBtn.isEnabled = false
-                    viewDetails.isEnabled = false
-                    viewDetails.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.disabledSettingsBtnColor
-                        )
-                    )
+//                    submitLateEntryBtn.isEnabled = true
+//                    viewDetails.isEnabled = true
+//                    viewDetails.setTextColor(
+//                        ContextCompat.getColor(
+//                            requireContext(),
+//                            R.color.disabledSettingsBtnColor
+//                        )
+//                    )
                 }
                 else
                 {
