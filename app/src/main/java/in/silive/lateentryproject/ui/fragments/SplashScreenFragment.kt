@@ -42,31 +42,39 @@ class SplashScreenFragment: Fragment(R.layout.splash_screen) {
 			Log.e("dddd", ACCESS_TOKEN.toString()+"\n"+ REFRESH_TOKEN)
 		}
 
-		binding.motionLayout.apply {
-			startLayoutAnimation()
-			setTransitionListener(object : MotionLayout.TransitionListener{
-				override fun onTransitionStarted(motionLayout: MotionLayout?,
-												 startId: Int,
-												 endId: Int) {}
+		Handler(Looper.getMainLooper()).postDelayed({
+														lifecycleScope.launch {
+															if (datastore.isLogin()) askPermission()
+															else goToNextFragment(LoginFragment())
+														}
 
-				override fun onTransitionChange(motionLayout: MotionLayout?,
-												startId: Int,
-												endId: Int,
-												progress: Float) {}
+													}, 900)
 
-				override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-					lifecycleScope.launch {
-						if (datastore.isLogin()) askPermission()
-						else goToNextFragment(LoginFragment())
-					}
-				}
-
-				override fun onTransitionTrigger(motionLayout: MotionLayout?,
-												 triggerId: Int,
-												 positive: Boolean,
-												 progress: Float) {}
-			})
-		}
+//		binding.motionLayout.apply {
+//			startLayoutAnimation()
+//			setTransitionListener(object : MotionLayout.TransitionListener{
+//				override fun onTransitionStarted(motionLayout: MotionLayout?,
+//												 startId: Int,
+//												 endId: Int) {}
+//
+//				override fun onTransitionChange(motionLayout: MotionLayout?,
+//												startId: Int,
+//												endId: Int,
+//												progress: Float) {}
+//
+//				override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+//					lifecycleScope.launch {
+//						if (datastore.isLogin()) askPermission()
+//						else goToNextFragment(LoginFragment())
+//					}
+//				}
+//
+//				override fun onTransitionTrigger(motionLayout: MotionLayout?,
+//												 triggerId: Int,
+//												 positive: Boolean,
+//												 progress: Float) {}
+//			})
+//		}
 	}
 
 	private fun askPermission() {
