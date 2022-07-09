@@ -52,7 +52,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     private lateinit var venue: MutableMap<Int, String>
     private lateinit var venue2: Map<Int, String>
     private var student_No: String? = null
-	private lateinit var toast: Toast
+    private var bool:Boolean = false
+    private lateinit var toast: Toast
     private val bottomSheetDialog by lazy { BottomSheetDialog(requireContext()) }
     private val lateEntryViewModel by lazy {
         ViewModelProvider(this)[LateEntryViewModel::class.java]
@@ -223,6 +224,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
     override fun handleResult(rawResult: Result?) {
         student_No = rawResult?.contents.toString()
+        bool=true
         rawResult?.contents?.let {
             if (it.length in 7..15) showBottomSheet(rawResult.contents)
             else scannerView.resumeCameraPreview(this)
@@ -238,7 +240,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
         val studentNoTextInputLayout =
             enterStudentNoView.findViewById<TextInputLayout>(R.id.studentNoTextInputLayout)
-        val studentNoEditText = seeStudentDetailView.findViewById<TextInputEditText>(R.id.studentNoEditText)
+        val studentNoEditText = seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNoEditText)
         val studentNoInputLayout = seeStudentDetailView.findViewById<TextInputLayout>(R.id.studentNoInputLayout)
         val submitLateEntryBtn =
             seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
@@ -306,7 +308,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 } else {
                     Utils().hideKeyboard(studentNo, activity)
                     bottomSheetDialog.setContentView(seeStudentDetailView)
-                    student_No = studentNo.text.toString()
+//                    student_No = studentNo.text.toString()
                     studentNoEditText.setText(studentNo.text!!.trim())
                     return@launch
                 }
@@ -325,9 +327,16 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         submitLateEntryBtn.setOnClickListener {
             lifecycleScope.launchWhenStarted {
                 var flag = false
+                val studt:String
+                if (bool==true){
+                    studt= student_No.toString()
+                }
+                else{
+                    studt = studentNo.text.toString()
+                }
                 val studentList = studentDatabase.studentDao().getStudentDetails()
                 studentList.forEach {
-                    if (it.student_no == studentNo.text.toString()) {
+                    if (it.student_no == studt) {
                         flag = true
                         return@forEach
                     }
@@ -402,7 +411,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
                         student.student_image?.let {
                             if (!student.image_downloaded) {
-                                val imgUrl = "https://lateentry.azurewebsites.net$it"
+                                val imgUrl = "https://late-entry.azurewebsites.net$it"
                                 Glide.with(requireActivity())
                                     .applyDefaultRequestOptions(
                                         RequestOptions.placeholderOf(R.drawable.ic_placeholder)

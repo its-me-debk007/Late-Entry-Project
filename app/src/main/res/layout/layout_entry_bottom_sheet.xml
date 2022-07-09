@@ -101,12 +101,13 @@
                         <!--                            android:textSize="18sp" />-->
 
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/studentNoEditText"
                             android:layout_width="match_parent"
                             android:layout_height="47dp"
                             android:ellipsize="end"
                             android:fontFamily="@font/source_sans_pro_semibold"
+                            android:background="@drawable/curved_edge_edit_text"
                             android:imeOptions="actionGo"
                             android:inputType="number"
                             android:maxLength="15"

@@ -76,8 +76,7 @@
                     android:fontFamily="@font/source_sans_pro_semibold"
                     android:text="OK"
                     android:textColor="#BFBFBF"
-                    android:textSize="20sp"
-                     />
+                    android:textSize="20sp" />
             </RelativeLayout>
         </com.google.android.material.textfield.TextInputLayout>
 
