@@ -109,9 +109,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                         showToast("No failed entries exist")
                         disableBtn(uploadBtn, false)
                     }
-                    else
+                    else {
+                        Log.e("dddd", "entries is :-$entries")
                         context?.let { it1 ->
-                            viewModel.bulkUpload(BulkReqDataClass(entries!!), it1).observe(viewLifecycleOwner){
+                            viewModel.bulkUpload(BulkReqDataClass(entries), it1).observe(viewLifecycleOwner) {
                                 if (it is Response.Success) {
 
                                     lifecycleScope.launch {
@@ -126,7 +127,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                                 disableBtn(uploadBtn, false)
                             }
                         }
-
+                    }
                 }
             }
         }
@@ -145,52 +146,52 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .setText(R.string.logoutMessage)
         val logout = customView.findViewById<MaterialButton>(R.id.positiveBtn)
         val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+        val progressBar = customView.findViewById<CircularProgressIndicator>(R.id.progressBar)
 
         logout.text = "Logout"
         logout.setOnClickListener {
             lifecycleScope.launchWhenStarted {
                 Log.e("ffff", "logout click")
 //                try {
-                    val entries = mutableListOf<LateEntryDataClass>()
+                val entries = mutableListOf<LateEntryDataClass>()
 //                    lifecycleScope.launch {
-                        studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
-                            entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
-                        }
-                        if (entries.size != 0) {
-                            logout.text = ""
-                            progressBar.visibility = View.VISIBLE
-                            context?.let { it1 ->
-                                viewModel.bulkUpload(BulkReqDataClass(entries!!), it1).observe(viewLifecycleOwner){
-                                    if (it is Response.Success) {
-                                        lifecycleScope.launch {
-                                            studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-                                        }
-                                    }
+                studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
+                    entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
+                }
+                if (entries.size != 0) {
+                    logout.text = ""
+                    progressBar.visibility = View.VISIBLE
+                    context?.let { it1 ->
+                        viewModel.bulkUpload(BulkReqDataClass(entries), it1).observe(viewLifecycleOwner){
+                            lifecycleScope.launch {
+                                if (it is Response.Success) {
+                                    Log.e("gggg", "Suc")
+                                    studentDatabase.offlineLateEntryDao().clearLateEntryTable()
                                 }
-                            }
-                                    Log.e("gggg", "DFDFFDA")
+                                Log.e("gggg", "DFDFFDA")
                                 datastore.changeLoginState(false)
                                 SplashScreenFragment.ACCESS_TOKEN = "_"
                                 SplashScreenFragment.REFRESH_TOKEN = "_"
                                 datastore.saveAccessToken("_")
                                 datastore.saveRefreshToken("_")
                                 goToNextFragment(LoginFragment())
-                                    dialog.dismiss()
-                                }
+                                dialog.dismiss()
+                            }
                         }
+                    }
 
-                        }
+                }
 //                    }
 //                } finally {
                 else {
-                            datastore.changeLoginState(false)
-                            SplashScreenFragment.ACCESS_TOKEN = "_"
-                            SplashScreenFragment.REFRESH_TOKEN = "_"
-                            datastore.saveAccessToken("_")
-                            datastore.saveRefreshToken("_")
-                            goToNextFragment(LoginFragment())
-                            dialog.dismiss()
-                        }
+                    datastore.changeLoginState(false)
+                    SplashScreenFragment.ACCESS_TOKEN = "_"
+                    SplashScreenFragment.REFRESH_TOKEN = "_"
+                    datastore.saveAccessToken("_")
+                    datastore.saveRefreshToken("_")
+                    goToNextFragment(LoginFragment())
+                    dialog.dismiss()
+                }
 //                }
             }
         }
