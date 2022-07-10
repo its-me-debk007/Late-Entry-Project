@@ -38,16 +38,16 @@ class LateEntryRepository() {
 
 
 				}else if(response.code()==401){
-					GlobalScope.launch {
-						Datastore(context).getAccessToken()?.let {
-							Datastore(context).getRefreshToken()?.let { it1 ->
-								Utils().generateToken(
-									it, it1,context
-								)
-							}
-						}
-						lateEntry(studentNo, venue,context)
-					}
+//					GlobalScope.launch {
+//						Datastore(context).getAccessToken()?.let {
+//							Datastore(context).getRefreshToken()?.let { it1 ->
+//								Utils().generateToken(
+//									it, it1,context
+//								)
+//							}
+//						}
+//						lateEntry(studentNo, venue,context)
+//					}
 				} else if (response.code() == 400) {
 					val gson: Gson = GsonBuilder().create()
 					val mError: ErrorPojoClass =

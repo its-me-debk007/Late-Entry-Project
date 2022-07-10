@@ -110,13 +110,11 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                         disableBtn(uploadBtn, false)
                     }
                     else {
-                        Log.e("dddd", "entries is :-$entries")
                         context?.let { it1 ->
                             viewModel.bulkUpload(BulkReqDataClass(entries), it1).observe(viewLifecycleOwner) {
                                 if (it is Response.Success) {
-
+                                    showToast("Failed entries registered")
                                     lifecycleScope.launch {
-                                        showToast("Failed entries registered")
                                         studentDatabase.offlineLateEntryDao().clearLateEntryTable()
                                         lastUploadTime.text = "Failed entries count: ${
                                             studentDatabase.offlineLateEntryDao().getCount()
@@ -151,7 +149,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         logout.text = "Logout"
         logout.setOnClickListener {
             lifecycleScope.launchWhenStarted {
-                Log.e("ffff", "logout click")
 //                try {
                 val entries = mutableListOf<LateEntryDataClass>()
 //                    lifecycleScope.launch {
@@ -165,10 +162,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                         viewModel.bulkUpload(BulkReqDataClass(entries), it1).observe(viewLifecycleOwner){
                             lifecycleScope.launch {
                                 if (it is Response.Success) {
-                                    Log.e("gggg", "Suc")
                                     studentDatabase.offlineLateEntryDao().clearLateEntryTable()
                                 }
-                                Log.e("gggg", "DFDFFDA")
                                 datastore.changeLoginState(false)
                                 SplashScreenFragment.ACCESS_TOKEN = "_"
                                 SplashScreenFragment.REFRESH_TOKEN = "_"

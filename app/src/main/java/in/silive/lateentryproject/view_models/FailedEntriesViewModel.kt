@@ -17,6 +17,7 @@ class FailedEntriesViewModel : ViewModel() {
 	fun bulkUpload(body: BulkReqDataClass,context: Context): MutableLiveData<Response<MessageDataClass>> {
 		viewModelScope.launch {
 			bulkLiveData = FailedEntriesRepository().bulkUpload(body,context)
+
 		}
 		return bulkLiveData
 

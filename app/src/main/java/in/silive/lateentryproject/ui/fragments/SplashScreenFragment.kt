@@ -39,7 +39,6 @@ class SplashScreenFragment: Fragment(R.layout.splash_screen) {
 		lifecycleScope.launch {
 			ACCESS_TOKEN = datastore.getAccessToken()
 			REFRESH_TOKEN = datastore.getRefreshToken()
-			Log.e("dddd", ACCESS_TOKEN.toString()+"\n"+ REFRESH_TOKEN)
 		}
 
 		Handler(Looper.getMainLooper()).postDelayed({

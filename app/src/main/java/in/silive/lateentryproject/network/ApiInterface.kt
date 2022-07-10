@@ -2,6 +2,7 @@ package `in`.silive.lateentryproject.network
 
 import `in`.silive.lateentryproject.models.*
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiInterface {
@@ -20,6 +21,6 @@ interface ApiInterface {
 	fun cacheData():Call<BulkDataClass>
 
 	@POST("/auth/token/refresh/")
-	fun generateToken(@Body data:TokenDataClass): Call<TokenDataClass>
+	suspend fun generateToken(@Body data:TokenDataClass): Response<TokenDataClass>
 
 }

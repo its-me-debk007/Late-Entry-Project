@@ -5,6 +5,7 @@ import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
+import `in`.silive.lateentryproject.ui.fragments.SplashScreenFragment
 import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.utils.Utils
 import android.content.Context
@@ -24,7 +25,6 @@ class FailedEntriesRepository {
         val liveData = MutableLiveData<Response<MessageDataClass>>()
         val call = ServiceBuilder.buildService().bulkUpload(body)
 
-		Log.i("Hello", "bulkUpload: "+body)
 		call.enqueue(object : Callback<MessageDataClass> {
 			override fun onResponse(
 				call: Call<MessageDataClass>,
@@ -33,19 +33,22 @@ class FailedEntriesRepository {
 				when {
 					response.isSuccessful -> {
 						liveData.postValue(Response.Success(response.body()!!))
-						Log.e("ffff", "Failed entry success")
+						Log.e("dddd", "Failed entry success")
 					}
 					response.code()==401 ->{
-						runBlocking {
-							Datastore(context).getAccessToken()?.let {
-								Datastore(context).getRefreshToken()?.let { it1 ->
-									Utils().generateToken(
-										it, it1,context
-									)
-								}
-							}
-							bulkUpload(body,context)
-						}
+//						runBlocking {
+//							Datastore(context).getAccessToken()?.let {
+//								Datastore(context).getRefreshToken()?.let { it1 ->
+//									Utils().generateToken(
+//										it, it1,context
+//									)
+//								}
+//							}
+//							Utils().generateToken(SplashScreenFragment.ACCESS_TOKEN!!,
+//												  SplashScreenFragment.REFRESH_TOKEN!!, context)
+						Utils().generateNewToken(context)
+						bulkUpload(body,context)
+//						}
 					}
 					response.code() == 403 -> {
 						val gson: Gson = GsonBuilder().create()
@@ -55,7 +58,6 @@ class FailedEntriesRepository {
 								ErrorPojoClass::class.java
 							)
 						liveData.postValue(mError.message?.let { Response.Error(it) })
-						Log.e("ffff", "Failed entry failure")
 					}
 
 					else -> liveData.postValue(Response.Error(response.message()))

@@ -13,17 +13,14 @@ object ServiceBuilder {
     private const val baseURL = "https://late-entry.azurewebsites.net"
 
 	fun buildService(): ApiInterface {
-		Log.e("dddd", "access token is: ${SplashScreenFragment.ACCESS_TOKEN}")
 
 		val retrofit: Retrofit
 		if (SplashScreenFragment.ACCESS_TOKEN == null || SplashScreenFragment.ACCESS_TOKEN == "_") {
-			Log.e("dddd", "access is null")
 			retrofit = Retrofit.Builder()
 				.baseUrl(baseURL)
 				.addConverterFactory(GsonConverterFactory.create())
 				.build()
 		} else {
-			Log.e("dddd", "access is not null")
 			val tokenInterceptor = Interceptor { chain ->
 				var request = chain.request()
 				request = request.newBuilder()

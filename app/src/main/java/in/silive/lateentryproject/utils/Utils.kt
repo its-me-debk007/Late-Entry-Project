@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Call
@@ -86,32 +87,43 @@ class Utils {
 		return TimeUnit.MILLISECONDS.toHours(diff)
 	}
 
-	suspend fun generateToken(token: String, refToken: String, context: Context)
-	{
-		Log.w("GENERATE TOKEN access", "NEW ACCESS TOKEN : $token")
-		ServiceBuilder.buildService().generateToken(
-			TokenDataClass(
-				refresh = refToken
-			)
-		)
-			.enqueue(object : Callback<TokenDataClass?> {
-				override fun onResponse(call: Call<TokenDataClass?>, response: Response<TokenDataClass?>) {
+//	suspend fun generateToken(token: String, refToken: String, context: Context)
+//	{
+//		Log.w("GENERATE TOKEN access", "NEW ACCESS TOKEN : $token")
+//		ServiceBuilder.buildService().generateToken(TokenDataClass(refresh = refToken))
+//			.enqueue(object : Callback<TokenDataClass?> {
+//				override fun onResponse(call: Call<TokenDataClass?>, response: Response<TokenDataClass?>) {
+//
+//					if(response.isSuccessful) {
+//						val newToken = response.body()?.access!!
+//						GlobalScope.launch{
+//							Datastore(context).saveAccessToken(newToken)
+//							SplashScreenFragment.ACCESS_TOKEN = newToken
+//							Log.w("NEW TOKEN", "NEW ACCESS TOKEN : "+Datastore(context).getAccessToken())
+//
+//						}
+//
+//					}
+//				}
+//
+//				override fun onFailure(call: Call<TokenDataClass?>, t: Throwable) {
+//					Toast.makeText(context, " Failed: ${t.message}", Toast.LENGTH_SHORT).show()
+//				}
+//			})
+//	}
 
-					if(response.isSuccessful) {
-						val newToken = response.body()?.access.toString()
-						GlobalScope.launch{
-							Datastore(context).saveAccessToken(newToken)
-							SplashScreenFragment.ACCESS_TOKEN = newToken
-							Log.w("NEW TOKEN", "NEW ACCESS TOKEN : "+Datastore(context).getAccessToken())
+	fun generateNewToken(context: Context) {
+		runBlocking {
+			try {
+				val response = ServiceBuilder.buildService().generateToken(TokenDataClass(
+					SplashScreenFragment.REFRESH_TOKEN, SplashScreenFragment.ACCESS_TOKEN))
 
-						}
-
-					}
-				}
-
-				override fun onFailure(call: Call<TokenDataClass?>, t: Throwable) {
-					Toast.makeText(context, " Failed: ${t.message}", Toast.LENGTH_SHORT).show()
-				}
-			})
+				SplashScreenFragment.ACCESS_TOKEN = response.body()?.access
+				Datastore(context).saveAccessToken(SplashScreenFragment.ACCESS_TOKEN!!)
+				Log.e("dddd", "${SplashScreenFragment.ACCESS_TOKEN}")
+			} catch (e: Exception) {
+				Log.e("dddd", e.message.toString())
+			}
+		}
 	}
 }
