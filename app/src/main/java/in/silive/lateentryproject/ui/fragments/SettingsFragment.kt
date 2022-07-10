@@ -27,18 +27,18 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textview.MaterialTextView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private lateinit var binding: FragmentSettingsBinding
     private val datastore by lazy { Datastore(requireContext()) }
     private lateinit var toast: Toast
     private val bulkViewModel by lazy {
-        ViewModelProvider(
-            this,
-            BulkDataViewModelFactory(StudentDatabase.getDatabase(requireContext()))
-        )[BulkDataViewModel::class.java]
-    }
+        ViewModelProvider(this, BulkDataViewModelFactory(StudentDatabase.getDatabase(requireContext()))
+        )[BulkDataViewModel::class.java] }
+
     private val viewModel by lazy { ViewModelProvider(this)[FailedEntriesViewModel::class.java] }
     private val studentDatabase by lazy { StudentDatabase.getDatabase(requireContext()) }
 
@@ -100,33 +100,35 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 disableBtn(uploadBtn, true)
 
                 val entries = mutableListOf<LateEntryDataClass>()
-                lifecycleScope.launch {
+                runBlocking {
                     studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
                         entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
                     }
+                }
                     if (entries.size == 0)
                     {
                         showToast("No failed entries exist")
                         disableBtn(uploadBtn, false)
                     }
                     else {
-                        context?.let { it1 ->
-                            viewModel.bulkUpload(BulkReqDataClass(entries), it1).observe(viewLifecycleOwner) {
+                        context?.let { it1 -> viewModel.bulkUpload(BulkReqDataClass(entries), it1) }
+                        viewModel._bulkLiveData.observe(viewLifecycleOwner){
+                            Log.e("TAG", "onViewCreated: observe" )
                                 if (it is Response.Success) {
-                                    showToast("Failed entries registered")
                                     lifecycleScope.launch {
                                         studentDatabase.offlineLateEntryDao().clearLateEntryTable()
                                         lastUploadTime.text = "Failed entries count: ${
                                             studentDatabase.offlineLateEntryDao().getCount()
                                         }"
                                     }
+                                    showToast("Failed entries registered")
                                 } else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
 
                                 disableBtn(uploadBtn, false)
                             }
-                        }
+
                     }
-                }
+
             }
         }
     }
@@ -158,8 +160,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 if (entries.size != 0) {
                     logout.text = ""
                     progressBar.visibility = View.VISIBLE
-                    context?.let { it1 ->
-                        viewModel.bulkUpload(BulkReqDataClass(entries), it1).observe(viewLifecycleOwner){
+                    context?.let { it1 -> viewModel.bulkUpload(BulkReqDataClass(entries), it1) }
+                    viewModel._bulkLiveData.observe(viewLifecycleOwner){
                             lifecycleScope.launch {
                                 if (it is Response.Success) {
                                     studentDatabase.offlineLateEntryDao().clearLateEntryTable()
@@ -172,7 +174,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                                 goToNextFragment(LoginFragment())
                                 dialog.dismiss()
                             }
-                        }
                     }
 
                 }

@@ -21,8 +21,8 @@ import retrofit2.Callback
 
 class FailedEntriesRepository {
 
+	private val liveData = MutableLiveData<Response<MessageDataClass>>()
 	fun bulkUpload(body: BulkReqDataClass,context: Context): MutableLiveData<Response<MessageDataClass>> {
-        val liveData = MutableLiveData<Response<MessageDataClass>>()
         val call = ServiceBuilder.buildService().bulkUpload(body)
 
 		call.enqueue(object : Callback<MessageDataClass> {
@@ -36,19 +36,8 @@ class FailedEntriesRepository {
 						Log.e("dddd", "Failed entry success")
 					}
 					response.code()==401 ->{
-//						runBlocking {
-//							Datastore(context).getAccessToken()?.let {
-//								Datastore(context).getRefreshToken()?.let { it1 ->
-//									Utils().generateToken(
-//										it, it1,context
-//									)
-//								}
-//							}
-//							Utils().generateToken(SplashScreenFragment.ACCESS_TOKEN!!,
-//												  SplashScreenFragment.REFRESH_TOKEN!!, context)
 						Utils().generateNewToken(context)
 						bulkUpload(body,context)
-//						}
 					}
 					response.code() == 403 -> {
 						val gson: Gson = GsonBuilder().create()
@@ -66,9 +55,11 @@ class FailedEntriesRepository {
 			}
 
 			override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
-				val message = if (t.message?.substring(0, 22) == "Unable to resolve host")
-					"No Internet connection"
-					else t.message + " Please try again"
+//				val message = if (t.message?.substring(0, 22) == "Unable to resolve host")
+//					"No Internet connection"
+//					else t.message + " Please try again"
+				val message = if (t.message == "Unable to resolve host \"lateentry.azurewebsites.net\": No address associated with hostname")
+					"No Internet connection! Please connect to the Internet first!" else t.message+ " Please try again"
 
 				liveData.postValue(Response.Error(message))
 			}

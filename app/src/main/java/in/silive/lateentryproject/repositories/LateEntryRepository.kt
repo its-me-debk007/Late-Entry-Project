@@ -35,9 +35,11 @@ class LateEntryRepository() {
 				if (response.isSuccessful) {
 					val responseBody = response.body()!!
 					lateEntryLiveData.postValue(Response.Success(responseBody))
-
+					Log.e("success", "onResponse: Successss", )
 
 				}else if(response.code()==401){
+					Utils().generateNewToken(context)
+					lateEntry(studentNo, venue,context)
 //					GlobalScope.launch {
 //						Datastore(context).getAccessToken()?.let {
 //							Datastore(context).getRefreshToken()?.let { it1 ->

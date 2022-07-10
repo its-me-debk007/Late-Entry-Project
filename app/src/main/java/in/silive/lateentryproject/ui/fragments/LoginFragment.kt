@@ -78,8 +78,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                          lifecycleScope.launchWhenStarted {
                              try {
                                  sync = datastore.isSync()
-                                 datastore.saveRefreshToken(it.data!!.refresh)
-                                 datastore.saveAccessToken(it.data.access)
+                                 it.data!!.refresh?.let { it1 -> datastore.saveRefreshToken(it1) }
+                                 it.data.access?.let { it1 -> datastore.saveAccessToken(it1) }
                                  datastore.changeLoginState(true)
                              }
 

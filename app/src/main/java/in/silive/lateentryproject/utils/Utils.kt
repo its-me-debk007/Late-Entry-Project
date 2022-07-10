@@ -12,10 +12,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -115,12 +112,12 @@ class Utils {
 	fun generateNewToken(context: Context) {
 		runBlocking {
 			try {
+				Log.e("ddddold", "${SplashScreenFragment.ACCESS_TOKEN}")
 				val response = ServiceBuilder.buildService().generateToken(TokenDataClass(
 					SplashScreenFragment.REFRESH_TOKEN, SplashScreenFragment.ACCESS_TOKEN))
-
 				SplashScreenFragment.ACCESS_TOKEN = response.body()?.access
 				Datastore(context).saveAccessToken(SplashScreenFragment.ACCESS_TOKEN!!)
-				Log.e("dddd", "${SplashScreenFragment.ACCESS_TOKEN}")
+				Log.e("ddddnew", "${SplashScreenFragment.ACCESS_TOKEN}")
 			} catch (e: Exception) {
 				Log.e("dddd", e.message.toString())
 			}
