@@ -6,36 +6,13 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 
 object ServiceBuilder {
-    private const val baseURL = "https://lateentry.azurewebsites.net"
+    private const val baseURL = "https://late-entry.azurewebsites.net"
 
-    private val tokenClient = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            val request = chain.request()
-                .newBuilder()
-                .addHeader(
-                    "Authorization",
-                    "Bearer ${SplashScreenFragment.ACCESS_TOKEN}"
-                )
-                .build()
-
-            chain.proceed(request)
-        }
-        .build()
-
-    private val retrofit = if (SplashScreenFragment.ACCESS_TOKEN != null && SplashScreenFragment.ACCESS_TOKEN != "_") Retrofit.Builder()
-        	.baseUrl(baseURL)
-        	.addConverterFactory(GsonConverterFactory.create())
-        	.client(tokenClient)
-        	.build()
-		else Retrofit.Builder()
-			.baseUrl(baseURL)
-			.addConverterFactory(GsonConverterFactory.create())
-			.build()
-
-    fun buildService(): ApiInterface {
+	fun buildService(): ApiInterface {
 //		Log.e("dddd", "access token is: ${SplashScreenFragment.ACCESS_TOKEN}")
 
 		val retrofit: Retrofit
@@ -57,6 +34,9 @@ object ServiceBuilder {
 
 			val tokenClient = OkHttpClient.Builder()
 				.addInterceptor(tokenInterceptor)
+				.connectTimeout(30, TimeUnit.SECONDS)
+				.writeTimeout(30, TimeUnit.SECONDS)
+				.readTimeout(30, TimeUnit.SECONDS)
 				.build()
 
 			retrofit = Retrofit.Builder()

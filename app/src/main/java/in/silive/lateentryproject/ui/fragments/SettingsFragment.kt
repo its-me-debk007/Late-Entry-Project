@@ -56,6 +56,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             logoutBtn.setOnClickListener { showLogoutDialog() }
 
             syncBtn.setOnClickListener {
+                lifecycleScope.launch {
+                    studentDatabase.studentDao().clearStudentTable()
+                }
                 disableBtn(syncBtn, true)
                 bulkViewModel.sendResult()
                 bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {

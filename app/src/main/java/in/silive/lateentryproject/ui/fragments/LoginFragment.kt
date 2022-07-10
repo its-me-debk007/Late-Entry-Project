@@ -70,49 +70,60 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
                 viewModel.loginLiveData.observe(viewLifecycleOwner) {
 
-
                     if (it is Response.Success) {
                         var sync=false
                         SplashScreenFragment.ACCESS_TOKEN = it.data?.access
                         SplashScreenFragment.REFRESH_TOKEN = it.data?.refresh
-                         lifecycleScope.launch {
-                             sync=datastore.isSync()
-                             datastore.saveRefreshToken(it.data!!.refresh)
-                             datastore.saveAccessToken(it.data.access)
+                         lifecycleScope.launchWhenStarted {
+                             try {
+                                 sync = datastore.isSync()
+                                 datastore.saveRefreshToken(it.data!!.refresh)
+                                 datastore.saveAccessToken(it.data.access)
+                                 datastore.changeLoginState(true)
+                             }
+
+                             finally {
+                                 if (sync) {
+                                     bulkViewModel.sendResult()
+                                     bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
+
+                                         if (it is Response.Success) {
+                                             val venueMap = mutableMapOf<Int, String>()
+
+                                             it.data?.venue_data!!.forEach { venueData ->
+                                                 venueMap[venueData.id] = venueData.venue
+                                             }
+                                             lifecycleScope.launch {
+                                                 datastore.changeSyncState(false)
+                                                 datastore.saveVenueDetails(venueMap)
+                                                 val venue = datastore.getVenueDetails()
+                                                     ?.replace("\\s".toRegex(), "")!!
+                                                     .split(",").associateTo(mutableMapOf()) { str ->
+                                                         val (left, right) = str.split("=")
+                                                         left.toInt() to right
+                                                     }
+                                                 datastore.saveId(
+                                                     "ID_KEY",
+                                                     venue.keys.toTypedArray()[0]
+                                                 )
+                                                 datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
+                                                 datastore.saveSyncTime(Utils().currentTime())
+                                                 datastore.changeLoginState(true)
+                                                 disableViews(false)
+                                                 askPermission()
+                                             }
+                                         } else if (it is Response.Error) it.errorMessage?.let { it1 ->
+                                             showToast(
+                                                 it1
+                                             )
+                                         }
+                                     }
+                                 } else {
+                                     disableViews(false)
+                                     askPermission()
+                                 }
+                             }
                          }
-                            if (sync) {
-                                bulkViewModel.sendResult()
-                                bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
-
-                                    if (it is Response.Success) {
-                                        val venueMap = mutableMapOf<Int, String>()
-
-                                        it.data?.venue_data!!.forEach { venueData ->
-                                            venueMap[venueData.id] = venueData.venue
-                                        }
-                                        lifecycleScope.launch {
-                                            datastore.changeSyncState(false)
-                                            datastore.saveVenueDetails(venueMap)
-                                            val venue = datastore.getVenueDetails()?.replace("\\s".toRegex(), "")!!
-                                                .split(",").associateTo(mutableMapOf()) { str ->
-                                                    val (left, right) = str.split("=")
-                                                    left.toInt() to right
-                                                }
-                                            datastore.saveId("ID_KEY", venue.keys.toTypedArray()[0])
-                                            datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
-                                            datastore.changeLoginState(true)
-                                            datastore.saveSyncTime(Utils().currentTime())
-                                            disableViews(false)
-                                            askPermission()
-                                        }
-                                    }
-                                    else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
-                                }
-                            }
-                        else {
-                                disableViews(false)
-                                askPermission()
-                            }
                     } else if (it is Response.Error) {
                         val snackBar = Snackbar.make(
                             loginBtn, it.errorMessage!!, Snackbar

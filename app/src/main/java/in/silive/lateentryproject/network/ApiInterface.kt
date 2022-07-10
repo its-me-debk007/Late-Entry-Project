@@ -1,9 +1,6 @@
 package `in`.silive.lateentryproject.network
 
-import `in`.silive.lateentryproject.models.BulkDataClass
-import `in`.silive.lateentryproject.models.BulkReqDataClass
-import `in`.silive.lateentryproject.models.LateEntryDataClass
-import `in`.silive.lateentryproject.models.MessageDataClass
+import `in`.silive.lateentryproject.models.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -21,5 +18,8 @@ interface ApiInterface {
 
 	@GET("/entry/syncall/")
 	fun cacheData():Call<BulkDataClass>
+
+	@POST("/auth/token/refresh/")
+	fun generateToken(@Body data:TokenDataClass): Call<TokenDataClass>
 
 }

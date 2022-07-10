@@ -16,4 +16,6 @@ interface StudentDao {
     @Query("SELECT * FROM student")
     suspend fun getStudentDetails():List<Student>
 
+    @Query("DELETE FROM student")
+    suspend fun clearStudentTable()
 }

@@ -1,13 +1,21 @@
 package `in`.silive.lateentryproject.utils
 
+import `in`.silive.lateentryproject.models.TokenDataClass
+import `in`.silive.lateentryproject.network.ServiceBuilder
 import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -74,5 +82,35 @@ class Utils {
 
 		val diff = time2!!.time - time1!!.time
 		return TimeUnit.MILLISECONDS.toHours(diff)
+	}
+
+	suspend fun generateToken(token: String, refToken: String, context: Context)
+	{
+		Log.w("GENERATE TOKEN access", "NEW ACCESS TOKEN : $token")
+		ServiceBuilder.buildService().generateToken(
+			TokenDataClass(
+				refresh = refToken
+			)
+		)
+			.enqueue(object : Callback<TokenDataClass?> {
+				override fun onResponse(call: Call<TokenDataClass?>, response: Response<TokenDataClass?>) {
+
+					if(response.isSuccessful) {
+						val newToken = response.body()?.access.toString()
+						GlobalScope.launch {
+							Datastore(context).saveAccessToken(
+								newToken)
+
+							Log.w("NEW TOKEN", "NEW ACCESS TOKEN : $newToken")
+
+						}
+
+					}
+				}
+
+				override fun onFailure(call: Call<TokenDataClass?>, t: Throwable) {
+					Toast.makeText(context, " Failed: ${t.message}", Toast.LENGTH_SHORT).show()
+				}
+			})
 	}
 }
