@@ -2,6 +2,7 @@ package `in`.silive.lateentryproject.utils
 
 import `in`.silive.lateentryproject.models.TokenDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
+import `in`.silive.lateentryproject.ui.fragments.SplashScreenFragment
 import android.content.Context
 import android.util.Log
 import android.view.View
@@ -13,6 +14,7 @@ import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -97,11 +99,10 @@ class Utils {
 
 					if(response.isSuccessful) {
 						val newToken = response.body()?.access.toString()
-						GlobalScope.launch {
-							Datastore(context).saveAccessToken(
-								newToken)
-
-							Log.w("NEW TOKEN", "NEW ACCESS TOKEN : $newToken")
+						GlobalScope.launch{
+							Datastore(context).saveAccessToken(newToken)
+							SplashScreenFragment.ACCESS_TOKEN = newToken
+							Log.w("NEW TOKEN", "NEW ACCESS TOKEN : "+Datastore(context).getAccessToken())
 
 						}
 

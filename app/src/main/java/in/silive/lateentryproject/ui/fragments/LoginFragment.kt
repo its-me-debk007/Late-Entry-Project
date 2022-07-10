@@ -85,7 +85,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
                              finally {
                                  if (sync) {
-                                     bulkViewModel.sendResult()
+                                     context?.let { it1 -> bulkViewModel.sendResult(it1) }
                                      bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
 
                                          if (it is Response.Success) {

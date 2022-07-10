@@ -63,7 +63,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     studentDatabase.studentDao().clearStudentTable()
                 }
                 disableBtn(syncBtn, true)
-                bulkViewModel.sendResult()
+                context?.let { it1 -> bulkViewModel.sendResult(it1) }
                 bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
                     if (it is Response.Success) {
                         val venueMap = mutableMapOf<Int, String>()
@@ -109,9 +109,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                         showToast("No failed entries exist")
                         disableBtn(uploadBtn, false)
                     }
-                    else {
-                        Log.e("dddd", "entries is :-$entries")
-                        viewModel.bulkUpload(BulkReqDataClass(entries)).observe(viewLifecycleOwner) {
+                    else
+                        context?.let { it1 ->
+                            viewModel.bulkUpload(BulkReqDataClass(entries!!), it1).observe(viewLifecycleOwner){
                                 if (it is Response.Success) {
 
                                     lifecycleScope.launch {
@@ -125,7 +125,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
                                 disableBtn(uploadBtn, false)
                             }
-                    }
+                        }
+
                 }
             }
         }
@@ -144,7 +145,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .setText(R.string.logoutMessage)
         val logout = customView.findViewById<MaterialButton>(R.id.positiveBtn)
         val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
-        val progressBar = customView.findViewById<CircularProgressIndicator>(R.id.progressBar)
 
         logout.text = "Logout"
         logout.setOnClickListener {
@@ -159,12 +159,15 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                         if (entries.size != 0) {
                             logout.text = ""
                             progressBar.visibility = View.VISIBLE
-                            viewModel.bulkUpload(BulkReqDataClass(entries)).observe(viewLifecycleOwner){
-                                lifecycleScope.launch {
-                                if (it is Response.Success) {
-                                    Log.e("gggg", "Suc")
-                                        studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+                            context?.let { it1 ->
+                                viewModel.bulkUpload(BulkReqDataClass(entries!!), it1).observe(viewLifecycleOwner){
+                                    if (it is Response.Success) {
+                                        lifecycleScope.launch {
+                                            studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+                                        }
+                                    }
                                 }
+                            }
                                     Log.e("gggg", "DFDFFDA")
                                 datastore.changeLoginState(false)
                                 SplashScreenFragment.ACCESS_TOKEN = "_"

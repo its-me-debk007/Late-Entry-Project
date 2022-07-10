@@ -4,6 +4,7 @@ import `in`.silive.lateentryproject.models.BulkReqDataClass
 import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.repositories.FailedEntriesRepository
 import `in`.silive.lateentryproject.sealed_class.Response
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,9 +14,9 @@ class FailedEntriesViewModel : ViewModel() {
 
 	var bulkLiveData = MutableLiveData<Response<MessageDataClass>>()
 
-	fun bulkUpload(body: BulkReqDataClass): MutableLiveData<Response<MessageDataClass>> {
+	fun bulkUpload(body: BulkReqDataClass,context: Context): MutableLiveData<Response<MessageDataClass>> {
 		viewModelScope.launch {
-			bulkLiveData = FailedEntriesRepository().bulkUpload(body)
+			bulkLiveData = FailedEntriesRepository().bulkUpload(body,context)
 		}
 		return bulkLiveData
 
