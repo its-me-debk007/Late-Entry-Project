@@ -46,6 +46,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.let { it.window.decorView.systemUiVisibility = 0 }
         binding = FragmentLoginBinding.bind(view)
         toast=Toast.makeText(context, "", Toast.LENGTH_SHORT)
 
@@ -129,7 +130,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             loginBtn, it.errorMessage!!, Snackbar
                                 .LENGTH_SHORT
                         )
-                        Log.e("eeee", it.errorMessage!!)
+                        Log.e("eeee", it.errorMessage)
                         snackBar.apply {
                             setAction(R.string.ok_btn_snackbar) {
                                 dismiss()
@@ -157,15 +158,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             if (bool) {
                 progressBar.visibility = View.VISIBLE
-                loginBtn.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.disabledSettingsBtnColor
-                    )
-                )
+                loginBtn.text = ""
             } else {
                 progressBar.visibility = View.INVISIBLE
-                loginBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
+                loginBtn.text = "Login"
                 password.text?.clear()
             }
         }

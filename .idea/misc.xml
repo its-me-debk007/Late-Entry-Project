@@ -23,21 +23,17 @@
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_barcode_sanner.xml" value="0.19615384615384615" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_barcode_scanner.xml" value="0.4" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_enter_bottom_sheet.xml" value="0.4" />
-        <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_login.xml" value="0.176" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_login.xml" value="0.37037037037037035" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_settings.xml" value="0.2570781426953567" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_splash_screen.xml" value="0.19410004275331338" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/fragment_view_bottom_sheet_fragment.xml" value="0.4" />
-        <entry key="..\:/JellyBean-App/app/src/main/res/layout/layout_entry_bottom_sheet.xml" value="0.6013289036544851" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/layout/layout_entry_bottom_sheet.xml" value="0.536" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/layout_input_bottom_sheet.xml" value="0.4370179948586118" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/layout_venue_bottom_sheet.xml" value="0.1" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/logout_dialog.xml" value="0.536" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/splash_screen.xml" value="0.1969872537659328" />
         <entry key="..\:/JellyBean-App/app/src/main/res/menu/scanner_menu.xml" value="0.1" />
         <entry key="..\:/JellyBean-App/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2425" />
-        <entry key="..\:/Users/HP/AndroidStudioProjects/JellyBean-App/app/src/main/res/drawable/constraint_layout_background.xml" value="0.1155" />
-        <entry key="..\:/Users/HP/AndroidStudioProjects/JellyBean-App/app/src/main/res/drawable/curved_edge_edit_text.xml" value="0.1155" />
-        <entry key="..\:/Users/HP/AndroidStudioProjects/JellyBean-App/app/src/main/res/layout/layout_entry_bottom_sheet.xml" value="0.17083333333333334" />
-        <entry key="..\:/Users/HP/AndroidStudioProjects/JellyBean-App/app/src/main/res/layout/layout_input_bottom_sheet.xml" value="0.17083333333333334" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/button_border.xml" value="0.175" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/constraint_layout_background.xml" value="0.175" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/drawable/horizontal_bar.xml" value="0.1" />

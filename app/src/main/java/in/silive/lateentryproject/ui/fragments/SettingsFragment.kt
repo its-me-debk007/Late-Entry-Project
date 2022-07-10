@@ -15,6 +15,7 @@ import `in`.silive.lateentryproject.view_models.FailedEntriesViewModel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -24,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
@@ -42,6 +44,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.let { it.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR }
         binding = FragmentSettingsBinding.bind(view)
         toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
         binding.apply {
@@ -96,38 +99,33 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             uploadBtn.setOnClickListener {
                 disableBtn(uploadBtn, true)
 
-                var lateEntryList: List<OfflineLateEntry>
-                var entries: List<LateEntryDataClass>? = null
+                val entries = mutableListOf<LateEntryDataClass>()
                 lifecycleScope.launch {
-                    lateEntryList = studentDatabase.offlineLateEntryDao().getLateEntryDetails()
-                    for (i in lateEntryList) {
-                        entries = listOf(
-                            LateEntryDataClass(
-                                i.student_no!!, i.timestamp!!, i.venue!!
-                            )
-                        )
+                    studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
+                        entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
                     }
-                    if (entries == null)
+                    if (entries.size == 0)
                     {
                         showToast("No failed entries exist")
                         disableBtn(uploadBtn, false)
                     }
-                    else
-                        viewModel.bulkUpload(BulkReqDataClass(entries!!)).observe(viewLifecycleOwner){
-                            if (it is Response.Success) {
+                    else {
+                        Log.e("dddd", "entries is :-$entries")
+                        viewModel.bulkUpload(BulkReqDataClass(entries)).observe(viewLifecycleOwner) {
+                                if (it is Response.Success) {
 
-                                lifecycleScope.launch {
-                                    showToast("Failed entries registered")
-                                    studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-                                    lastUploadTime.text = "Failed entries count: ${
-                                        studentDatabase.offlineLateEntryDao().getCount()
-                                    }"
-                                }
-                            } else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
+                                    lifecycleScope.launch {
+                                        showToast("Failed entries registered")
+                                        studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+                                        lastUploadTime.text = "Failed entries count: ${
+                                            studentDatabase.offlineLateEntryDao().getCount()
+                                        }"
+                                    }
+                                } else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
 
-                            disableBtn(uploadBtn, false)
-                        }
-
+                                disableBtn(uploadBtn, false)
+                            }
+                    }
                 }
             }
         }
@@ -146,40 +144,52 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .setText(R.string.logoutMessage)
         val logout = customView.findViewById<MaterialButton>(R.id.positiveBtn)
         val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+        val progressBar = customView.findViewById<CircularProgressIndicator>(R.id.progressBar)
 
         logout.text = "Logout"
         logout.setOnClickListener {
             lifecycleScope.launchWhenStarted {
-                try {
-                    datastore.changeLoginState(false)
-                    SplashScreenFragment.ACCESS_TOKEN = "_"
-                    SplashScreenFragment.REFRESH_TOKEN = "_"
-                    var lateEntryList: List<OfflineLateEntry>
-                    var entries: List<LateEntryDataClass>? = null
-                    lifecycleScope.launch {
-                        lateEntryList = studentDatabase.offlineLateEntryDao().getLateEntryDetails()
-                        for (i in lateEntryList) {
-                            entries = listOf(
-                                LateEntryDataClass(
-                                    i.student_no!!, i.timestamp!!, i.venue!!
-                                )
-                            )
+                Log.e("ffff", "logout click")
+//                try {
+                    val entries = mutableListOf<LateEntryDataClass>()
+//                    lifecycleScope.launch {
+                        studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
+                            entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
                         }
-                        if (entries != null) {
-                            viewModel.bulkUpload(BulkReqDataClass(entries!!)).observe(viewLifecycleOwner){
+                        if (entries.size != 0) {
+                            logout.text = ""
+                            progressBar.visibility = View.VISIBLE
+                            viewModel.bulkUpload(BulkReqDataClass(entries)).observe(viewLifecycleOwner){
+                                lifecycleScope.launch {
                                 if (it is Response.Success) {
-                                    lifecycleScope.launch {
+                                    Log.e("gggg", "Suc")
                                         studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-                                    }
                                 }
-                            }
+                                    Log.e("gggg", "DFDFFDA")
+                                datastore.changeLoginState(false)
+                                SplashScreenFragment.ACCESS_TOKEN = "_"
+                                SplashScreenFragment.REFRESH_TOKEN = "_"
+                                datastore.saveAccessToken("_")
+                                datastore.saveRefreshToken("_")
+                                goToNextFragment(LoginFragment())
+                                    dialog.dismiss()
+                                }
                         }
-                    }
-                } finally {
-                    goToNextFragment(LoginFragment())
-                }
+
+                        }
+//                    }
+//                } finally {
+                else {
+                            datastore.changeLoginState(false)
+                            SplashScreenFragment.ACCESS_TOKEN = "_"
+                            SplashScreenFragment.REFRESH_TOKEN = "_"
+                            datastore.saveAccessToken("_")
+                            datastore.saveRefreshToken("_")
+                            goToNextFragment(LoginFragment())
+                            dialog.dismiss()
+                        }
+//                }
             }
-            dialog.dismiss()
         }
 
         cancel.setOnClickListener { dialog.dismiss() }

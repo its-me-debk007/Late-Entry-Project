@@ -26,6 +26,9 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -66,6 +69,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
+        activity?.let { it.window.decorView.systemUiVisibility = 0 }
         binding = FragmentBarcodeScannerBinding.bind(view)
         venue = HashMap()
         venue2 = HashMap()
@@ -303,8 +308,10 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 }
 
                 if (!flag) {
-                    studentNoTextInputLayout.helperText = "Invalid student number"
+                    studentNoTextInputLayout.helperText = "     " + "Invalid student number"
                     okButton.isEnabled = false
+                    okButton.setTextColor(Color.parseColor("#BFBFBF"))
+                    okButton.setBackgroundResource(R.drawable.ok_button_curved_edge)
                 } else {
                     Utils().hideKeyboard(studentNo, activity)
                     bottomSheetDialog.setContentView(seeStudentDetailView)
@@ -322,18 +329,13 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         }
 
         var student: String
-        var venueId = -1
+        var venueId: Int
 
         submitLateEntryBtn.setOnClickListener {
-            lifecycleScope.launchWhenStarted {
+            lifecycleScope.launch {
                 var flag = false
-                val studt:String
-                if (bool==true){
-                    studt= student_No.toString()
-                }
-                else{
-                    studt = studentNo.text.toString()
-                }
+                val studt = if (bool) student_No.toString()
+                    else studentNo.text.toString()
                 val studentList = studentDatabase.studentDao().getStudentDetails()
                 studentList.forEach {
                     if (it.student_no == studt) {
@@ -342,26 +344,15 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                     }
                 }
 
-                if (!flag) {
-                    studentNoInputLayout.helperText = "Sync your data"
-//                    submitLateEntryBtn.isEnabled = true
-//                    viewDetails.isEnabled = true
-//                    viewDetails.setTextColor(
-//                        ContextCompat.getColor(
-//                            requireContext(),
-//                            R.color.disabledSettingsBtnColor
-//                        )
-//                    )
-                }
-                else
-                {
+                if (!flag) studentNoInputLayout.helperText = "Sync your data"
+                else {
                     showToast("Late entry registered")
                     bottomSheetDialog.cancel()
                     student = studentNoEditText.text.toString().trim()
 
-                    lifecycleScope.launch {
+//                    lifecycleScope.launch {
                         venueId = datastore.getId("ID_KEY")!!
-                    }
+//                    }
 
                     lateEntryViewModel.submitResult(student, venueId)
                     lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {

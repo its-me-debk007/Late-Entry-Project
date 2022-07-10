@@ -27,6 +27,7 @@ class FailedEntriesRepository {
 				when {
 					response.isSuccessful -> {
 						liveData.postValue(Response.Success(response.body()!!))
+						Log.e("ffff", "Failed entry success")
 					}
 
 					response.code() == 403 -> {
@@ -37,6 +38,7 @@ class FailedEntriesRepository {
 								ErrorPojoClass::class.java
 							)
 						liveData.postValue(mError.message?.let { Response.Error(it) })
+						Log.e("ffff", "Failed entry failure")
 					}
 
 					else -> liveData.postValue(Response.Error(response.message()))
@@ -45,9 +47,9 @@ class FailedEntriesRepository {
 			}
 
 			override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
-				val message =if (t.message == "Unable to resolve host \"lateentry.azurewebsites.net\": No address associated with hostname")
-					"No Internet connection! Please connect to the Internet first!"
-					else t.message+ " Please try again"
+				val message = if (t.message?.substring(0, 22) == "Unable to resolve host")
+					"No Internet connection"
+					else t.message + " Please try again"
 
 				liveData.postValue(Response.Error(message))
 			}
