@@ -73,8 +73,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         initializeCamera()
         toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
 
-        val checkNetworkConnection = ConnectivityLiveData(requireActivity().application)
-        checkNetworkConnection.observe(viewLifecycleOwner) {
+        val checkNetworkConnection = context?.let { ConnectivityLiveData(it) }
+        checkNetworkConnection?.observe(viewLifecycleOwner) {
             if (it) {
                 val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_out)
                 binding.noConnection.startAnimation(animation)
@@ -342,6 +342,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                     }
                 }
 
+                Log.d("flag", "showBottomSheet: $flag")
                 if (!flag) {
                     studentNoInputLayout.helperText = "Sync your data"
 //                    submitLateEntryBtn.isEnabled = true
@@ -363,7 +364,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                         venueId = datastore.getId("ID_KEY")!!
                     }
 
-                    lateEntryViewModel.submitResult(student, venueId)
+                    context?.let { it1 -> lateEntryViewModel.submitResult(student, venueId, it1) }
                     lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
                         if (it is Response.Error && it.errorMessage == "Save to DB") {
                             lifecycleScope.launch {

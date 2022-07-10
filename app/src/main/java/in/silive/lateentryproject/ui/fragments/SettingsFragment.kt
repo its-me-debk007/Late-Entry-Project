@@ -60,7 +60,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     studentDatabase.studentDao().clearStudentTable()
                 }
                 disableBtn(syncBtn, true)
-                bulkViewModel.sendResult()
+                context?.let { it1 -> bulkViewModel.sendResult(it1) }
                 bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
                     if (it is Response.Success) {
                         val venueMap = mutableMapOf<Int, String>()
@@ -113,19 +113,21 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                         disableBtn(uploadBtn, false)
                     }
                     else
-                        viewModel.bulkUpload(BulkReqDataClass(entries!!)).observe(viewLifecycleOwner){
-                            if (it is Response.Success) {
+                        context?.let { it1 ->
+                            viewModel.bulkUpload(BulkReqDataClass(entries!!), it1).observe(viewLifecycleOwner){
+                                if (it is Response.Success) {
 
-                                lifecycleScope.launch {
-                                    showToast("Failed entries registered")
-                                    studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-                                    lastUploadTime.text = "Failed entries count: ${
-                                        studentDatabase.offlineLateEntryDao().getCount()
-                                    }"
-                                }
-                            } else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
+                                    lifecycleScope.launch {
+                                        showToast("Failed entries registered")
+                                        studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+                                        lastUploadTime.text = "Failed entries count: ${
+                                            studentDatabase.offlineLateEntryDao().getCount()
+                                        }"
+                                    }
+                                } else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
 
-                            disableBtn(uploadBtn, false)
+                                disableBtn(uploadBtn, false)
+                            }
                         }
 
                 }
@@ -166,10 +168,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                             )
                         }
                         if (entries != null) {
-                            viewModel.bulkUpload(BulkReqDataClass(entries!!)).observe(viewLifecycleOwner){
-                                if (it is Response.Success) {
-                                    lifecycleScope.launch {
-                                        studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+                            context?.let { it1 ->
+                                viewModel.bulkUpload(BulkReqDataClass(entries!!), it1).observe(viewLifecycleOwner){
+                                    if (it is Response.Success) {
+                                        lifecycleScope.launch {
+                                            studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+                                        }
                                     }
                                 }
                             }

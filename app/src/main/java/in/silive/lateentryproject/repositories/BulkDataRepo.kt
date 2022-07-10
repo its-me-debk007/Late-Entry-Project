@@ -6,20 +6,23 @@ import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.ui.activities.MainActivity
+import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.utils.Utils
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 
 class BulkDataRepo(private val studentDatabase: StudentDatabase) {
 	private val bulkDataLiveData = MutableLiveData<Response<BulkDataClass>>()
 
-	fun cacheData(): MutableLiveData<Response<BulkDataClass>> {
+	fun cacheData(context:Context): MutableLiveData<Response<BulkDataClass>> {
 		val call = ServiceBuilder.buildService().cacheData()
 
 		call.enqueue(object : Callback<BulkDataClass?> {
@@ -34,7 +37,19 @@ class BulkDataRepo(private val studentDatabase: StudentDatabase) {
 					}
 					bulkDataLiveData.postValue(Response.Success(responseBody))
 
-				} else {
+				}else if(response.code()==401){
+					runBlocking{
+						Datastore(context).getAccessToken()?.let {
+							Datastore(context).getRefreshToken()?.let { it1 ->
+								Utils().generateToken(
+									it, it1,context
+								)
+							}
+						}
+						cacheData(context)
+					}
+				}
+				else {
 					bulkDataLiveData.postValue(Response.Error(response.message()))
 				}
 			}

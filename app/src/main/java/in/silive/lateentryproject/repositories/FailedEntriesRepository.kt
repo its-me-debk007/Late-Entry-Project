@@ -5,16 +5,22 @@ import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
+import `in`.silive.lateentryproject.utils.Datastore
+import `in`.silive.lateentryproject.utils.Utils
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 
 class FailedEntriesRepository {
 
-	fun bulkUpload(body: BulkReqDataClass): MutableLiveData<Response<MessageDataClass>> {
+	fun bulkUpload(body: BulkReqDataClass,context: Context): MutableLiveData<Response<MessageDataClass>> {
         val liveData = MutableLiveData<Response<MessageDataClass>>()
         val call = ServiceBuilder.buildService().bulkUpload(body)
 
@@ -28,7 +34,18 @@ class FailedEntriesRepository {
 					response.isSuccessful -> {
 						liveData.postValue(Response.Success(response.body()!!))
 					}
-
+					response.code()==401 ->{
+						runBlocking {
+							Datastore(context).getAccessToken()?.let {
+								Datastore(context).getRefreshToken()?.let { it1 ->
+									Utils().generateToken(
+										it, it1,context
+									)
+								}
+							}
+							bulkUpload(body,context)
+						}
+					}
 					response.code() == 403 -> {
 						val gson: Gson = GsonBuilder().create()
 						val mError: ErrorPojoClass =

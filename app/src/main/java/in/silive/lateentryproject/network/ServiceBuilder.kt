@@ -13,7 +13,7 @@ object ServiceBuilder {
     private const val baseURL = "https://late-entry.azurewebsites.net"
 
 	fun buildService(): ApiInterface {
-//		Log.e("dddd", "access token is: ${SplashScreenFragment.ACCESS_TOKEN}")
+		Log.e("dddd", "access token is: ${SplashScreenFragment.ACCESS_TOKEN}")
 
 		val retrofit: Retrofit
 		if (SplashScreenFragment.ACCESS_TOKEN == null || SplashScreenFragment.ACCESS_TOKEN == "_") {
