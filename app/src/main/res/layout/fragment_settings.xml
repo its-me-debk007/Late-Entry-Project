@@ -81,6 +81,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/materialTextView" />
 
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/syncProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:indicatorSize="24dp"
+                app:trackCornerRadius="8dp"
+                app:trackThickness="3dp"
+                android:visibility="invisible"
+                app:indicatorColor="@color/custom_blue"
+                app:layout_constraintBottom_toBottomOf="@id/syncBtn"
+                app:layout_constraintEnd_toEndOf="@id/syncBtn"
+                app:layout_constraintStart_toStartOf="@id/syncBtn"
+                app:layout_constraintTop_toTopOf="@+id/syncBtn" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/lastSyncTime"
                 android:layout_width="wrap_content"
@@ -140,6 +155,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/materialTextView2" />
 
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/uploadProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:indicatorSize="24dp"
+                app:trackCornerRadius="8dp"
+                app:trackThickness="3dp"
+                android:visibility="invisible"
+                app:indicatorColor="@color/custom_blue"
+                app:layout_constraintBottom_toBottomOf="@id/uploadBtn"
+                app:layout_constraintEnd_toEndOf="@id/uploadBtn"
+                app:layout_constraintStart_toStartOf="@id/uploadBtn"
+                app:layout_constraintTop_toTopOf="@+id/uploadBtn" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/lastUploadTime"
                 android:layout_width="wrap_content"
@@ -186,17 +216,17 @@
             app:strokeColor="#DCDDE2"
             app:strokeWidth="1dp" />
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            app:indicatorColor="@color/custom_blue"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logoutBtn" />
+<!--        <com.google.android.material.progressindicator.CircularProgressIndicator-->
+<!--            android:id="@+id/progressBar"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:indeterminate="true"-->
+<!--            android:visibility="invisible"-->
+<!--            app:indicatorColor="@color/custom_blue"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/logoutBtn" />-->
 
         <ImageView
             android:layout_width="wrap_content"

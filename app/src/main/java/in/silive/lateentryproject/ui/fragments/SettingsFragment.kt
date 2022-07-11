@@ -56,7 +56,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             }
             backBtn.setOnClickListener { goToNextFragment(BarcodeFragment()) }
 
-            logoutBtn.setOnClickListener { showLogoutDialog() }
+            logoutBtn.setOnClickListener {
+                it.isEnabled = false
+                showLogoutDialog()
+                logoutBtn.postDelayed({
+                    it.isEnabled = true
+                                      }, 300)
+            }
 
             syncBtn.setOnClickListener {
                 lifecycleScope.launch {
@@ -107,7 +113,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 }
                     if (entries.size == 0)
                     {
-                        showToast("No failed entries exist")
+                        showToast("No failed entries")
                         disableBtn(uploadBtn, false)
                     }
                     else {
@@ -212,20 +218,24 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private fun disableBtn(btn: MaterialButton, bool: Boolean) {
         btn.isEnabled = !bool
-
+        val progressBar =  if (btn.id == 2131362265) binding.syncProgressBar
+            else binding.uploadProgressBar
         if (bool) {
-            btn.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.disabledSettingsBtnColor
-                )
-            )
-            btn.setIconTintResource(R.color.disabledSettingsBtnColor)
-            binding.progressBar.visibility = View.VISIBLE
+//            btn.setTextColor(
+//                ContextCompat.getColor(
+//                    requireContext(),
+//                    R.color.disabledSettingsBtnColor
+//                )
+//            )
+            btn.text = ""
+            btn.setIconTintResource(R.color.colorTransparent)
+            progressBar.visibility = View.VISIBLE
+
         } else {
-            btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
+//            btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
+            btn.text = if (btn.id == 2131362265) "Sync Data" else "Upload Data"
             btn.setIconTintResource(R.color.custom_blue)
-            binding.progressBar.visibility = View.INVISIBLE
+            progressBar.visibility = View.INVISIBLE
         }
     }
 

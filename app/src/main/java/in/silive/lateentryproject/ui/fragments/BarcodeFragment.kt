@@ -67,6 +67,13 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         lateinit var scannerView: ZBarScannerView
     }
 
+    val customView by lazy { layoutInflater.inflate(R.layout.dialog, null) }
+    val builder by lazy { MaterialAlertDialogBuilder(requireContext()).apply {
+        setView(customView)
+        background = ColorDrawable(Color.TRANSPARENT)
+    } }
+    val dialog by lazy { builder.show() }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
@@ -469,12 +476,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     }
 
     private fun showExitDialog() {
-        val customView = layoutInflater.inflate(R.layout.dialog, null)
-        val builder = MaterialAlertDialogBuilder(requireContext()).apply {
-            setView(customView)
-            background = ColorDrawable(Color.TRANSPARENT)
-        }
-        val dialog = builder.show()
+
+        if (!dialog.isShowing) dialog.show()
 
         binding.scannerContainer.postDelayed({
             scannerView.stopCamera()

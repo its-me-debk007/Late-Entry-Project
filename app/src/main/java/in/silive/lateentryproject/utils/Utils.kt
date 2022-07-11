@@ -74,15 +74,15 @@ class Utils {
 		return current.format(formatter).substring(0, 11)
 	}
 
-	fun compareTimeInHrs(t1: String, t2: String): Long {
-		val ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
-		val sdf = SimpleDateFormat(ISO_8601_24H_FULL_FORMAT, Locale.UK)
-		val time1 = sdf.parse(t1)
-		val time2 = sdf.parse(t2)
-
-		val diff = time2!!.time - time1!!.time
-		return TimeUnit.MILLISECONDS.toHours(diff)
-	}
+//	fun compareTimeInHrs(t1: String, t2: String): Long {
+//		val ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"
+//		val sdf = SimpleDateFormat(ISO_8601_24H_FULL_FORMAT, Locale.UK)
+//		val time1 = sdf.parse(t1)
+//		val time2 = sdf.parse(t2)
+//
+//		val diff = time2!!.time - time1!!.time
+//		return TimeUnit.MILLISECONDS.toHours(diff)
+//	}
 
 //	suspend fun generateToken(token: String, refToken: String, context: Context)
 //	{
@@ -112,7 +112,7 @@ class Utils {
 	fun generateNewToken(context: Context) {
 		runBlocking {
 			try {
-				Log.e("ddddold", "${SplashScreenFragment.ACCESS_TOKEN}")
+				Log.e("dddd", "${SplashScreenFragment.ACCESS_TOKEN}")
 				val response = ServiceBuilder.buildService().generateToken(TokenDataClass(
 					SplashScreenFragment.REFRESH_TOKEN, SplashScreenFragment.ACCESS_TOKEN))
 				SplashScreenFragment.ACCESS_TOKEN = response.body()?.access
