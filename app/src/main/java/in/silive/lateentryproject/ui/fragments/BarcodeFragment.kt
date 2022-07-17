@@ -14,12 +14,12 @@ import `in`.silive.lateentryproject.view_models.LateEntryViewModel
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.*
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
@@ -27,8 +27,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -48,108 +46,110 @@ import java.io.File
 
 class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView
 .ResultHandler, VenueClickListenerInterface {
-    private lateinit var binding: FragmentBarcodeScannerBinding
-    private val venueBottomSheetDialog by lazy { BottomSheetDialog(requireContext()) }
-    private val datastore by lazy { Datastore(requireContext()) }
-    private val studentDatabase by lazy { StudentDatabase.getDatabase(requireContext()) }
-    private lateinit var venue: MutableMap<Int, String>
-    private lateinit var venue2: Map<Int, String>
-    private var student_No: String? = null
-    private var bool:Boolean = false
-    private lateinit var toast: Toast
-    private val bottomSheetDialog by lazy { BottomSheetDialog(requireContext()) }
-    private val lateEntryViewModel by lazy {
-        ViewModelProvider(this)[LateEntryViewModel::class.java]
-    }
-    private lateinit var seeStudentDetailView: View
+	private lateinit var binding: FragmentBarcodeScannerBinding
+	private val venueBottomSheetDialog by lazy { BottomSheetDialog(requireContext()) }
+	private val datastore by lazy { Datastore(requireContext()) }
+	private val studentDatabase by lazy { StudentDatabase.getDatabase(requireContext()) }
+	private lateinit var venue: MutableMap<Int, String>
+	private lateinit var venue2: Map<Int, String>
+	private var student_No: String? = null
+	private var bool: Boolean = false
+	private lateinit var toast: Toast
+	private val bottomSheetDialog by lazy { BottomSheetDialog(requireContext()) }
+	private val lateEntryViewModel by lazy {
+		ViewModelProvider(this)[LateEntryViewModel::class.java]
+	}
+	private lateinit var seeStudentDetailView: View
 
-    companion object {
-        lateinit var scannerView: ZBarScannerView
-    }
+	companion object {
+		lateinit var scannerView: ZBarScannerView
+	}
 
-    val customView by lazy { layoutInflater.inflate(R.layout.dialog, null) }
-    val builder by lazy { MaterialAlertDialogBuilder(requireContext()).apply {
-        setView(customView)
-        background = ColorDrawable(Color.TRANSPARENT)
-    } }
-    val dialog by lazy { builder.show() }
+	val customView by lazy { layoutInflater.inflate(R.layout.dialog, null) }
+	val builder by lazy {
+		MaterialAlertDialogBuilder(requireContext()).apply {
+			setView(customView)
+			background = ColorDrawable(Color.TRANSPARENT)
+		}
+	}
+	val dialog by lazy { builder.show() }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
-        activity?.let { it.window.decorView.systemUiVisibility = 0 }
-        binding = FragmentBarcodeScannerBinding.bind(view)
-        venue = HashMap()
-        venue2 = HashMap()
-        onClicks()
-        initializeCamera()
-        toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
+		activity?.let { it.window.decorView.systemUiVisibility = 0 }
+		binding = FragmentBarcodeScannerBinding.bind(view)
+		venue = HashMap()
+		venue2 = HashMap()
+		onClicks()
+		initializeCamera()
+		toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
 
-        val checkNetworkConnection = context?.let { ConnectivityLiveData(it) }
-        checkNetworkConnection?.observe(viewLifecycleOwner) {
-            if (it) {
-                val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_out)
-                binding.noConnection.startAnimation(animation)
-                binding.noConnection.visibility = View.GONE
-            } else {
-                val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_in)
-                binding.noConnection.startAnimation(animation)
-                binding.noConnection.visibility = View.VISIBLE
-            }
-        }
+		val checkNetworkConnection = context?.let { ConnectivityLiveData(it) }
+		checkNetworkConnection?.observe(viewLifecycleOwner) {
+			if (it) {
+				val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_out)
+				binding.noConnection.startAnimation(animation)
+				binding.noConnection.visibility = View.GONE
+			} else {
+				val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_in)
+				binding.noConnection.startAnimation(animation)
+				binding.noConnection.visibility = View.VISIBLE
+			}
+		}
 
-        binding.enterStudentNoBtn.setOnClickListener {
-            if (binding.enterStudentNoBtn.isEnabled)
-                showBottomSheet(null)
+		binding.enterStudentNoBtn.setOnClickListener {
+			if (binding.enterStudentNoBtn.isEnabled)
+				showBottomSheet(null)
 
-            binding.enterStudentNoBtn.isEnabled = false
-            binding.enterStudentNoBtn.isClickable = false
+			binding.enterStudentNoBtn.isEnabled = false
+			binding.enterStudentNoBtn.isClickable = false
 
-            binding.scannerContainer.postDelayed({
-                scannerView.stopCamera()
-            }, 400)
-        }
+			binding.scannerContainer.postDelayed({
+													 scannerView.stopCamera()
+												 }, 400)
+		}
 
-        binding.setting.setOnClickListener {
-                activity?.supportFragmentManager?.beginTransaction()
-                    ?.replace(
-                        R.id.fragmentContainerView,
-                        SettingsFragment()
-                    )
-                    ?.commit()
-        }
+		binding.setting.setOnClickListener {
+			activity?.supportFragmentManager?.beginTransaction()
+				?.replace(
+					R.id.fragmentContainerView,
+					SettingsFragment()
+				)
+				?.commit()
+		}
 
-        lifecycleScope.launch {
-            venue2 =
-                datastore.getVenueDetails()?.replace("\\s".toRegex(), "")!!
-                    .split(",").associateTo(HashMap()) {
-                        val (left, right) = it.split("=")
-                        left.toInt() to right
-                    }
-            binding.location.text = datastore.getDefaultVenue()
-        }
-        binding.location.setOnClickListener {
-            val venueItems =
-                layoutInflater.inflate(R.layout.layout_venue_bottom_sheet, null)
-            venueBottomSheetDialog.setContentView(venueItems)
-            venueBottomSheetDialog.show()
+		lifecycleScope.launch {
+			venue2 =
+				datastore.getVenueDetails()?.replace("\\s".toRegex(), "")!!
+					.split(",").associateTo(HashMap()) {
+						val (left, right) = it.split("=")
+						left.toInt() to right
+					}
+			binding.location.text = datastore.getDefaultVenue()
+		}
+		binding.location.setOnClickListener {
+			val venueItems =
+				layoutInflater.inflate(R.layout.layout_venue_bottom_sheet, null)
+			venueBottomSheetDialog.setContentView(venueItems)
+			venueBottomSheetDialog.show()
 
-            binding.scannerContainer.postDelayed({
-                scannerView.stopCamera()
-            }, 400)
+			binding.scannerContainer.postDelayed({
+													 scannerView.stopCamera()
+												 }, 400)
 
-            val adapter =
-                VenueRecyclerAdapter(venue2, binding.location.text.toString(), this)
-            val recyclerView = venueItems.findViewById<RecyclerView>(R.id.recyclerView)
-            recyclerView.adapter = adapter
+			val adapter =
+				VenueRecyclerAdapter(venue2, binding.location.text.toString(), this)
+			val recyclerView = venueItems.findViewById<RecyclerView>(R.id.recyclerView)
+			recyclerView.adapter = adapter
 
-            venueBottomSheetDialog.setOnCancelListener {
-                scannerView.setResultHandler(this)
-                scannerView.startCamera()
-            }
-        }
+			venueBottomSheetDialog.setOnCancelListener {
+				scannerView.setResultHandler(this)
+				scannerView.startCamera()
+			}
+		}
 
-    }
+	}
 
 	private fun showToast(text: String) {
 		toast.cancel()
@@ -157,344 +157,346 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		toast.show()
 	}
 
-    private fun initializeCamera() {
-        scannerView = ZBarScannerView(context)
-        scannerView.setResultHandler(this)
+	private fun initializeCamera() {
+		scannerView = ZBarScannerView(context)
+		scannerView.setResultHandler(this)
 
-        scannerView.apply {
-            setBorderColor(ContextCompat.getColor(requireContext(), R.color.white))
-            setLaserColor(ContextCompat.getColor(requireContext(), R.color.black))
-            setBorderStrokeWidth(13)
-            setMaskColor(ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
-            setLaserEnabled(true)
-            setBorderLineLength(200)
-            setupScanner()
-            setAutoFocus(true)
-        }
+		scannerView.apply {
+			setBorderColor(ContextCompat.getColor(requireContext(), R.color.white))
+			setLaserColor(ContextCompat.getColor(requireContext(), R.color.black))
+			setBorderStrokeWidth(13)
+			setMaskColor(ContextCompat.getColor(requireContext(), R.color.colorTranslucent))
+			setLaserEnabled(true)
+			setBorderLineLength(200)
+			setupScanner()
+			setAutoFocus(true)
+		}
 
-        scannerView.startCamera()
-        binding.scannerContainer.addView(scannerView)
-    }
+		scannerView.startCamera()
+		binding.scannerContainer.addView(scannerView)
+	}
 
-    private fun onClicks() {
-        binding.flashToggle.setOnClickListener {
-            if (binding.flashToggle.isSelected) {
-                offFlashLight()
-                binding.flashToggle.apply {
-                    backgroundTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(), R.color.colorTransparent
-                        )
-                    )
-                    imageTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(), R.color.white
-                        )
-                    )
-                }
-            } else {
-                binding.flashToggle.apply {
-                    backgroundTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(), R.color.white
-                        )
-                    )
-                    imageTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(), R.color.black
-                        )
-                    )
-                }
-                onFlashLight()
-            }
-        }
-    }
+	private fun onClicks() {
+		binding.flashToggle.setOnClickListener {
+			if (binding.flashToggle.isSelected) {
+				offFlashLight()
+				binding.flashToggle.apply {
+					backgroundTintList = ColorStateList.valueOf(
+						ContextCompat.getColor(
+							requireContext(), R.color.colorTransparent
+						)
+					)
+					imageTintList = ColorStateList.valueOf(
+						ContextCompat.getColor(
+							requireContext(), R.color.white
+						)
+					)
+				}
+			} else {
+				binding.flashToggle.apply {
+					backgroundTintList = ColorStateList.valueOf(
+						ContextCompat.getColor(
+							requireContext(), R.color.white
+						)
+					)
+					imageTintList = ColorStateList.valueOf(
+						ContextCompat.getColor(
+							requireContext(), R.color.black
+						)
+					)
+				}
+				onFlashLight()
+			}
+		}
+	}
 
-    private fun onFlashLight() {
-        binding.flashToggle.isSelected = true
-        scannerView.flash = true
-    }
+	private fun onFlashLight() {
+		binding.flashToggle.isSelected = true
+		scannerView.flash = true
+	}
 
-    private fun offFlashLight() {
-        binding.flashToggle.isSelected = false
-        scannerView.flash = false
-    }
+	private fun offFlashLight() {
+		binding.flashToggle.isSelected = false
+		scannerView.flash = false
+	}
 
-    override fun onResume() {
-        super.onResume()
-        scannerView.setResultHandler(this)
-        scannerView.startCamera()
-    }
+	override fun onResume() {
+		super.onResume()
+		scannerView.setResultHandler(this)
+		scannerView.startCamera()
+	}
 
-    override fun onPause() {
-        super.onPause()
+	override fun onPause() {
+		super.onPause()
 		toast.cancel()
-        binding.scannerContainer.postDelayed({
-            scannerView.stopCamera()
-        }, 400)
-    }
+		binding.scannerContainer.postDelayed({
+												 scannerView.stopCamera()
+											 }, 400)
+	}
 
-    override fun handleResult(rawResult: Result?) {
-        student_No = rawResult?.contents.toString()
-        bool=true
-        rawResult?.contents?.let {
-            if (it.length in 7..15) showBottomSheet(rawResult.contents)
-            else scannerView.resumeCameraPreview(this)
-        }
-    }
+	override fun handleResult(rawResult: Result?) {
+		student_No = rawResult?.contents.toString()
+		bool = true
+		rawResult?.contents?.let {
+			if (it.length in 7..15) showBottomSheet(rawResult.contents)
+			else scannerView.resumeCameraPreview(this)
+		}
+	}
 
-    private fun showBottomSheet(studentNumber: String?) {
-        val enterStudentNoView = layoutInflater.inflate(R.layout.layout_input_bottom_sheet, null)
-        seeStudentDetailView =
-            layoutInflater.inflate(R.layout.layout_entry_bottom_sheet, null)
+	private fun showBottomSheet(studentNumber: String?) {
+		val enterStudentNoView = layoutInflater.inflate(R.layout.layout_input_bottom_sheet, null)
+		seeStudentDetailView =
+			layoutInflater.inflate(R.layout.layout_entry_bottom_sheet, null)
 
-        val studentNo = enterStudentNoView.findViewById<TextInputEditText>(R.id.studentNo)
-        val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
-        val studentNoTextInputLayout =
-            enterStudentNoView.findViewById<TextInputLayout>(R.id.studentNoTextInputLayout)
-        val studentNoEditText = seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNoEditText)
-        val studentNoInputLayout = seeStudentDetailView.findViewById<TextInputLayout>(R.id.studentNoInputLayout)
-        val submitLateEntryBtn =
-            seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
-        val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
-        val name = seeStudentDetailView.findViewById<MaterialTextView>(R.id.name)
-        val branch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.branch)
-        val batch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.batch)
-        val studentno = seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNo)
-        val studentImage = seeStudentDetailView.findViewById<ImageView>(R.id.studentImage)
+		val studentNo = enterStudentNoView.findViewById<TextInputEditText>(R.id.studentNo)
+		val okButton = enterStudentNoView.findViewById<MaterialButton>(R.id.okButton)
+		val studentNoTextInputLayout =
+			enterStudentNoView.findViewById<TextInputLayout>(R.id.studentNoTextInputLayout)
+		val studentNoEditText =
+			seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNoEditText)
+		val studentNoInputLayout =
+			seeStudentDetailView.findViewById<TextInputLayout>(R.id.studentNoInputLayout)
+		val submitLateEntryBtn =
+			seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
+		val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
+		val name = seeStudentDetailView.findViewById<MaterialTextView>(R.id.name)
+		val branch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.branch)
+		val batch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.batch)
+		val studentno = seeStudentDetailView.findViewById<MaterialTextView>(R.id.studentNo)
+		val studentImage = seeStudentDetailView.findViewById<ImageView>(R.id.studentImage)
 
-        val viewDetailConstraint =
-            seeStudentDetailView.findViewById<ConstraintLayout>(R.id.constraint)
-        val studentConstraint =
-            seeStudentDetailView.findViewById<ConstraintLayout>(R.id.studentConstraint)
-        studentNoTextInputLayout.helperText = " "
-        if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
-        else {
-            bottomSheetDialog.setContentView(seeStudentDetailView)
-            studentNoEditText.setText(studentNumber)
-        }
+		val viewDetailConstraint =
+			seeStudentDetailView.findViewById<ConstraintLayout>(R.id.constraint)
+		val studentConstraint =
+			seeStudentDetailView.findViewById<ConstraintLayout>(R.id.studentConstraint)
+		studentNoTextInputLayout.helperText = " "
+		if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
+		else {
+			bottomSheetDialog.setContentView(seeStudentDetailView)
+			studentNoEditText.setText(studentNumber)
+		}
 
-        bottomSheetDialog.show()
+		bottomSheetDialog.show()
 
-        studentNo.requestFocus()
-        studentNo.postDelayed({
-            Utils().showKeyboard(studentNo, activity)
-            binding.enterStudentNoBtn.isEnabled = true
-            binding.enterStudentNoBtn.isClickable = true
-        }, 200)
+		studentNo.requestFocus()
+		studentNo.postDelayed({
+								  Utils().showKeyboard(studentNo, activity)
+								  binding.enterStudentNoBtn.isEnabled = true
+								  binding.enterStudentNoBtn.isClickable = true
+							  }, 200)
 
-        studentNo.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+		studentNo.addTextChangedListener(object : TextWatcher {
+			override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (p0 == null || p0.length < 7) {
-                    okButton.isEnabled = false
-                    okButton.setTextColor(Color.parseColor("#BFBFBF"))
-                    okButton.setBackgroundResource(R.drawable.ok_button_curved_edge)
-                    studentNoTextInputLayout.helperText = " "
-                } else {
-                    okButton.isEnabled = true
-                    okButton.setTextColor(Color.parseColor("#FFFFFF"))
-                    okButton.setBackgroundResource(R.drawable.ok_button_curved_edge_enable)
-                    studentNoTextInputLayout.helperText = " "
-                }
-            }
+			override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+				if (p0 == null || p0.length < 7) {
+					okButton.isEnabled = false
+					okButton.setTextColor(Color.parseColor("#BFBFBF"))
+					okButton.setBackgroundResource(R.drawable.ok_button_curved_edge)
+					studentNoTextInputLayout.helperText = " "
+				} else {
+					okButton.isEnabled = true
+					okButton.setTextColor(Color.parseColor("#FFFFFF"))
+					okButton.setBackgroundResource(R.drawable.ok_button_curved_edge_enable)
+					studentNoTextInputLayout.helperText = " "
+				}
+			}
 
-            override fun afterTextChanged(p0: Editable?) {}
-        })
+			override fun afterTextChanged(p0: Editable?) {}
+		})
 
-        okButton.setOnClickListener {
-            lifecycleScope.launch {
-                var flag = false
-                val studentList = studentDatabase.studentDao().getStudentDetails()
-                studentList.forEach {
-                    if (it.student_no == studentNo.text.toString()) {
-                        flag = true
-                        return@forEach
-                    }
-                }
+		okButton.setOnClickListener {
+			lifecycleScope.launch {
+				var flag = false
+				val studentList = studentDatabase.studentDao().getStudentDetails()
+				studentList.forEach {
+					if (it.student_no == studentNo.text.toString()) {
+						flag = true
+						return@forEach
+					}
+				}
 
-                if (!flag) {
-                    studentNoTextInputLayout.helperText = "     " + "Invalid student number"
-                    okButton.isEnabled = false
-                    okButton.setTextColor(Color.parseColor("#BFBFBF"))
-                    okButton.setBackgroundResource(R.drawable.ok_button_curved_edge)
-                } else {
-                    Utils().hideKeyboard(studentNo, activity)
-                    bottomSheetDialog.setContentView(seeStudentDetailView)
+				if (!flag) {
+					studentNoTextInputLayout.helperText = "     " + "Invalid student number"
+					okButton.isEnabled = false
+					okButton.setTextColor(Color.parseColor("#BFBFBF"))
+					okButton.setBackgroundResource(R.drawable.ok_button_curved_edge)
+				} else {
+					Utils().hideKeyboard(studentNo, activity)
+					bottomSheetDialog.setContentView(seeStudentDetailView)
 //                    student_No = studentNo.text.toString()
-                    studentNoEditText.setText(studentNo.text!!.trim())
-                    return@launch
-                }
-            }
-        }
+					studentNoEditText.setText(studentNo.text!!.trim())
+					return@launch
+				}
+			}
+		}
 
-        bottomSheetDialog.setOnCancelListener {
-                Utils().hideKeyboard(requireView(), activity)
-                scannerView.setResultHandler(this)
-                scannerView.startCamera()
-        }
+		bottomSheetDialog.setOnCancelListener {
+			Utils().hideKeyboard(requireView(), activity)
+			scannerView.setResultHandler(this)
+			scannerView.startCamera()
+		}
 
-        var student: String
-        var venueId: Int
+		var student: String
+		var venueId: Int
 
-        submitLateEntryBtn.setOnClickListener {
-            lifecycleScope.launch {
-                var flag = false
-                val studt = if (bool) student_No.toString()
-                    else studentNo.text.toString()
-                val studentList = studentDatabase.studentDao().getStudentDetails()
-                studentList.forEach {
-                    if (it.student_no == studt) {
-                        flag = true
-                        return@forEach
-                    }
-                }
+		submitLateEntryBtn.setOnClickListener {
+			lifecycleScope.launch {
+				var flag = false
+				val studt = if (bool) student_No.toString()
+				else studentNo.text.toString()
+				val studentList = studentDatabase.studentDao().getStudentDetails()
+				studentList.forEach {
+					if (it.student_no == studt) {
+						flag = true
+						return@forEach
+					}
+				}
 
-                if (!flag && bool) studentNoInputLayout.helperText = "Sync your data"
-                else {
-                    showToast("Late entry registered")
-                    bottomSheetDialog.cancel()
-                    student = studentNoEditText.text.toString().trim()
+				if (!flag && bool) studentNoInputLayout.helperText = "Sync your data"
+				else {
+					showToast("Late entry registered")
+					bottomSheetDialog.cancel()
+					student = studentNoEditText.text.toString().trim()
 
 //                    lifecycleScope.launch {
-                        venueId = datastore.getId("ID_KEY")!!
+					venueId = datastore.getId("ID_KEY")!!
 //                    }
 
-                    context?.let { it1 -> lateEntryViewModel.submitResult(student, venueId, it1) }
-                    lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
-                        if (it is Response.Error && it.errorMessage == "Save to DB") {
-                            lifecycleScope.launch {
-                                val currentTime = Utils().currentTimeInIsoFormat()
-                                studentDatabase.offlineLateEntryDao()
-                                    .addLateEntry(
-                                        OfflineLateEntry(
-                                            student_no = student,
-                                            timestamp = currentTime,
-                                            venue = venueId
-                                        )
-                                    )
-                            }
-                        }
-                    }
-                }
-            }
+					context?.let { it1 -> lateEntryViewModel.submitResult(student, venueId, it1) }
+					lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
+						if (it is Response.Error && it.errorMessage == "Save to DB") {
+							lifecycleScope.launch {
+								val currentTime = Utils().currentTimeInIsoFormat()
+								studentDatabase.offlineLateEntryDao()
+									.addLateEntry(
+										OfflineLateEntry(
+											student_no = student,
+											timestamp = currentTime,
+											venue = venueId
+										)
+									)
+							}
+						}
+					}
+				}
+			}
 
-        }
+		}
 
-        viewDetails.setOnClickListener {
-            Utils().hideKeyboard(it, activity)
-            viewDetails.isEnabled = false
-            viewDetails.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.disabledSettingsBtnColor
-                )
-            )
+		viewDetails.setOnClickListener {
+			Utils().hideKeyboard(it, activity)
+			viewDetails.isEnabled = false
+			viewDetails.setTextColor(
+				ContextCompat.getColor(
+					requireContext(),
+					R.color.disabledSettingsBtnColor
+				)
+			)
 
-            lifecycleScope.launch {
-                val lateEntryList = studentDatabase.studentDao().getStudentDetails()
-                var flag = false
-                val studentNumber2 = studentNoEditText.text.toString().trim()
-                for (student in lateEntryList) {
-                    if (student.student_no == studentNumber2) {
-                        flag = true
-                        viewDetailConstraint.visibility = View.GONE
-                        studentConstraint.visibility = View.VISIBLE
+			lifecycleScope.launch {
+				val lateEntryList = studentDatabase.studentDao().getStudentDetails()
+				var flag = false
+				val studentNumber2 = studentNoEditText.text.toString().trim()
+				for (student in lateEntryList) {
+					if (student.student_no == studentNumber2) {
+						flag = true
+						viewDetailConstraint.visibility = View.GONE
+						studentConstraint.visibility = View.VISIBLE
 
-                        name.text = student.name
-                        branch.text = student.branch
-                        studentno.text = studentNumber2
-                        batch.text = student.batch.toString()
+						name.text = student.name
+						branch.text = student.branch
+						studentno.text = studentNumber2
+						batch.text = student.batch.toString()
 
-                        student.student_image?.let {
-                            if (!student.image_downloaded) {
-                                val imgUrl = "https://late-entry.azurewebsites.net$it"
-                                Glide.with(requireActivity())
-                                    .applyDefaultRequestOptions(
-                                        RequestOptions.placeholderOf(R.drawable.ic_placeholder)
-                                            .error(R.drawable.ic_placeholder)
-                                    )
-                                    .load(imgUrl)
-                                    .into(studentImage)
+						student.student_image?.let {
+							if (!student.image_downloaded) {
+								val imgUrl = "https://late-entry.azurewebsites.net$it"
+								Glide.with(requireActivity())
+									.applyDefaultRequestOptions(
+										RequestOptions.placeholderOf(R.drawable.ic_placeholder)
+											.error(R.drawable.ic_placeholder)
+									)
+									.load(imgUrl)
+									.into(studentImage)
 
-                                Utils().downloadImg(
-                                    requireContext(), imgUrl,
-                                    "${context?.filesDir}/Images/",
-                                    "${student.student_no}_${student.name}" +
-                                            ".jpg"
-                                )
-                                    .observe(viewLifecycleOwner) { result ->
-                                        if (result == "Download complete")
-                                            student.image_downloaded = true
-                                    }
-                            } else {
-                                val file = File(context?.filesDir, "Images/")
-                                Glide.with(requireContext())
-                                    .applyDefaultRequestOptions(
-                                        RequestOptions.placeholderOf(R.drawable.ic_placeholder)
-                                            .error(R.drawable.ic_placeholder)
-                                    )
-                                    .load(file.absolutePath + "${student.student_no}_${student.name}.jpg")
-                                    .into(studentImage)
-                            }
-                        }
-                    }
-                }
-                if (!flag) showToast("Invalid student number")
-            }
-        }
-    }
+								Utils().downloadImg(
+									requireContext(), imgUrl,
+									"${context?.filesDir}/Images/",
+									"${student.student_no}_${student.name}" +
+											".jpg"
+								)
+									.observe(viewLifecycleOwner) { result ->
+										if (result == "Download complete")
+											student.image_downloaded = true
+									}
+							} else {
+								val file = File(context?.filesDir, "Images/")
+								Glide.with(requireContext())
+									.applyDefaultRequestOptions(
+										RequestOptions.placeholderOf(R.drawable.ic_placeholder)
+											.error(R.drawable.ic_placeholder)
+									)
+									.load(file.absolutePath + "${student.student_no}_${student.name}.jpg")
+									.into(studentImage)
+							}
+						}
+					}
+				}
+				if (!flag) showToast("Invalid student number")
+			}
+		}
+	}
 
-    override fun venueClickListener(venue: String, id: Int) {
-        lifecycleScope.launch {
-            datastore.saveId("ID_KEY", id)
-            datastore.saveDefaultVenue(venue)
-        }
-        scannerView.setResultHandler(this)
-        scannerView.startCamera()
+	override fun venueClickListener(venue: String, id: Int) {
+		lifecycleScope.launch {
+			datastore.saveId("ID_KEY", id)
+			datastore.saveDefaultVenue(venue)
+		}
+		scannerView.setResultHandler(this)
+		scannerView.startCamera()
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            venueBottomSheetDialog.dismiss()
-        }, 150)
-        val animation =
-            AnimationUtils.loadAnimation(
-                context,
-                R.anim.long_fade_in
-            )
-        binding.location.startAnimation(animation)
-        binding.location.text = venue
-    }
+		Handler(Looper.getMainLooper()).postDelayed({
+														venueBottomSheetDialog.dismiss()
+													}, 150)
+		val animation =
+			AnimationUtils.loadAnimation(
+				context,
+				R.anim.long_fade_in
+			)
+		binding.location.startAnimation(animation)
+		binding.location.text = venue
+	}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                showExitDialog()
-            }
-        })
-    }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+			override fun handleOnBackPressed() {
+				showExitDialog()
+			}
+		})
+	}
 
-    private fun showExitDialog() {
+	private fun showExitDialog() {
 
-        if (!dialog.isShowing) dialog.show()
+		if (!dialog.isShowing) dialog.show()
 
-        binding.scannerContainer.postDelayed({
-            scannerView.stopCamera()
-        }, 400)
+		binding.scannerContainer.postDelayed({
+												 scannerView.stopCamera()
+											 }, 400)
 
-        customView.findViewById<MaterialTextView>(R.id.dialogMessage).setText(R.string.exitMessage)
-        val exit = customView.findViewById<MaterialButton>(R.id.positiveBtn)
-        val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+		customView.findViewById<MaterialTextView>(R.id.dialogMessage).setText(R.string.exitMessage)
+		val exit = customView.findViewById<MaterialButton>(R.id.positiveBtn)
+		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
 
-        exit.setOnClickListener { activity?.finishAffinity() }
+		exit.setOnClickListener { activity?.finishAffinity() }
 
-        cancel.setOnClickListener { dialog.dismiss() }
+		cancel.setOnClickListener { dialog.dismiss() }
 
-        dialog.setOnDismissListener {
-            scannerView.setResultHandler(this)
-            scannerView.startCamera()
-        }
-    }
+		dialog.setOnDismissListener {
+			scannerView.setResultHandler(this)
+			scannerView.startCamera()
+		}
+	}
 }
 

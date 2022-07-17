@@ -9,7 +9,8 @@ interface ApiInterface {
 
 	@POST("/auth/login/")
 	@FormUrlEncoded
-	fun login(@Field("email") email: String, @Field("password") password: String): Call<MessageDataClass>
+	fun login(@Field("email") email: String,
+			  @Field("password") password: String): Call<MessageDataClass>
 
 	@POST("/entry/scan/")
 	fun lateEntry(@Body body: LateEntryDataClass): Call<MessageDataClass>
@@ -18,9 +19,9 @@ interface ApiInterface {
 	fun bulkUpload(@Body body: BulkReqDataClass): Call<MessageDataClass>
 
 	@GET("/entry/syncall/")
-	fun cacheData():Call<BulkDataClass>
+	fun cacheData(): Call<BulkDataClass>
 
 	@POST("/auth/token/refresh/")
-	suspend fun generateToken(@Body data:TokenDataClass): Response<TokenDataClass>
+	suspend fun generateToken(@Body data: TokenDataClass): Response<TokenDataClass>
 
 }

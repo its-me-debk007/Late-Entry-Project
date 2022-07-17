@@ -5,7 +5,6 @@ import `in`.silive.lateentryproject.repositories.BulkDataRepo
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,8 +18,8 @@ class BulkDataViewModel(private val studentDatabase: StudentDatabase) : ViewMode
 	val _bulkDataResult: LiveData<Response<BulkDataClass>>
 		get() = bulkDataResult
 
-    fun sendResult(context: Context) = viewModelScope.launch {
-        bulkDataResult = BulkDataRepo(studentDatabase).cacheData(context)
+	fun sendResult(context: Context) = viewModelScope.launch {
+		bulkDataResult = BulkDataRepo(studentDatabase).cacheData(context)
 
-    }
+	}
 }

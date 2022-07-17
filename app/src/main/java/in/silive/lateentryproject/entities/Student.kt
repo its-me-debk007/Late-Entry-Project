@@ -1,16 +1,15 @@
 package `in`.silive.lateentryproject.entities
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "student")
 data class Student(
-    @PrimaryKey(autoGenerate = false)
-    val student_no: String,
-    val batch: Int,
-    val branch: String,
-    val name: String,
-    val student_image: String?,
-    var image_downloaded: Boolean
+	@PrimaryKey(autoGenerate = false)
+	val student_no: String,
+	val batch: Int,
+	val branch: String,
+	val name: String,
+	val student_image: String?,
+	var image_downloaded: Boolean
 )

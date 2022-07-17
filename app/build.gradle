@@ -31,14 +31,14 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
-        dataBinding true
+        viewBinding true
     }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
@@ -46,15 +46,16 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     // retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    // gson
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    // moshi
+    implementation "com.squareup.retrofit2:converter-moshi:2.4.0"
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
     // ViewModel
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0'
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.0"
     // LiveData
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.0'
     // QR/Bar Code Scanner
     implementation 'me.dm7.barcodescanner:zbar:1.9.13'
     //Gson

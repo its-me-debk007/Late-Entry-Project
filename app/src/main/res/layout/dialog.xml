@@ -69,15 +69,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            app:indicatorSize="24dp"
-            app:trackCornerRadius="8dp"
-            app:trackThickness="3dp"
             android:visibility="invisible"
             app:indicatorColor="@color/custom_blue"
+            app:indicatorSize="24dp"
             app:layout_constraintBottom_toBottomOf="@id/positiveBtn"
             app:layout_constraintEnd_toEndOf="@id/positiveBtn"
             app:layout_constraintStart_toStartOf="@id/positiveBtn"
-            app:layout_constraintTop_toTopOf="@+id/positiveBtn" />
+            app:layout_constraintTop_toTopOf="@+id/positiveBtn"
+            app:trackCornerRadius="8dp"
+            app:trackThickness="3dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

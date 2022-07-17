@@ -15,7 +15,7 @@ class LateEntryViewModel : ViewModel() {
 	val _lateEntryResult: LiveData<Response<MessageDataClass>>
 		get() = lateEntryResult
 
-	fun submitResult(studentNo: String, venue: Int,context: Context) = viewModelScope.launch {
-		lateEntryResult = LateEntryRepository().lateEntry(studentNo, venue,context)
+	fun submitResult(studentNo: String, venue: Int, context: Context) = viewModelScope.launch {
+		lateEntryResult = LateEntryRepository().lateEntry(studentNo, venue, context)
 	}
 }

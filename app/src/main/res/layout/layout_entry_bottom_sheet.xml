@@ -9,13 +9,12 @@
         android:id="@+id/horizontalBar"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_marginTop="8dp"
         android:layout_marginHorizontal="148dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
         android:background="@drawable/ic_horizontal_bar"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint"
@@ -27,25 +26,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalBar">
-<!--        <com.google.android.material.textview.MaterialTextView-->
-<!--            android:id="@+id/studentNoInputLayout"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginHorizontal="24dp"-->
-<!--            android:layout_marginTop="18dp"-->
-<!--            android:ellipsize="end"-->
-<!--            android:fontFamily="@font/source_sans_pro_semibold"-->
-<!--            android:padding="10dp"-->
-<!--            android:text=""-->
-<!--            android:textColor="#242E42"-->
-<!--            android:background="@drawable/student_number_text_bg"-->
-<!--            android:textSize="18sp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--             />-->
+        <!--        <com.google.android.material.textview.MaterialTextView-->
+        <!--            android:id="@+id/studentNoInputLayout"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginHorizontal="24dp"-->
+        <!--            android:layout_marginTop="18dp"-->
+        <!--            android:ellipsize="end"-->
+        <!--            android:fontFamily="@font/source_sans_pro_semibold"-->
+        <!--            android:padding="10dp"-->
+        <!--            android:text=""-->
+        <!--            android:textColor="#242E42"-->
+        <!--            android:background="@drawable/student_number_text_bg"-->
+        <!--            android:textSize="18sp"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"-->
+        <!--             />-->
 
-            <com.google.android.material.textfield.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/studentNoInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -59,100 +58,101 @@
             app:boxCornerRadiusTopStart="12dp"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
-            app:hintEnabled="false"
             app:helperTextTextAppearance="@font/source_sans_pro_semibold"
             app:helperTextTextColor="#F13A3A"
+            app:hintEnabled="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-                    <RelativeLayout
-                        android:id="@+id/relativeLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-<!--                        <com.google.android.material.button.MaterialButton-->
-<!--                            android:id="@+id/okButton"-->
-<!--                            android:layout_width="74dp"-->
-<!--                            android:layout_height="56dp"-->
-<!--                            android:layout_alignParentEnd="true"-->
-<!--                            android:background="@drawable/ok_button_curved_edge"-->
-<!--                            android:enabled="false"-->
-<!--                            android:fontFamily="@font/source_sans_pro_semibold"-->
-<!--                            android:text="OK"-->
-<!--                            android:textColor="#BFBFBF"-->
-<!--                            android:textSize="20sp"-->
-<!--                            />-->
+                <!--                        <com.google.android.material.button.MaterialButton-->
+                <!--                            android:id="@+id/okButton"-->
+                <!--                            android:layout_width="74dp"-->
+                <!--                            android:layout_height="56dp"-->
+                <!--                            android:layout_alignParentEnd="true"-->
+                <!--                            android:background="@drawable/ok_button_curved_edge"-->
+                <!--                            android:enabled="false"-->
+                <!--                            android:fontFamily="@font/source_sans_pro_semibold"-->
+                <!--                            android:text="OK"-->
+                <!--                            android:textColor="#BFBFBF"-->
+                <!--                            android:textSize="20sp"-->
+                <!--                            />-->
 
-                        <!--                        <com.google.android.material.textfield.TextInputEditText-->
-                        <!--                            android:id="@+id/studentNo"-->
-                        <!--                            android:layout_width="match_parent"-->
-                        <!--                            android:layout_height="56dp"-->
-                        <!--                            android:layout_marginEnd="74dp"-->
-                        <!--                            android:fontFamily="@font/source_sans_pro_semibold"-->
-                        <!--                            android:hint="  Student No."-->
-                        <!--                            android:imeOptions="actionGo"-->
-                        <!--                            android:inputType="number"-->
-                        <!--                            android:maxLength="15"-->
-                        <!--                            android:padding="16dp"-->
-                        <!--                            android:paddingEnd="91dp"-->
-                        <!--                            android:textColor="#242E42"-->
-                        <!--                            android:textColorHint="#BDC0C6"-->
-                        <!--                            android:textSize="18sp" />-->
+                <!--                        <com.google.android.material.textfield.TextInputEditText-->
+                <!--                            android:id="@+id/studentNo"-->
+                <!--                            android:layout_width="match_parent"-->
+                <!--                            android:layout_height="56dp"-->
+                <!--                            android:layout_marginEnd="74dp"-->
+                <!--                            android:fontFamily="@font/source_sans_pro_semibold"-->
+                <!--                            android:hint="  Student No."-->
+                <!--                            android:imeOptions="actionGo"-->
+                <!--                            android:inputType="number"-->
+                <!--                            android:maxLength="15"-->
+                <!--                            android:padding="16dp"-->
+                <!--                            android:paddingEnd="91dp"-->
+                <!--                            android:textColor="#242E42"-->
+                <!--                            android:textColorHint="#BDC0C6"-->
+                <!--                            android:textSize="18sp" />-->
 
 
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/studentNoEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="47dp"
-                            android:background="@drawable/curved_edge_edit_text"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/source_sans_pro_semibold"
-                            android:imeOptions="actionGo"
-                            android:inputType="number"
-                            android:maxLength="15"
-                            android:maxLines="1"
-                            android:paddingStart="12dp"
-                            android:paddingTop="6dp"
-                            android:paddingEnd="110dp"
-                            android:paddingBottom="8dp"
-                            android:textColor="#242E42"
-                            android:textSize="24sp" />
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/viewDetails"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_marginBottom="3dp"
-                            android:fontFamily="@font/source_sans_pro_semibold"
-                            android:foreground="@drawable/view_details_textview_ripple_effect"
-                            android:padding="12dp"
-                            android:text="View Details"
-                            android:textColor="@color/custom_blue"
-                            android:textSize="16sp" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/studentNoEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="47dp"
+                    android:background="@drawable/curved_edge_edit_text"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/source_sans_pro_semibold"
+                    android:imeOptions="actionGo"
+                    android:inputType="number"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    android:paddingStart="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="110dp"
+                    android:paddingBottom="8dp"
+                    android:textColor="#242E42"
+                    android:textSize="24sp" />
 
-                    </RelativeLayout>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/viewDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="3dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/source_sans_pro_semibold"
+                    android:foreground="@drawable/view_details_textview_ripple_effect"
+                    android:padding="12dp"
+                    android:text="View Details"
+                    android:textColor="@color/custom_blue"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
 
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <com.google.android.material.textview.MaterialTextView-->
-<!--            android:id="@+id/viewDetails"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:clickable="true"-->
-<!--            android:focusable="true"-->
-<!--            android:layout_marginBottom="3dp"-->
-<!--            android:fontFamily="@font/source_sans_pro_semibold"-->
-<!--            android:foreground="@drawable/view_details_textview_ripple_effect"-->
-<!--            android:padding="12dp"-->
-<!--            android:text="View Details"-->
-<!--            android:textColor="@color/custom_blue"-->
-<!--            android:textSize="16sp"-->
-<!--            app:layout_constraintBottom_toBottomOf="@+id/studentNoInputLayout"-->
-<!--            app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"-->
-<!--            app:layout_constraintTop_toTopOf="@+id/studentNoInputLayout" />-->
+        <!--        <com.google.android.material.textview.MaterialTextView-->
+        <!--            android:id="@+id/viewDetails"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:clickable="true"-->
+        <!--            android:focusable="true"-->
+        <!--            android:layout_marginBottom="3dp"-->
+        <!--            android:fontFamily="@font/source_sans_pro_semibold"-->
+        <!--            android:foreground="@drawable/view_details_textview_ripple_effect"-->
+        <!--            android:padding="12dp"-->
+        <!--            android:text="View Details"-->
+        <!--            android:textColor="@color/custom_blue"-->
+        <!--            android:textSize="16sp"-->
+        <!--            app:layout_constraintBottom_toBottomOf="@+id/studentNoInputLayout"-->
+        <!--            app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"-->
+        <!--            app:layout_constraintTop_toTopOf="@+id/studentNoInputLayout" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -265,9 +265,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:ellipsize="end"
             android:fontFamily="@font/source_sans_pro"
             android:singleLine="true"
-            android:ellipsize="end"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -279,11 +279,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:ellipsize="end"
             android:fontFamily="@font/source_sans_pro"
+            android:singleLine="true"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:singleLine="true"
-            android:ellipsize="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView7"
             app:layout_constraintTop_toTopOf="@+id/textView7" />
@@ -293,11 +293,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:ellipsize="end"
             android:fontFamily="@font/source_sans_pro"
+            android:singleLine="true"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:singleLine="true"
-            android:ellipsize="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView6"
             app:layout_constraintTop_toTopOf="@+id/textView6" />

@@ -4,7 +4,6 @@ import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -40,7 +39,7 @@ class LoginRepository {
 
 			override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
 				val message = if (t.message?.substring(0, 22) == "Unable to resolve host")
-					"No Internet connection" else t.message+ " Please try again"
+					"No Internet connection" else t.message + " Please try again"
 
 				liveData.postValue(Response.Error(message))
 			}

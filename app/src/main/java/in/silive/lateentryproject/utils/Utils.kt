@@ -7,6 +7,7 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.downloader.OnDownloadListener
@@ -76,9 +77,8 @@ class Utils {
 					SplashScreenFragment.REFRESH_TOKEN, SplashScreenFragment.ACCESS_TOKEN))
 				SplashScreenFragment.ACCESS_TOKEN = response.body()?.access
 				Datastore(context).saveAccessToken(SplashScreenFragment.ACCESS_TOKEN!!)
-				Log.e("ddddnew", "${SplashScreenFragment.ACCESS_TOKEN}")
 			} catch (e: Exception) {
-				Log.e("dddd", e.message.toString())
+				Toast.makeText(context, "${e.message}\nPlease try again", Toast.LENGTH_SHORT).show()
 			}
 		}
 	}

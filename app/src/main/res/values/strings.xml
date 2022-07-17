@@ -9,4 +9,5 @@
     <string name="sync_data">Sync data every year to get updated student list</string>
     <string name="logoutMessage">Are you sure you want to log out?</string>
     <string name="exitMessage">Are you sure you want to exit app?</string>
+    <string name="powered_by_software_incubator">Powered by Software Incubator</string>
 </resources>

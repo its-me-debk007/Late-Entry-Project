@@ -1,16 +1,13 @@
 package `in`.silive.lateentryproject.adapters
 
-import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.LayoutVenueItemsBinding
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 
-class VenueRecyclerAdapter(private val venueMap: Map<Int,String>, private val selectedVenue:
+class VenueRecyclerAdapter(private val venueMap: Map<Int, String>, private val selectedVenue:
 String, private val listener: VenueClickListenerInterface) :
 	RecyclerView.Adapter<VenueRecyclerAdapter.ViewHolder>() {
 
@@ -31,7 +28,8 @@ String, private val listener: VenueClickListenerInterface) :
 			}
 
 			venue.setOnClickListener {
-				listener.venueClickListener(venue.text.toString(),venueMap.keys.toTypedArray()[position])
+				listener.venueClickListener(venue.text.toString(),
+											venueMap.keys.toTypedArray()[position])
 				highlight(selectedVenueBtn, false)
 				selectedVenueBtn = venue
 				highlight(venue, true)
@@ -57,6 +55,6 @@ String, private val listener: VenueClickListenerInterface) :
 	}
 }
 
-interface VenueClickListenerInterface{
-	fun venueClickListener(venue: String,id:Int)
+interface VenueClickListenerInterface {
+	fun venueClickListener(venue: String, id: Int)
 }

@@ -1,16 +1,14 @@
 package `in`.silive.lateentryproject.network
 
 import `in`.silive.lateentryproject.ui.fragments.SplashScreenFragment
-import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.net.HttpURLConnection
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ServiceBuilder {
-    private const val baseURL = "https://late-entry.azurewebsites.net"
+	private const val baseURL = "https://late-entry.azurewebsites.net"
 
 	fun buildService(): ApiInterface {
 
@@ -18,7 +16,7 @@ object ServiceBuilder {
 		if (SplashScreenFragment.ACCESS_TOKEN == null || SplashScreenFragment.ACCESS_TOKEN == "_") {
 			retrofit = Retrofit.Builder()
 				.baseUrl(baseURL)
-				.addConverterFactory(GsonConverterFactory.create())
+				.addConverterFactory(MoshiConverterFactory.create())
 				.build()
 		} else {
 			val tokenInterceptor = Interceptor { chain ->
@@ -38,11 +36,11 @@ object ServiceBuilder {
 
 			retrofit = Retrofit.Builder()
 				.baseUrl(baseURL)
-				.addConverterFactory(GsonConverterFactory.create())
+				.addConverterFactory(MoshiConverterFactory.create())
 				.client(tokenClient)
 				.build()
 		}
 
 		return retrofit.create(ApiInterface::class.java)
-    }
+	}
 }

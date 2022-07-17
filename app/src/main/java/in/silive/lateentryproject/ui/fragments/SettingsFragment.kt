@@ -2,7 +2,6 @@ package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentSettingsBinding
-import `in`.silive.lateentryproject.entities.OfflineLateEntry
 import `in`.silive.lateentryproject.models.BulkReqDataClass
 import `in`.silive.lateentryproject.models.LateEntryDataClass
 import `in`.silive.lateentryproject.room_database.StudentDatabase
@@ -15,11 +14,9 @@ import `in`.silive.lateentryproject.view_models.FailedEntriesViewModel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -27,226 +24,218 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textview.MaterialTextView
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
-    private lateinit var binding: FragmentSettingsBinding
-    private val datastore by lazy { Datastore(requireContext()) }
-    private lateinit var toast: Toast
-    private val bulkViewModel by lazy {
-        ViewModelProvider(this, BulkDataViewModelFactory(StudentDatabase.getDatabase(requireContext()))
-        )[BulkDataViewModel::class.java] }
+	private lateinit var binding: FragmentSettingsBinding
+	private val datastore by lazy { Datastore(requireContext()) }
+	private lateinit var toast: Toast
+	private val bulkViewModel by lazy {
+		ViewModelProvider(this,
+						  BulkDataViewModelFactory(StudentDatabase.getDatabase(requireContext()))
+		)[BulkDataViewModel::class.java]
+	}
 
-    private val viewModel by lazy { ViewModelProvider(this)[FailedEntriesViewModel::class.java] }
-    private val studentDatabase by lazy { StudentDatabase.getDatabase(requireContext()) }
+	private val viewModel by lazy { ViewModelProvider(this)[FailedEntriesViewModel::class.java] }
+	private val studentDatabase by lazy { StudentDatabase.getDatabase(requireContext()) }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        activity?.let { it.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR }
-        binding = FragmentSettingsBinding.bind(view)
-        toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
-        binding.apply {
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		activity?.let {
+			it.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+		}
+		binding = FragmentSettingsBinding.bind(view)
+		toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
+		binding.apply {
 
-            lifecycleScope.launch {
-                lastSyncTime.text = "Last synced: ${datastore.getSyncTime()}"
-                lastUploadTime.text =
-                    "Failed entries count: ${studentDatabase.offlineLateEntryDao().getCount()}"
-            }
-            backBtn.setOnClickListener { goToNextFragment(BarcodeFragment()) }
+			lifecycleScope.launch {
+				lastSyncTime.text = "Last synced: ${datastore.getSyncTime()}"
+				lastUploadTime.text =
+					"Failed entries count: ${studentDatabase.offlineLateEntryDao().getCount()}"
+			}
+			backBtn.setOnClickListener { goToNextFragment(BarcodeFragment()) }
 
-            logoutBtn.setOnClickListener {
-                it.isEnabled = false
-                showLogoutDialog()
-                logoutBtn.postDelayed({
-                    it.isEnabled = true
-                                      }, 300)
-            }
+			logoutBtn.setOnClickListener {
+				it.isEnabled = false
+				showLogoutDialog()
+				logoutBtn.postDelayed({
+										  it.isEnabled = true
+									  }, 300)
+			}
 
-            syncBtn.setOnClickListener {
-                lifecycleScope.launch {
-                    studentDatabase.studentDao().clearStudentTable()
-                }
-                disableBtn(syncBtn, true)
-                context?.let { it1 -> bulkViewModel.sendResult(it1) }
-                bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
-                    if (it is Response.Success) {
-                        val venueMap = mutableMapOf<Int, String>()
+			syncBtn.setOnClickListener {
+				lifecycleScope.launch {
+					studentDatabase.studentDao().clearStudentTable()
+				}
+				disableBtn(true, syncBtn, 'S')
+				context?.let { it1 -> bulkViewModel.sendResult(it1) }
+				bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
+					if (it is Response.Success) {
+						val venueMap = mutableMapOf<Int, String>()
 
-                        it.data?.venue_data!!.forEach { venueData ->
-                            venueMap[venueData.id] = venueData.venue
-                        }
+						it.data?.venue_data!!.forEach { venueData ->
+							venueMap[venueData.id] = venueData.venue
+						}
 
-                        lifecycleScope.launch {
-                            datastore.saveVenueDetails(venueMap)
-                            val venue =
-                                datastore.getVenueDetails()
-                                    ?.replace("\\s".toRegex(), "")!!
-                                    .split(",").associateTo(mutableMapOf()) { str ->
-                                        val (left, right) = str.split("=")
-                                        left.toInt() to right
-                                    }
-                            datastore.saveId("ID_KEY", venue.keys.toTypedArray()[0])
+						lifecycleScope.launch {
+							datastore.saveVenueDetails(venueMap)
+							val venue =
+								datastore.getVenueDetails()
+									?.replace("\\s".toRegex(), "")!!
+									.split(",").associateTo(mutableMapOf()) { str ->
+										val (left, right) = str.split("=")
+										left.toInt() to right
+									}
+							datastore.saveId("ID_KEY", venue.keys.toTypedArray()[0])
 
-                            val currentTime = Utils().currentTime()
-                            datastore.saveSyncTime(Utils().currentTime())
-                            lastSyncTime.text = "Last synced: $currentTime"
-                        }
+							val currentTime = Utils().currentTime()
+							datastore.saveSyncTime(Utils().currentTime())
+							lastSyncTime.text = "Last synced: $currentTime"
+						}
 
-                        showToast("Data fetched successfully")
+						showToast("Data fetched successfully")
 
-                    } else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
+					} else if (it is Response.Error) it.errorMessage?.let { it1 -> showToast(it1) }
 
-                    disableBtn(syncBtn, false)
-                }
-            }
+					disableBtn(false, syncBtn, 'S')
+				}
+			}
 
-            uploadBtn.setOnClickListener {
-                disableBtn(uploadBtn, true)
+			uploadBtn.setOnClickListener {
+				disableBtn(true, uploadBtn, 'U')
 
-                val entries = mutableListOf<LateEntryDataClass>()
-                runBlocking {
-                    studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
-                        entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
-                    }
-                }
-                    if (entries.size == 0)
-                    {
-                        showToast("No failed entries")
-                        disableBtn(uploadBtn, false)
-                    }
-                    else {
-                        context?.let { it1 -> viewModel.bulkUpload(BulkReqDataClass(entries), it1) }
-                        viewModel._bulkLiveData.observe(viewLifecycleOwner){
-                            Log.e("TAG", "onViewCreated: observe" )
-                                if (it is Response.Success) {
-                                    lifecycleScope.launch {
-                                        studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-                                        lastUploadTime.text = "Failed entries count: ${
-                                            studentDatabase.offlineLateEntryDao().getCount()
-                                        }"
-                                    }
-                                    showToast("Failed entries registered")
-                                } else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
+				val entries = mutableListOf<LateEntryDataClass>()
+				runBlocking {
+					studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
+						entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
+					}
+				}
+				if (entries.size == 0) {
+					showToast("No failed entries")
+					disableBtn(false, uploadBtn, 'U')
+				} else {
+					context?.let { it1 -> viewModel.bulkUpload(BulkReqDataClass(entries), it1) }
+					viewModel._bulkLiveData.observe(viewLifecycleOwner) {
+						if (it is Response.Success) {
+							lifecycleScope.launch {
+								studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+								lastUploadTime.text = "Failed entries count: ${
+									studentDatabase.offlineLateEntryDao().getCount()
+								}"
+							}
+							showToast("Failed entries registered")
+						} else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
 
-                                disableBtn(uploadBtn, false)
-                            }
+						disableBtn(false, uploadBtn, 'U')
+					}
 
-                    }
+				}
 
-            }
-        }
-    }
+			}
+		}
+	}
 
-    private fun showLogoutDialog() {
-        val customView = layoutInflater.inflate(R.layout.dialog, null)
-        val builder = MaterialAlertDialogBuilder(requireContext()).apply {
-            setView(customView)
-            background = ColorDrawable(Color.TRANSPARENT)
-        }
+	private fun showLogoutDialog() {
+		val customView = layoutInflater.inflate(R.layout.dialog, null)
+		val builder = MaterialAlertDialogBuilder(requireContext()).apply {
+			setView(customView)
+			background = ColorDrawable(Color.TRANSPARENT)
+		}
 
-        val dialog = builder.show()
+		val dialog = builder.show()
 
-        customView.findViewById<MaterialTextView>(R.id.dialogMessage)
-            .setText(R.string.logoutMessage)
-        val logout = customView.findViewById<MaterialButton>(R.id.positiveBtn)
-        val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
-        val progressBar = customView.findViewById<CircularProgressIndicator>(R.id.progressBar)
+		customView.findViewById<MaterialTextView>(R.id.dialogMessage)
+			.setText(R.string.logoutMessage)
+		val logout = customView.findViewById<MaterialButton>(R.id.positiveBtn)
+		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+		val progressBar = customView.findViewById<CircularProgressIndicator>(R.id.progressBar)
 
-        logout.text = "Logout"
-        logout.setOnClickListener {
-            lifecycleScope.launchWhenStarted {
+		logout.text = "Logout"
+		logout.setOnClickListener {
+			lifecycleScope.launchWhenStarted {
 //                try {
-                val entries = mutableListOf<LateEntryDataClass>()
+				val entries = mutableListOf<LateEntryDataClass>()
 //                    lifecycleScope.launch {
-                studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
-                    entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
-                }
-                if (entries.size != 0) {
-                    logout.text = ""
-                    progressBar.visibility = View.VISIBLE
-                    context?.let { it1 -> viewModel.bulkUpload(BulkReqDataClass(entries), it1) }
-                    viewModel._bulkLiveData.observe(viewLifecycleOwner){
-                            lifecycleScope.launch {
-                                if (it is Response.Success) {
-                                    studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-                                }
-                                datastore.changeLoginState(false)
-                                SplashScreenFragment.ACCESS_TOKEN = "_"
-                                SplashScreenFragment.REFRESH_TOKEN = "_"
-                                datastore.saveAccessToken("_")
-                                datastore.saveRefreshToken("_")
-                                goToNextFragment(LoginFragment())
-                                dialog.dismiss()
-                            }
-                    }
+				studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
+					entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
+				}
+				if (entries.size != 0) {
+					logout.text = ""
+					progressBar.visibility = View.VISIBLE
+					context?.let { it1 -> viewModel.bulkUpload(BulkReqDataClass(entries), it1) }
+					viewModel._bulkLiveData.observe(viewLifecycleOwner) {
+						lifecycleScope.launch {
+							if (it is Response.Success) {
+								studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+							}
+							datastore.changeLoginState(false)
+							SplashScreenFragment.ACCESS_TOKEN = "_"
+							SplashScreenFragment.REFRESH_TOKEN = "_"
+							datastore.saveAccessToken("_")
+							datastore.saveRefreshToken("_")
+							goToNextFragment(LoginFragment())
+							dialog.dismiss()
+						}
+					}
 
-                }
+				}
 //                    }
 //                } finally {
-                else {
-                    datastore.changeLoginState(false)
-                    SplashScreenFragment.ACCESS_TOKEN = "_"
-                    SplashScreenFragment.REFRESH_TOKEN = "_"
-                    datastore.saveAccessToken("_")
-                    datastore.saveRefreshToken("_")
-                    goToNextFragment(LoginFragment())
-                    dialog.dismiss()
-                }
+				else {
+					datastore.changeLoginState(false)
+					SplashScreenFragment.ACCESS_TOKEN = "_"
+					SplashScreenFragment.REFRESH_TOKEN = "_"
+					datastore.saveAccessToken("_")
+					datastore.saveRefreshToken("_")
+					goToNextFragment(LoginFragment())
+					dialog.dismiss()
+				}
 //                }
-            }
-        }
+			}
+		}
 
-        cancel.setOnClickListener { dialog.dismiss() }
-    }
+		cancel.setOnClickListener { dialog.dismiss() }
+	}
 
-    private fun goToNextFragment(fragment: Fragment) {
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.fragmentContainerView, fragment)
-            ?.commit()
-    }
+	private fun goToNextFragment(fragment: Fragment) {
+		activity?.supportFragmentManager?.beginTransaction()
+			?.replace(R.id.fragmentContainerView, fragment)
+			?.commit()
+	}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                goToNextFragment(BarcodeFragment())
-            }
-        })
-    }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+			override fun handleOnBackPressed() {
+				goToNextFragment(BarcodeFragment())
+			}
+		})
+	}
 
-    private fun disableBtn(btn: MaterialButton, bool: Boolean) {
-        btn.isEnabled = !bool
-        val progressBar =  if (btn.id == 2131362265) binding.syncProgressBar
-            else binding.uploadProgressBar
-        if (bool) {
-//            btn.setTextColor(
-//                ContextCompat.getColor(
-//                    requireContext(),
-//                    R.color.disabledSettingsBtnColor
-//                )
-//            )
-            btn.text = ""
-            btn.setIconTintResource(R.color.colorTransparent)
-            progressBar.visibility = View.VISIBLE
+	private fun disableBtn(bool: Boolean, btn: MaterialButton, type: Char) {
+		btn.isEnabled = !bool
+		val progressBar = if (type == 'S') binding.syncProgressBar
+		else binding.uploadProgressBar
+		if (bool) {
+			btn.text = ""
+			btn.setIconTintResource(R.color.colorTransparent)
+			progressBar.show()
+		} else {
+			btn.text = if (type == 'S') "Sync Data" else "Upload Data"
+			btn.setIconTintResource(R.color.custom_blue)
+			progressBar.hide()
+		}
+	}
 
-        } else {
-//            btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.custom_blue))
-            btn.text = if (btn.id == 2131362265) "Sync Data" else "Upload Data"
-            btn.setIconTintResource(R.color.custom_blue)
-            progressBar.visibility = View.INVISIBLE
-        }
-    }
+	private fun showToast(text: String) {
+		toast.cancel()
+		toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
+		toast.show()
+	}
 
-    private fun showToast(text: String) {
-        toast.cancel()
-        toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
-        toast.show()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        toast.cancel()
-    }
+	override fun onPause() {
+		super.onPause()
+		toast.cancel()
+	}
 }

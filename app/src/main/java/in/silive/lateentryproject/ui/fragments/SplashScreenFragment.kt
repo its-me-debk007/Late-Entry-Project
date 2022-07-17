@@ -13,22 +13,20 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SplashScreenFragment: Fragment(R.layout.splash_screen) {
+class SplashScreenFragment : Fragment(R.layout.splash_screen) {
 	private lateinit var datastore: Datastore
-	private lateinit var binding : SplashScreenBinding
+	private lateinit var binding: SplashScreenBinding
+
 	companion object {
-		var ACCESS_TOKEN : String? = null
+		var ACCESS_TOKEN: String? = null
 		var REFRESH_TOKEN: String? = null
 	}
 
@@ -48,32 +46,6 @@ class SplashScreenFragment: Fragment(R.layout.splash_screen) {
 														}
 
 													}, 900)
-
-//		binding.motionLayout.apply {
-//			startLayoutAnimation()
-//			setTransitionListener(object : MotionLayout.TransitionListener{
-//				override fun onTransitionStarted(motionLayout: MotionLayout?,
-//												 startId: Int,
-//												 endId: Int) {}
-//
-//				override fun onTransitionChange(motionLayout: MotionLayout?,
-//												startId: Int,
-//												endId: Int,
-//												progress: Float) {}
-//
-//				override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-//					lifecycleScope.launch {
-//						if (datastore.isLogin()) askPermission()
-//						else goToNextFragment(LoginFragment())
-//					}
-//				}
-//
-//				override fun onTransitionTrigger(motionLayout: MotionLayout?,
-//												 triggerId: Int,
-//												 positive: Boolean,
-//												 progress: Float) {}
-//			})
-//		}
 	}
 
 	private fun askPermission() {
