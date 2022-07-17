@@ -351,7 +351,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                     }
                 }
 
-                if (!flag) studentNoInputLayout.helperText = "Sync your data"
+                if (!flag && bool) studentNoInputLayout.helperText = "Sync your data"
                 else {
                     showToast("Late entry registered")
                     bottomSheetDialog.cancel()
