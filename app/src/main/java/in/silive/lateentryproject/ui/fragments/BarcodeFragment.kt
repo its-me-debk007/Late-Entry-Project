@@ -14,19 +14,20 @@ import `in`.silive.lateentryproject.view_models.LateEntryViewModel
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.WindowInsetsController
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -76,8 +77,12 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
-		activity?.let { it.window.decorView.systemUiVisibility = 0 }
+//		WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+			activity?.window?.insetsController?.setSystemBarsAppearance(0,
+																		WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)
+		else activity?.window?.decorView?.systemUiVisibility = 0
+
 		binding = FragmentBarcodeScannerBinding.bind(view)
 		venue = HashMap()
 		venue2 = HashMap()

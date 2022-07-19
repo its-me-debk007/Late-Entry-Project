@@ -13,8 +13,10 @@ import `in`.silive.lateentryproject.view_models.BulkDataViewModel
 import `in`.silive.lateentryproject.view_models.FailedEntriesViewModel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowInsetsController
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
@@ -42,9 +44,11 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		activity?.let {
-			it.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+			activity?.window?.insetsController?.setSystemBarsAppearance(
+				WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+				WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)
+		else activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 		binding = FragmentSettingsBinding.bind(view)
 		toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
 		binding.apply {
