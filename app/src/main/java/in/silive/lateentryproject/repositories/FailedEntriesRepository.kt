@@ -49,11 +49,8 @@ class FailedEntriesRepository {
 			}
 
 			override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
-//				val message = if (t.message?.substring(0, 22) == "Unable to resolve host")
-//					"No Internet connection"
-//					else t.message + " Please try again"
 				val message =
-					if (t.message == "Unable to resolve host \"lateentry.azurewebsites.net\": No address associated with hostname")
+					if (t.message == "Unable to resolve host \"late-entry.azurewebsites.net\": No address associated with hostname")
 						"No Internet connection! Please connect to the Internet first!" else t.message + " Please try again"
 
 				liveData.postValue(Response.Error(message))
