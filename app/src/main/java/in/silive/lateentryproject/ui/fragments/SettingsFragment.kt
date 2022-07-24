@@ -69,9 +69,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 			}
 
 			syncBtn.setOnClickListener {
-				lifecycleScope.launch {
-					studentDatabase.studentDao().clearStudentTable()
-				}
+//				lifecycleScope.launch {
+//					studentDatabase.studentDao().clearStudentTable()
+//				}
 				disableBtn(true, syncBtn, 'S')
 				context?.let { it1 -> bulkViewModel.sendResult(it1) }
 				bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
@@ -129,7 +129,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 								}"
 							}
 							showToast("Failed entries registered")
-						} else it.errorMessage?.let { errorMessage -> showToast(errorMessage) }
+						} else it.errorMessage?.let { errorMessage ->
+							showToast(if (errorMessage == "No Internet")
+										  "No Internet connection" else errorMessage)
+						}
 
 						disableBtn(false, uploadBtn, 'U')
 					}
@@ -157,10 +160,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 		logout.text = "Logout"
 		logout.setOnClickListener {
-			lifecycleScope.launchWhenStarted {
-//                try {
+			lifecycleScope.launch {
 				val entries = mutableListOf<LateEntryDataClass>()
-//                    lifecycleScope.launch {
 				studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
 					entries.add(LateEntryDataClass(it.student_no!!, it.timestamp!!, it.venue!!))
 				}
@@ -172,30 +173,30 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 						lifecycleScope.launch {
 							if (it is Response.Success) {
 								studentDatabase.offlineLateEntryDao().clearLateEntryTable()
+								SplashScreenFragment.ACCESS_TOKEN = "_"
+								SplashScreenFragment.REFRESH_TOKEN = "_"
+								datastore.saveAccessToken("_")
+								datastore.saveRefreshToken("_")
+								datastore.changeLoginState(false)
+								goToNextFragment(LoginFragment())
+								dialog.dismiss()
+							} else {
+								Toast.makeText(context,
+											   if (it.errorMessage == "No Internet") "Unable to register failed entries! No internet connection"
+											   else it.errorMessage, Toast.LENGTH_SHORT).show()
+								dialog.dismiss()
 							}
-							datastore.changeLoginState(false)
-							SplashScreenFragment.ACCESS_TOKEN = "_"
-							SplashScreenFragment.REFRESH_TOKEN = "_"
-							datastore.saveAccessToken("_")
-							datastore.saveRefreshToken("_")
-							goToNextFragment(LoginFragment())
-							dialog.dismiss()
 						}
 					}
-
-				}
-//                    }
-//                } finally {
-				else {
-					datastore.changeLoginState(false)
+				} else {
 					SplashScreenFragment.ACCESS_TOKEN = "_"
 					SplashScreenFragment.REFRESH_TOKEN = "_"
 					datastore.saveAccessToken("_")
 					datastore.saveRefreshToken("_")
+					datastore.changeLoginState(false)
 					goToNextFragment(LoginFragment())
 					dialog.dismiss()
 				}
-//                }
 			}
 		}
 

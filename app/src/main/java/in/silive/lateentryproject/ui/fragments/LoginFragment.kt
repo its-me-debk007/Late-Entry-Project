@@ -21,6 +21,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -40,6 +41,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 			BulkDataViewModelFactory(StudentDatabase.getDatabase(requireContext()))
 		)[BulkDataViewModel::class.java]
 	}
+	private var dialog: AlertDialog? = null
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
@@ -77,7 +79,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 								sync = datastore.isSync()
 								it.data!!.refresh?.let { it1 -> datastore.saveRefreshToken(it1) }
 								it.data.access?.let { it1 -> datastore.saveAccessToken(it1) }
-								datastore.changeLoginState(true)
 							} finally {
 								if (sync) {
 									context?.let { it1 -> bulkViewModel.sendResult(it1) }
@@ -109,12 +110,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 												askPermission()
 											}
 										} else if (it is Response.Error) it.errorMessage?.let { it1 ->
-											showToast(
-												it1
-											)
+											showToast(it1)
 										}
 									}
 								} else {
+									datastore.changeLoginState(true)
 									disableViews(false)
 									askPermission()
 								}
@@ -167,6 +167,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 	}
 
 	private fun gotToBarcodeFragment() {
+		dialog?.dismiss()
 		activity?.supportFragmentManager?.beginTransaction()
 			?.replace(R.id.fragmentContainerView, BarcodeFragment())
 			?.commit()
@@ -234,14 +235,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 			setView(customView)
 			background = ColorDrawable(Color.TRANSPARENT)
 		}
-		val dialog = builder.show()
+		dialog = builder.show()
 
 		val exit = customView.findViewById<MaterialButton>(R.id.positiveBtn)
 		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
 
 		exit.setOnClickListener { activity?.finishAffinity() }
 
-		cancel.setOnClickListener { dialog.dismiss() }
+		cancel.setOnClickListener { dialog?.dismiss() }
 	}
 
 }

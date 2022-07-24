@@ -26,6 +26,7 @@ class BulkDataRepo(private val studentDatabase: StudentDatabase) {
 				if (response.isSuccessful) {
 					val responseBody = response.body()!!
 					GlobalScope.launch {
+						studentDatabase.studentDao().clearStudentTable()
 						studentDatabase.studentDao().addStudent(responseBody.student_data)
 					}
 					bulkDataLiveData.postValue(Response.Success(responseBody))
@@ -41,7 +42,7 @@ class BulkDataRepo(private val studentDatabase: StudentDatabase) {
 			override fun onFailure(call: Call<BulkDataClass?>, t: Throwable) {
 				val message =
 					if (t.message == "Unable to resolve host \"late-entry.azurewebsites.net\": No address associated with hostname")
-						"No Internet connection! Please connect to the Internet first!" else t.message + " Please try again"
+						"No Internet connection" else t.message + " Please try again"
 
 				bulkDataLiveData.postValue(Response.Error(message))
 			}
