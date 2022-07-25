@@ -61,6 +61,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		ViewModelProvider(this)[LateEntryViewModel::class.java]
 	}
 	private lateinit var seeStudentDetailView: View
+	private var isInternetAvailable = true
 
 	companion object {
 		lateinit var scannerView: ZBarScannerView
@@ -92,6 +93,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 		val checkNetworkConnection = context?.let { ConnectivityLiveData(it) }
 		checkNetworkConnection?.observe(viewLifecycleOwner) {
+			isInternetAvailable = it
 			if (it) {
 				val animation = AnimationUtils.loadAnimation(context, R.anim.long_fade_out)
 				binding.noConnection.startAnimation(animation)
@@ -157,6 +159,12 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 	}
 
 	private fun showToast(text: String) {
+		if (!isInternetAvailable) {
+			binding.noConnection.visibility = View.INVISIBLE
+			binding.noConnection.postDelayed({
+												 binding.noConnection.visibility = View.VISIBLE
+											 }, 2200)
+		}
 		toast.cancel()
 		toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
 		toast.show()
@@ -364,9 +372,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 					bottomSheetDialog.cancel()
 					student = studentNoEditText.text.toString().trim()
 
-//                    lifecycleScope.launch {
 					venueId = datastore.getId("ID_KEY")!!
-//                    }
 
 					context?.let { it1 -> lateEntryViewModel.submitResult(student, venueId, it1) }
 					lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {

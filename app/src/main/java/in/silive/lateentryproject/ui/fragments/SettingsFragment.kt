@@ -160,6 +160,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 		logout.text = "Logout"
 		logout.setOnClickListener {
+			dialog.setCancelable(false)
 			lifecycleScope.launch {
 				val entries = mutableListOf<LateEntryDataClass>()
 				studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
