@@ -8,6 +8,7 @@ import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.utils.currentTime
+import `in`.silive.lateentryproject.utils.isDialogShown
 import `in`.silive.lateentryproject.view_model_factories.BulkDataViewModelFactory
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
 import `in`.silive.lateentryproject.view_models.FailedEntriesViewModel
@@ -148,8 +149,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 		val builder = MaterialAlertDialogBuilder(requireContext()).apply {
 			setView(customView)
 			background = ColorDrawable(Color.TRANSPARENT)
+			setCancelable(false)
 		}
-
+		isDialogShown = true
 		val dialog = builder.show()
 
 		customView.findViewById<MaterialTextView>(R.id.dialogMessage)
@@ -160,7 +162,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 		logout.text = "Logout"
 		logout.setOnClickListener {
-			dialog.setCancelable(false)
 			lifecycleScope.launch {
 				val entries = mutableListOf<LateEntryDataClass>()
 				studentDatabase.offlineLateEntryDao().getLateEntryDetails().forEach {
@@ -174,13 +175,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 						lifecycleScope.launch {
 							if (it is Response.Success) {
 								studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-//								SplashScreenFragment.ACCESS_TOKEN = "_"
-//								SplashScreenFragment.REFRESH_TOKEN = "_"
-								datastore.saveAccessToken("_")
-								datastore.saveRefreshToken("_")
-								datastore.changeLoginState(false)
-								goToNextFragment(LoginFragment())
-								dialog.dismiss()
+								if (isDialogShown) {
+									datastore.saveAccessToken("_")
+									datastore.saveRefreshToken("_")
+									datastore.changeLoginState(false)
+									goToNextFragment(LoginFragment())
+									dialog.dismiss()
+								}
 							} else {
 								Toast.makeText(context,
 											   if (it.errorMessage == "No Internet") "Unable to register failed entries! No internet connection"
@@ -190,18 +191,21 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 						}
 					}
 				} else {
-//					SplashScreenFragment.ACCESS_TOKEN = "_"
-//					SplashScreenFragment.REFRESH_TOKEN = "_"
-					datastore.saveAccessToken("_")
-					datastore.saveRefreshToken("_")
-					datastore.changeLoginState(false)
-					goToNextFragment(LoginFragment())
-					dialog.dismiss()
+					if (isDialogShown) {
+						datastore.saveAccessToken("_")
+						datastore.saveRefreshToken("_")
+						datastore.changeLoginState(false)
+						goToNextFragment(LoginFragment())
+						dialog.dismiss()
+					}
 				}
 			}
 		}
 
-		cancel.setOnClickListener { dialog.dismiss() }
+		cancel.setOnClickListener {
+			isDialogShown = false
+			dialog.dismiss()
+		}
 	}
 
 	private fun goToNextFragment(fragment: Fragment) {

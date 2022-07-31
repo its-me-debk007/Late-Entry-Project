@@ -13,10 +13,7 @@ import `in`.silive.lateentryproject.view_models.LateEntryViewModel
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -61,6 +58,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 	}
 	private lateinit var seeStudentDetailView: View
 	private var isInternetAvailable = true
+	private var lastClickTime = 0L
 
 	companion object {
 		lateinit var scannerView: ZBarScannerView
@@ -105,6 +103,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		}
 
 		binding.enterStudentNoBtn.setOnClickListener {
+			if (SystemClock.elapsedRealtime() - lastClickTime < 1000) return@setOnClickListener
+			lastClickTime = SystemClock.elapsedRealtime()
+
 			if (binding.enterStudentNoBtn.isEnabled)
 				showBottomSheet(null)
 
@@ -117,6 +118,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		}
 
 		binding.setting.setOnClickListener {
+			if (SystemClock.elapsedRealtime() - lastClickTime < 1000) return@setOnClickListener
+			lastClickTime = SystemClock.elapsedRealtime()
+
 			activity?.supportFragmentManager?.beginTransaction()
 				?.replace(
 					R.id.fragmentContainerView,
@@ -135,6 +139,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			binding.location.text = datastore.getDefaultVenue()
 		}
 		binding.location.setOnClickListener {
+			if (SystemClock.elapsedRealtime() - lastClickTime < 1000) return@setOnClickListener
+			lastClickTime = SystemClock.elapsedRealtime()
+
 			val venueItems =
 				layoutInflater.inflate(R.layout.layout_venue_bottom_sheet, null)
 			venueBottomSheetDialog.setContentView(venueItems)
@@ -171,9 +178,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 	private fun initializeCamera() {
 		scannerView = ZBarScannerView(context)
-		scannerView.setResultHandler(this)
-
 		scannerView.apply {
+			setResultHandler(this@BarcodeFragment)
 			setBorderColor(ContextCompat.getColor(requireContext(), R.color.white))
 			setLaserColor(ContextCompat.getColor(requireContext(), R.color.black))
 			setBorderStrokeWidth(13)
@@ -182,10 +188,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			setBorderLineLength(200)
 			setupScanner()
 			setAutoFocus(true)
+			startCamera()
+			binding.scannerContainer.addView(this)
 		}
-
-		scannerView.startCamera()
-		binding.scannerContainer.addView(scannerView)
 	}
 
 	private fun onClicks() {

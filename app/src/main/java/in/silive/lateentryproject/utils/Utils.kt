@@ -18,6 +18,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
 
+var isDialogShown = false
+
 fun downloadImg(context: Context,
 				imgUrl: String,
 				dirPath: String,

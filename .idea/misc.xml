@@ -7,15 +7,29 @@
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/constraint_layout_background.xml" value="0.2135" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/curved_edge_edit_text.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/edit_text_curved_edge.xml" value="0.176" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_avatar.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_back.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_badge.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_check_circle.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_email.xml" value="0.245" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_exit.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_flash_on.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_location.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_logo.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_overflow_menu.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/ic_placeholder.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/popup_menu_background.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/rounded_dialog.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/selector.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/settings_constraint_layout_edge.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/splash_background.xml" value="0.152" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/splash_screen_background.xml" value="0.108" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/student_number_text_bg.xml" value="0.2425" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/text_input_bg.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/text_view_border.xml" value="0.154" />
         <entry key="..\:/JellyBean-App/app/src/main/res/drawable/textview_ripple_effect.xml" value="0.154" />
+        <entry key="..\:/JellyBean-App/app/src/main/res/drawable/view_details_textview_ripple_effect.xml" value="0.2425" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/activity_main.xml" value="0.19615384615384615" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/activity_splash_screen.xml" value="0.2" />
         <entry key="..\:/JellyBean-App/app/src/main/res/layout/camera_permission_dialog.xml" value="0.19401709401709402" />
