@@ -10,37 +10,33 @@ import java.util.concurrent.TimeUnit
 object ServiceBuilder {
 	private const val baseURL = "https://late-entry.azurewebsites.net"
 
-	fun buildService(): ApiInterface {
+	fun buildService(isTokenRequired: Boolean = true): ApiInterface {
+		if (!isTokenRequired) return Retrofit.Builder()
+			.baseUrl(baseURL)
+			.addConverterFactory(MoshiConverterFactory.create())
+			.build()
+			.create(ApiInterface::class.java)
 
-		val retrofit: Retrofit
-		if (SplashScreenFragment.ACCESS_TOKEN == null || SplashScreenFragment.ACCESS_TOKEN == "_") {
-			retrofit = Retrofit.Builder()
-				.baseUrl(baseURL)
-				.addConverterFactory(MoshiConverterFactory.create())
+		val tokenInterceptor = Interceptor { chain ->
+			var request = chain.request()
+			request = request.newBuilder()
+				.addHeader("Authorization", "Bearer ${SplashScreenFragment.ACCESS_TOKEN}")
 				.build()
-		} else {
-			val tokenInterceptor = Interceptor { chain ->
-				var request = chain.request()
-				request = request.newBuilder()
-					.addHeader("Authorization", "Bearer ${SplashScreenFragment.ACCESS_TOKEN}")
-					.build()
-				chain.proceed(request)
-			}
-
-			val tokenClient = OkHttpClient.Builder()
-				.addInterceptor(tokenInterceptor)
-				.connectTimeout(30, TimeUnit.SECONDS)
-				.writeTimeout(30, TimeUnit.SECONDS)
-				.readTimeout(30, TimeUnit.SECONDS)
-				.build()
-
-			retrofit = Retrofit.Builder()
-				.baseUrl(baseURL)
-				.addConverterFactory(MoshiConverterFactory.create())
-				.client(tokenClient)
-				.build()
+			chain.proceed(request)
 		}
 
-		return retrofit.create(ApiInterface::class.java)
+		val tokenClient = OkHttpClient.Builder()
+			.addInterceptor(tokenInterceptor)
+			.connectTimeout(30, TimeUnit.SECONDS)
+			.writeTimeout(30, TimeUnit.SECONDS)
+			.readTimeout(30, TimeUnit.SECONDS)
+			.build()
+
+		return Retrofit.Builder()
+			.baseUrl(baseURL)
+			.addConverterFactory(MoshiConverterFactory.create())
+			.client(tokenClient)
+			.build()
+			.create(ApiInterface::class.java)
 	}
 }

@@ -7,7 +7,7 @@ import `in`.silive.lateentryproject.models.LateEntryDataClass
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
-import `in`.silive.lateentryproject.utils.Utils
+import `in`.silive.lateentryproject.utils.currentTime
 import `in`.silive.lateentryproject.view_model_factories.BulkDataViewModelFactory
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
 import `in`.silive.lateentryproject.view_models.FailedEntriesViewModel
@@ -93,8 +93,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 									}
 							datastore.saveId("ID_KEY", venue.keys.toTypedArray()[0])
 
-							val currentTime = Utils().currentTime()
-							datastore.saveSyncTime(Utils().currentTime())
+							val currentTime = currentTime()
+							datastore.saveSyncTime(currentTime)
 							lastSyncTime.text = "Last synced: $currentTime"
 						}
 
@@ -174,8 +174,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 						lifecycleScope.launch {
 							if (it is Response.Success) {
 								studentDatabase.offlineLateEntryDao().clearLateEntryTable()
-								SplashScreenFragment.ACCESS_TOKEN = "_"
-								SplashScreenFragment.REFRESH_TOKEN = "_"
+//								SplashScreenFragment.ACCESS_TOKEN = "_"
+//								SplashScreenFragment.REFRESH_TOKEN = "_"
 								datastore.saveAccessToken("_")
 								datastore.saveRefreshToken("_")
 								datastore.changeLoginState(false)
@@ -190,8 +190,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 						}
 					}
 				} else {
-					SplashScreenFragment.ACCESS_TOKEN = "_"
-					SplashScreenFragment.REFRESH_TOKEN = "_"
+//					SplashScreenFragment.ACCESS_TOKEN = "_"
+//					SplashScreenFragment.REFRESH_TOKEN = "_"
 					datastore.saveAccessToken("_")
 					datastore.saveRefreshToken("_")
 					datastore.changeLoginState(false)

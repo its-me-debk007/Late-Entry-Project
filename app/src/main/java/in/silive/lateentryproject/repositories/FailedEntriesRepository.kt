@@ -5,7 +5,7 @@ import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
-import `in`.silive.lateentryproject.utils.Utils
+import `in`.silive.lateentryproject.utils.generateNewToken
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -30,7 +30,7 @@ class FailedEntriesRepository {
 						liveData.postValue(Response.Success(response.body()!!))
 					}
 					response.code() == 401 -> {
-						Utils().generateNewToken(context)
+						generateNewToken(context)
 						bulkUpload(body, context)
 					}
 					response.code() == 403 -> {

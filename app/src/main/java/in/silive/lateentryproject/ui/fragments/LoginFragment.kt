@@ -5,7 +5,8 @@ import `in`.silive.lateentryproject.databinding.FragmentLoginBinding
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
-import `in`.silive.lateentryproject.utils.Utils
+import `in`.silive.lateentryproject.utils.currentTime
+import `in`.silive.lateentryproject.utils.hideKeyboard
 import `in`.silive.lateentryproject.view_model_factories.BulkDataViewModelFactory
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
 import `in`.silive.lateentryproject.view_models.LoginViewModel
@@ -63,7 +64,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 					return@setOnClickListener
 				}
 
-				Utils().hideKeyboard(requireView(), activity)
+				hideKeyboard(requireView(), activity)
 				disableViews(true)
 
 				viewModel.login(email.text?.trim().toString(), password.text?.trim().toString())
@@ -71,17 +72,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 				viewModel.loginLiveData.observe(viewLifecycleOwner) {
 
 					if (it is Response.Success) {
-						var sync = false
-						SplashScreenFragment.ACCESS_TOKEN = it.data?.access
-						SplashScreenFragment.REFRESH_TOKEN = it.data?.refresh
-						lifecycleScope.launchWhenStarted {
-							try {
-								sync = datastore.isSync()
-								it.data!!.refresh?.let { it1 -> datastore.saveRefreshToken(it1) }
-								it.data.access?.let { it1 -> datastore.saveAccessToken(it1) }
-							} finally {
-								if (sync) {
-									context?.let { it1 -> bulkViewModel.sendResult(it1) }
+						SplashScreenFragment.ACCESS_TOKEN = it.data!!.access
+						SplashScreenFragment.REFRESH_TOKEN = it.data.refresh
+						lifecycleScope.launch {
+//							try {
+
+								datastore.saveRefreshToken(it.data.refresh!!)
+								datastore.saveAccessToken(it.data.access!!)
+//							} finally {
+								if (datastore.isSync()) {
+									bulkViewModel.sendResult(requireContext())
 									bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
 
 										if (it is Response.Success) {
@@ -104,7 +104,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 													venue.keys.toTypedArray()[0]
 												)
 												datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
-												datastore.saveSyncTime(Utils().currentTime())
+												datastore.saveSyncTime(currentTime())
 												datastore.changeLoginState(true)
 												disableViews(false)
 												askPermission()
@@ -118,7 +118,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 									disableViews(false)
 									askPermission()
 								}
-							}
+//							}
 						}
 					} else if (it is Response.Error) {
 						val snackBar = Snackbar.make(

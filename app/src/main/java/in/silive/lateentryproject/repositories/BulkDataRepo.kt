@@ -4,7 +4,7 @@ import `in`.silive.lateentryproject.models.BulkDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
-import `in`.silive.lateentryproject.utils.Utils
+import `in`.silive.lateentryproject.utils.generateNewToken
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.GlobalScope
@@ -32,7 +32,7 @@ class BulkDataRepo(private val studentDatabase: StudentDatabase) {
 					bulkDataLiveData.postValue(Response.Success(responseBody))
 
 				} else if (response.code() == 401) {
-					Utils().generateNewToken(context)
+					generateNewToken(context)
 					cacheData(context)
 				} else {
 					bulkDataLiveData.postValue(Response.Error(response.message()))

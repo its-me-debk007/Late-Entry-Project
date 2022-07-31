@@ -14,7 +14,7 @@ class LoginRepository {
 	private val liveData = MutableLiveData<Response<MessageDataClass>>()
 
 	fun login(email: String, password: String): MutableLiveData<Response<MessageDataClass>> {
-		val call = ServiceBuilder.buildService().login(email, password)
+		val call = ServiceBuilder.buildService(isTokenRequired = false).login(email, password)
 
 		call.enqueue(object : Callback<MessageDataClass> {
 			override fun onResponse(

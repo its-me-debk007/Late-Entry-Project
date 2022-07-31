@@ -8,8 +8,7 @@ import `in`.silive.lateentryproject.databinding.FragmentBarcodeScannerBinding
 import `in`.silive.lateentryproject.entities.OfflineLateEntry
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
-import `in`.silive.lateentryproject.utils.Datastore
-import `in`.silive.lateentryproject.utils.Utils
+import `in`.silive.lateentryproject.utils.*
 import `in`.silive.lateentryproject.view_models.LateEntryViewModel
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -293,7 +292,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 		studentNo.requestFocus()
 		studentNo.postDelayed({
-								  Utils().showKeyboard(studentNo, activity)
+								  showKeyboard(studentNo, activity)
 								  binding.enterStudentNoBtn.isEnabled = true
 								  binding.enterStudentNoBtn.isClickable = true
 							  }, 200)
@@ -335,7 +334,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 					okButton.setTextColor(Color.parseColor("#BFBFBF"))
 					okButton.setBackgroundResource(R.drawable.ok_button_curved_edge)
 				} else {
-					Utils().hideKeyboard(studentNo, activity)
+					hideKeyboard(studentNo, activity)
 					bottomSheetDialog.setContentView(seeStudentDetailView)
 //                    student_No = studentNo.text.toString()
 					studentNoEditText.setText(studentNo.text!!.trim())
@@ -345,7 +344,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		}
 
 		bottomSheetDialog.setOnCancelListener {
-			Utils().hideKeyboard(requireView(), activity)
+			hideKeyboard(requireView(), activity)
 			scannerView.setResultHandler(this)
 			scannerView.startCamera()
 		}
@@ -378,12 +377,11 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 					lateEntryViewModel._lateEntryResult.observe(viewLifecycleOwner) {
 						if (it is Response.Error && it.errorMessage == "Save to DB") {
 							lifecycleScope.launch {
-								val currentTime = Utils().currentTimeInIsoFormat()
 								studentDatabase.offlineLateEntryDao()
 									.addLateEntry(
 										OfflineLateEntry(
 											student_no = student,
-											timestamp = currentTime,
+											timestamp = currentTimeInIsoFormat(),
 											venue = venueId
 										)
 									)
@@ -396,7 +394,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 		}
 
 		viewDetails.setOnClickListener {
-			Utils().hideKeyboard(it, activity)
+			hideKeyboard(it, activity)
 			viewDetails.isEnabled = false
 			viewDetails.setTextColor(
 				ContextCompat.getColor(
@@ -431,7 +429,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 									.load(imgUrl)
 									.into(studentImage)
 
-								Utils().downloadImg(
+								downloadImg(
 									requireContext(), imgUrl,
 									"${context?.filesDir}/Images/",
 									"${student.student_no}_${student.name}" +

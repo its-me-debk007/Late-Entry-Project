@@ -5,7 +5,8 @@ import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
-import `in`.silive.lateentryproject.utils.Utils
+import `in`.silive.lateentryproject.utils.currentTimeInIsoFormat
+import `in`.silive.lateentryproject.utils.generateNewToken
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -21,7 +22,7 @@ class LateEntryRepository {
 		venue: Int,
 		context: Context): MutableLiveData<Response<MessageDataClass>> {
 		val call = ServiceBuilder.buildService()
-			.lateEntry(LateEntryDataClass(studentNo, Utils().currentTimeInIsoFormat(), venue))
+			.lateEntry(LateEntryDataClass(studentNo, currentTimeInIsoFormat(), venue))
 		call.enqueue(object : Callback<MessageDataClass?> {
 			override fun onResponse(
 				call: Call<MessageDataClass?>,
@@ -31,7 +32,7 @@ class LateEntryRepository {
 					val responseBody = response.body()!!
 					lateEntryLiveData.postValue(Response.Success(responseBody))
 				} else if (response.code() == 401) {
-					Utils().generateNewToken(context)
+					generateNewToken(context)
 					lateEntry(studentNo, venue, context)
 				} else if (response.code() == 400) {
 					val gson: Gson = GsonBuilder().create()
