@@ -4,6 +4,7 @@ import `in`.silive.lateentryproject.models.MessageDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -38,9 +39,10 @@ class LoginRepository {
 			}
 
 			override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
+				Log.d("ERROR", t.message.toString())
 				val message =
-					if (t.message == "Unable to resolve host \"late-entry.azurewebsites.net\": No address associated with hostname")
-						"No Internet connection! Please connect to the Internet first!" else t.message + " Please try again"
+					if (t.message == "Failed to connect to /13.232.227.118:80")
+						"No Internet connection!" else t.message + " Please try again"
 
 				liveData.postValue(Response.Error(message))
 			}

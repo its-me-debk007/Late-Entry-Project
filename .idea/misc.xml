@@ -96,6 +96,8 @@
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/menu/scanner_menu.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.175" />
         <entry key="..\:/Users/HP/Desktop/JellyBean-App/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.175" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.2667806755023514" />
+        <entry key="app/src/main/res/layout/dialog.xml" value="0.2667806755023514" />
       </map>
     </option>
   </component>

@@ -41,8 +41,8 @@ class BulkDataRepo(private val studentDatabase: StudentDatabase) {
 
 			override fun onFailure(call: Call<BulkDataClass?>, t: Throwable) {
 				val message =
-					if (t.message == "Unable to resolve host \"late-entry.azurewebsites.net\": No address associated with hostname")
-						"No Internet connection" else t.message + " Please try again"
+					if (t.message == "Failed to connect to /13.232.227.118:80")
+						"No Internet connection!" else t.message + " Please try again"
 
 				bulkDataLiveData.postValue(Response.Error(message))
 			}
