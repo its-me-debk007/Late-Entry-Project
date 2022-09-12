@@ -1,6 +1,7 @@
 package `in`.silive.lateentryproject.repositories
 
 import `in`.silive.lateentryproject.models.MessageDataClass
+import `in`.silive.lateentryproject.models.TokenDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.sealed_class.ErrorPojoClass
 import `in`.silive.lateentryproject.sealed_class.Response
@@ -49,5 +50,43 @@ class LoginRepository {
 		})
 
 		return liveData
+	}
+
+	private val tokenLiveData = MutableLiveData<Response<TokenDataClass>>()
+	fun getToken(email: String, password: String): MutableLiveData<Response<TokenDataClass>> {
+		val call = ServiceBuilder.buildService(isTokenRequired = false).getToken(email, password)
+
+		call.enqueue(object : Callback<TokenDataClass> {
+			override fun onResponse(
+				call: Call<TokenDataClass>,
+				response: retrofit2.Response<TokenDataClass>
+			) {
+				when {
+					response.isSuccessful ->
+						tokenLiveData.postValue(Response.Success(response.body()!!))
+
+					response.code() == 403 -> {
+						val gson: Gson = GsonBuilder().create()
+						val mError: ErrorPojoClass =
+							gson.fromJson(response.errorBody()?.string(),
+								ErrorPojoClass::class.java)
+						tokenLiveData.postValue(mError.message?.let { Response.Error(it) })
+					}
+
+					else -> tokenLiveData.postValue(Response.Error(response.message()))
+				}
+			}
+
+			override fun onFailure(call: Call<TokenDataClass>, t: Throwable) {
+				Log.d("ERROR", t.message.toString())
+				val message =
+					if (t.message == "Failed to connect to /13.232.227.118:80")
+						"No Internet connection!" else t.message + " Please try again"
+
+				tokenLiveData.postValue(Response.Error(message))
+			}
+		})
+
+		return tokenLiveData
 	}
 }
