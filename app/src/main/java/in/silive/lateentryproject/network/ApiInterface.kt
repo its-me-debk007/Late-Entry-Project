@@ -24,9 +24,4 @@ interface ApiInterface {
 	@POST("/auth/token/refresh/")
 	suspend fun generateToken(@Body data: TokenDataClass): Response<TokenDataClass>
 
-	@POST("/auth/token/")
-	@FormUrlEncoded
-	fun getToken(@Field("email") email: String,
-						 @Field("password") password: String): Call<TokenDataClass>
-
 }

@@ -16,11 +16,4 @@ class LoginViewModel : ViewModel() {
 	fun login(email: String, password: String) = viewModelScope.launch {
 		loginLiveData = LoginRepository().login(email, password)
 	}
-
-	var tokenLiveData = MutableLiveData<Response<TokenDataClass>>()
-
-	fun getToken(email: String, password: String) = viewModelScope.launch {
-		tokenLiveData = LoginRepository().getToken(email, password)
-	}
-
 }

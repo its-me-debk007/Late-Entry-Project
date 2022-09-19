@@ -72,75 +72,54 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 				viewModel.loginLiveData.observe(viewLifecycleOwner) {
 
 					if (it is Response.Success) {
-						viewModel.getToken(email.text?.trim().toString(), password.text?.trim().toString())
-						viewModel.tokenLiveData.observe(viewLifecycleOwner) { response ->
-
-							if (response is Response.Success) {
-								SplashScreenFragment.ACCESS_TOKEN = response.data!!.access
-								SplashScreenFragment.REFRESH_TOKEN = response.data.refresh
-								lifecycleScope.launch {
+						SplashScreenFragment.ACCESS_TOKEN = it.data!!.access
+						SplashScreenFragment.REFRESH_TOKEN = it.data.refresh
+						lifecycleScope.launch {
 //							try {
 
-									datastore.saveRefreshToken(response.data.refresh!!)
-									datastore.saveAccessToken(response.data.access!!)
+							datastore.saveRefreshToken(it.data.refresh!!)
+							datastore.saveAccessToken(it.data.access!!)
 //							} finally {
-									if (datastore.isSync()) {
-										bulkViewModel.sendResult(requireContext())
-										bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
+							if (datastore.isSync()) {
+								bulkViewModel.sendResult(requireContext())
+								bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
 
-											if (it is Response.Success) {
-												val venueMap = mutableMapOf<Int, String>()
+									if (it is Response.Success) {
+										val venueMap = mutableMapOf<Int, String>()
 
-												it.data?.venue_data!!.forEach { venueData ->
-													venueMap[venueData.id] = venueData.venue
-												}
-												lifecycleScope.launch {
-													datastore.changeSyncState(false)
-													datastore.saveVenueDetails(venueMap)
-													val venue = datastore.getVenueDetails()
-														?.replace("\\s".toRegex(), "")!!
-														.split(",")
-														.associateTo(mutableMapOf()) { str ->
-															val (left, right) = str.split("=")
-															left.toInt() to right
-														}
-													datastore.saveId(
-														"ID_KEY",
-														venue.keys.toTypedArray()[0]
-													)
-													datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
-													datastore.saveSyncTime(currentTime())
-													datastore.changeLoginState(true)
-													disableViews(false)
-													askPermission()
-												}
-											} else if (it is Response.Error) it.errorMessage?.let { it1 ->
-												showToast(it1)
-											}
+										it.data?.venue_data!!.forEach { venueData ->
+											venueMap[venueData.id] = venueData.venue
 										}
-									} else {
-										datastore.changeLoginState(true)
-										disableViews(false)
-										askPermission()
+										lifecycleScope.launch {
+											datastore.changeSyncState(false)
+											datastore.saveVenueDetails(venueMap)
+											val venue = datastore.getVenueDetails()
+												?.replace("\\s".toRegex(), "")!!
+												.split(",")
+												.associateTo(mutableMapOf()) { str ->
+													val (left, right) = str.split("=")
+													left.toInt() to right
+												}
+											datastore.saveId(
+												"ID_KEY",
+												venue.keys.toTypedArray()[0]
+											)
+											datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
+											datastore.saveSyncTime(currentTime())
+											datastore.changeLoginState(true)
+											disableViews(false)
+											askPermission()
+										}
+									} else if (it is Response.Error) it.errorMessage?.let { it1 ->
+										showToast(it1)
 									}
-//							}
 								}
-							}
-
-							else {
-								val snackBar = Snackbar.make(
-									loginBtn, it.errorMessage!!, Snackbar
-										.LENGTH_SHORT
-								)
-								snackBar.apply {
-									setAction(R.string.ok_btn_snackbar) {
-										dismiss()
-									}
-									animationMode = Snackbar.ANIMATION_MODE_SLIDE
-									show()
-								}
+							} else {
+								datastore.changeLoginState(true)
 								disableViews(false)
+								askPermission()
 							}
+//							}
 						}
 					} else if (it is Response.Error) {
 						val snackBar = Snackbar.make(
