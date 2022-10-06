@@ -36,6 +36,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textview.MaterialTextView
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.launch
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
@@ -423,9 +424,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 						studentno.text = studentNumber2
 						batch.text = student.batch.toString()
 
-						student.student_image?.let {
+						student.student_image?.let { imgUrl ->
 							if (!student.image_downloaded) {
-								val imgUrl = "https://late-entry.azurewebsites.net$it"
+//								val imgUrl = "https://late-entry.azurewebsites.net$it"
 								Glide.with(requireActivity())
 									.applyDefaultRequestOptions(
 										RequestOptions.placeholderOf(R.drawable.ic_placeholder)
@@ -484,6 +485,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+		reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+
 		activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
 			override fun handleOnBackPressed() {
 				showExitDialog()

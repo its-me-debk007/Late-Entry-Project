@@ -27,6 +27,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textview.MaterialTextView
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -216,6 +217,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+		returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+
 		activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
 			override fun handleOnBackPressed() {
 				goToNextFragment(BarcodeFragment())

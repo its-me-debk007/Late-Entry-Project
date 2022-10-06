@@ -21,7 +21,7 @@
 
     </style>
 
-<!--    Rounded Bottom Sheet-->
+    <!--    Rounded Bottom Sheet-->
     <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
@@ -45,8 +45,9 @@
         <item name="android:fontFamily">@font/source_sans_pro</item>
     </style>
 
-<!--    Shapeable Image View-->
+    <!--    Shapeable Image View-->
     <style name="ShapeAppearanceOverlay.App.CornerSize8Percent" parent="">
         <item name="cornerSize">8%</item>
     </style>
+
 </resources>

@@ -29,6 +29,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialFadeThrough
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -223,6 +225,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+
 		activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
 			override fun handleOnBackPressed() {
 				showExitDialog()

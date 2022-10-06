@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.launch
 
 class SplashScreenFragment : Fragment(R.layout.splash_screen) {
@@ -28,6 +29,11 @@ class SplashScreenFragment : Fragment(R.layout.splash_screen) {
 	companion object {
 		var ACCESS_TOKEN: String? = null
 		var REFRESH_TOKEN: String? = null
+	}
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+//		exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
