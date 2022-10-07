@@ -10,10 +10,15 @@ import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.*
 import `in`.silive.lateentryproject.view_models.LateEntryViewModel
+import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.*
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -22,6 +27,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -240,6 +246,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
 	override fun onResume() {
 		super.onResume()
+		askPermission()
 		scannerView.setResultHandler(this)
 		scannerView.startCamera()
 	}
@@ -515,6 +522,51 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 			scannerView.setResultHandler(this)
 			scannerView.startCamera()
 		}
+	}
+	private fun askPermission() {
+		requestPermission.launch(Manifest.permission.CAMERA)
+	}
+
+	private val requestPermission = registerForActivityResult(
+		ActivityResultContracts.RequestPermission()
+	) {
+		if (it) {
+
+		} else {
+			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+				showGoToAppSettingsDialog(requireContext())
+			else askPermission()
+		}
+	}
+
+	private fun showGoToAppSettingsDialog(context: Context) {
+		val customView = layoutInflater.inflate(R.layout.camera_permission_dialog, null)
+
+		MaterialAlertDialogBuilder(context)
+			.setView(customView)
+			.setCancelable(false)
+			.setBackground(ColorDrawable(Color.TRANSPARENT))
+			.show()
+
+		val grant = customView.findViewById<MaterialButton>(R.id.grant)
+		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+
+		grant.setOnClickListener {
+			goToAppSettings()
+			activity?.finishAffinity()
+		}
+
+		cancel.setOnClickListener { activity?.finishAffinity() }
+	}
+
+	private fun goToAppSettings() {
+		val intent = Intent(
+			Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+			Uri.fromParts("package", activity?.packageName, null)
+		)
+		intent.addCategory(Intent.CATEGORY_DEFAULT)
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+		startActivity(intent)
 	}
 }
 
