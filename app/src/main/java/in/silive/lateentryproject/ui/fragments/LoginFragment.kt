@@ -4,6 +4,7 @@ import `in`.silive.lateentryproject.R
 import `in`.silive.lateentryproject.databinding.FragmentLoginBinding
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
+import `in`.silive.lateentryproject.ui.activities.MainActivity
 import `in`.silive.lateentryproject.utils.Datastore
 import `in`.silive.lateentryproject.utils.currentTime
 import `in`.silive.lateentryproject.utils.hideKeyboard
@@ -110,7 +111,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 											datastore.saveSyncTime(currentTime())
 											datastore.changeLoginState(true)
 											disableViews(false)
-											askPermission()
+											MainActivity().askPermission()
 										}
 									} else if (it is Response.Error) it.errorMessage?.let { it1 ->
 										showToast(it1)
@@ -119,7 +120,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 							} else {
 								datastore.changeLoginState(true)
 								disableViews(false)
-								askPermission()
+								MainActivity().askPermission()
 							}
 //							}
 						}
@@ -165,58 +166,58 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 		}
 	}
 
-	private fun askPermission() {
-		requestPermission.launch(Manifest.permission.CAMERA)
-	}
-
-	private fun gotToBarcodeFragment() {
-		dialog?.dismiss()
-		activity?.supportFragmentManager?.beginTransaction()
-			?.replace(R.id.fragmentContainerView, BarcodeFragment())
-			?.commit()
-	}
-
-	private val requestPermission = registerForActivityResult(
-		ActivityResultContracts.RequestPermission()
-	) {
-		if (it) {
-			gotToBarcodeFragment()
-		} else {
-			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
-				showGoToAppSettingsDialog(requireContext())
-			else askPermission()
-		}
-	}
-
-	private fun showGoToAppSettingsDialog(context: Context) {
-		val customView = layoutInflater.inflate(R.layout.camera_permission_dialog, null)
-
-		MaterialAlertDialogBuilder(context)
-			.setView(customView)
-			.setCancelable(false)
-			.setBackground(ColorDrawable(Color.TRANSPARENT))
-			.show()
-
-		val grant = customView.findViewById<MaterialButton>(R.id.grant)
-		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
-
-		grant.setOnClickListener {
-			goToAppSettings()
-			activity?.finishAffinity()
-		}
-
-		cancel.setOnClickListener { activity?.finishAffinity() }
-	}
-
-	private fun goToAppSettings() {
-		val intent = Intent(
-			Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-			Uri.fromParts("package", activity?.packageName, null)
-		)
-		intent.addCategory(Intent.CATEGORY_DEFAULT)
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-		startActivity(intent)
-	}
+//	private fun askPermission() {
+//		requestPermission.launch(Manifest.permission.CAMERA)
+//	}
+//
+//	private fun gotToBarcodeFragment() {
+//		dialog?.dismiss()
+//		activity?.supportFragmentManager?.beginTransaction()
+//			?.replace(R.id.fragmentContainerView, BarcodeFragment())
+//			?.commit()
+//	}
+//
+//	private val requestPermission = registerForActivityResult(
+//		ActivityResultContracts.RequestPermission()
+//	) {
+//		if (it) {
+//			gotToBarcodeFragment()
+//		} else {
+//			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+//				showGoToAppSettingsDialog(requireContext())
+//			else askPermission()
+//		}
+//	}
+//
+//	private fun showGoToAppSettingsDialog(context: Context) {
+//		val customView = layoutInflater.inflate(R.layout.camera_permission_dialog, null)
+//
+//		MaterialAlertDialogBuilder(context)
+//			.setView(customView)
+//			.setCancelable(false)
+//			.setBackground(ColorDrawable(Color.TRANSPARENT))
+//			.show()
+//
+//		val grant = customView.findViewById<MaterialButton>(R.id.grant)
+//		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+//
+//		grant.setOnClickListener {
+//			goToAppSettings()
+//			activity?.finishAffinity()
+//		}
+//
+//		cancel.setOnClickListener { activity?.finishAffinity() }
+//	}
+//
+//	private fun goToAppSettings() {
+//		val intent = Intent(
+//			Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//			Uri.fromParts("package", activity?.packageName, null)
+//		)
+//		intent.addCategory(Intent.CATEGORY_DEFAULT)
+//		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//		startActivity(intent)
+//	}
 
 	override fun onPause() {
 		super.onPause()
@@ -229,25 +230,25 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
 		activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
 			override fun handleOnBackPressed() {
-				showExitDialog()
+				context?.let { MainActivity().showExitDialog(it) }
 			}
 		})
 	}
-
-	private fun showExitDialog() {
-		val customView = layoutInflater.inflate(R.layout.dialog, null)
-		val builder = MaterialAlertDialogBuilder(requireContext()).apply {
-			setView(customView)
-			background = ColorDrawable(Color.TRANSPARENT)
-		}
-		dialog = builder.show()
-
-		val exit = customView.findViewById<MaterialButton>(R.id.positiveBtn)
-		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
-
-		exit.setOnClickListener { activity?.finishAffinity() }
-
-		cancel.setOnClickListener { dialog?.dismiss() }
-	}
+//
+//	private fun showExitDialog() {
+//		val customView = layoutInflater.inflate(R.layout.dialog, null)
+//		val builder = MaterialAlertDialogBuilder(requireContext()).apply {
+//			setView(customView)
+//			background = ColorDrawable(Color.TRANSPARENT)
+//		}
+//		dialog = builder.show()
+//
+//		val exit = customView.findViewById<MaterialButton>(R.id.positiveBtn)
+//		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+//
+//		exit.setOnClickListener { activity?.finishAffinity() }
+//
+//		cancel.setOnClickListener { dialog?.dismiss() }
+//	}
 
 }
