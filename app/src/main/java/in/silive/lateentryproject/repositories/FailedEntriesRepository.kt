@@ -49,9 +49,17 @@ class FailedEntriesRepository {
 			}
 
 			override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
-				val message =
-					if (t.message == "Failed to connect to /13.232.227.118:80")
-						"No Internet connection!" else t.message + " Please try again"
+//				val message =
+//					if (t.message == "Failed to connect to /13.232.227.118:80")
+//						"No Internet connection!" else t.message + " Please try again"
+
+				val message = t.message?.let {
+					if (it.length == 7 || it.substring(0, 17)
+							.equals("failed to connect", ignoreCase = true)
+					) "No or poor Internet connection!" // it.length == 7 refers to it = "timeout"
+
+					else "${t.message} Please try again"
+				} ?: "Please try again"
 
 				liveData.postValue(Response.Error(message))
 			}

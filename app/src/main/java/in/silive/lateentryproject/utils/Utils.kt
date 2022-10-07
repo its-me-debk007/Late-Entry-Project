@@ -4,6 +4,7 @@ import `in`.silive.lateentryproject.models.TokenDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.ui.fragments.SplashScreenFragment
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -76,6 +77,7 @@ fun generateNewToken(context: Context) {
 			SplashScreenFragment.ACCESS_TOKEN = response.body()?.access
 			Datastore(context).saveAccessToken(SplashScreenFragment.ACCESS_TOKEN!!)
 		} catch (e: Exception) {
+			Log.d("REFRESH_TOKEN_EXPIRY", e.message.toString())
 			Toast.makeText(context, "${e.message}\nPlease try again", Toast.LENGTH_SHORT).show()
 		}
 	}
