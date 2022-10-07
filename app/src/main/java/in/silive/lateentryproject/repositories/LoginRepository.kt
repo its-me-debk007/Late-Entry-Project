@@ -47,7 +47,7 @@ class LoginRepository {
                             .equals("failed to connect", ignoreCase = true)
                     ) "No or poor Internet connection!" // it.length == 7 refers to it = "timeout"
 
-                    else "${t.message} Please try again"
+                    else "$it Please try again"
                 } ?: "Please try again"
 
                 liveData.postValue(Response.Error(message))

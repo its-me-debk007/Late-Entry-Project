@@ -8,7 +8,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ServiceBuilder {
-	private const val baseURL = "http://13.232.227.118/"
+	private const val baseURL = "https://lateentry.silive.in"
 
 	fun buildService(isTokenRequired: Boolean = true): ApiInterface {
 		if (!isTokenRequired) return Retrofit.Builder()
