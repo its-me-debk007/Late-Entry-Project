@@ -78,6 +78,8 @@ fun generateNewToken(context: Context) {
 			Datastore(context).saveAccessToken(SplashScreenFragment.ACCESS_TOKEN!!)
 		} catch (e: Exception) {
 			Log.d("REFRESH_TOKEN_EXPIRY", e.message.toString())
+			Log.d("REFRESH_TOKEN_EXPIRY", SplashScreenFragment.REFRESH_TOKEN.toString())
+			Log.d("REFRESH_TOKEN_EXPIRY", SplashScreenFragment.ACCESS_TOKEN.toString())
 			Toast.makeText(context, "${e.message}\nPlease try again", Toast.LENGTH_SHORT).show()
 		}
 	}

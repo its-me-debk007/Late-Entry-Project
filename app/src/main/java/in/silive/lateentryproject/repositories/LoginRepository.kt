@@ -45,6 +45,7 @@ class LoginRepository {
                 val message = t.message?.let {
                     if (it.length == 7 || it.substring(0, 17)
                             .equals("failed to connect", ignoreCase = true)
+                        || it.substring(0, 22) == "Unable to resolve host"
                     ) "No or poor Internet connection!" // it.length == 7 refers to it = "timeout"
 
                     else "$it Please try again"
