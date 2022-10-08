@@ -49,9 +49,6 @@ class FailedEntriesRepository {
 			}
 
 			override fun onFailure(call: Call<MessageDataClass>, t: Throwable) {
-//				val message =
-//					if (t.message == "Failed to connect to /13.232.227.118:80")
-//						"No Internet connection!" else t.message + " Please try again"
 
 				val message = t.message?.let {
 					if (it.length == 7 || it.substring(0, 17)

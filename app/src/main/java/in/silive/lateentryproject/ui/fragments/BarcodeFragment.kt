@@ -431,9 +431,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 						studentno.text = studentNumber2
 						batch.text = student.batch.toString()
 
-						student.student_image?.let { imgUrl ->
+						student.student_image?.let {
 							if (!student.image_downloaded) {
-//								val imgUrl = "https://late-entry.azurewebsites.net$it"
+								val imgUrl = "https://lateentry.silive.in$it"
 								Glide.with(requireActivity())
 									.applyDefaultRequestOptions(
 										RequestOptions.placeholderOf(R.drawable.ic_placeholder)
@@ -530,9 +530,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 	private val requestPermission = registerForActivityResult(
 		ActivityResultContracts.RequestPermission()
 	) {
-		if (it) {
-
-		} else {
+		if (!it) {
 			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
 				showGoToAppSettingsDialog(requireContext())
 			else askPermission()

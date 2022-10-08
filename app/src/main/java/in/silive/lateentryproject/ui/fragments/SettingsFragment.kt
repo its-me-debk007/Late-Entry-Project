@@ -185,7 +185,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 								}
 							} else {
 								Toast.makeText(context,
-											   if (it.errorMessage == "No Internet") "Unable to register failed entries! No internet connection"
+											   if (it.errorMessage?.substring(0, 2) == "No") "Unable to register failed entries! No or poor internet connection"
 											   else it.errorMessage, Toast.LENGTH_SHORT).show()
 								dialog.dismiss()
 							}
