@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package `in`.silive.lateentryproject.ui.fragments
 
 import `in`.silive.lateentryproject.R
@@ -49,12 +51,14 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
             activity?.window?.insetsController?.setSystemBarsAppearance(
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
             )
         else activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
         binding = FragmentSettingsBinding.bind(view)
         toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
         binding.apply {
@@ -92,7 +96,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 //					studentDatabase.studentDao().clearStudentTable()
 //				}
                 disableBtn(true, syncBtn, 'S')
-                context?.let { it1 -> bulkViewModel.sendResult(it1) }
+                bulkViewModel.sendResult()
                 bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
                     if (it is Response.Success) {
                         val venueMap = mutableMapOf<Int, String>()
@@ -138,7 +142,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     showToast("No failed entries")
                     disableBtn(false, uploadBtn, 'U')
                 } else {
-                    context?.let { it1 -> viewModel.bulkUpload(BulkReqDataClass(entries), it1) }
+                    viewModel.bulkUpload(BulkReqDataClass(entries))
                     viewModel._bulkLiveData.observe(viewLifecycleOwner) {
                         if (it is Response.Success) {
                             lifecycleScope.launch {
@@ -190,7 +194,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 if (entries.size != 0) {
                     logout.text = ""
                     progressBar.visibility = View.VISIBLE
-                    context?.let { it1 -> viewModel.bulkUpload(BulkReqDataClass(entries), it1) }
+                    viewModel.bulkUpload(BulkReqDataClass(entries))
                     viewModel._bulkLiveData.observe(viewLifecycleOwner) {
                         lifecycleScope.launch {
                             if (it is Response.Success) {

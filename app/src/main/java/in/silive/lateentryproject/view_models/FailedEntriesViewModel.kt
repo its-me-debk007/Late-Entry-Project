@@ -17,9 +17,9 @@ class FailedEntriesViewModel : ViewModel() {
 	val _bulkLiveData: LiveData<Response<MessageDataClass>>
 		get() = bulkLiveData
 
-	fun bulkUpload(body: BulkReqDataClass, context: Context) {
+	fun bulkUpload(body: BulkReqDataClass) {
 		viewModelScope.launch {
-			bulkLiveData = FailedEntriesRepository().bulkUpload(body, context)
+			bulkLiveData = FailedEntriesRepository().bulkUpload(body)
 		}
 
 	}

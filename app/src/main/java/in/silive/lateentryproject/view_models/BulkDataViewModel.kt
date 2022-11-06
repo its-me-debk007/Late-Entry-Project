@@ -18,8 +18,7 @@ class BulkDataViewModel(private val studentDatabase: StudentDatabase) : ViewMode
 	val _bulkDataResult: LiveData<Response<BulkDataClass>>
 		get() = bulkDataResult
 
-	fun sendResult(context: Context) = viewModelScope.launch {
-		bulkDataResult = BulkDataRepo(studentDatabase).cacheData(context)
-
+	fun sendResult() = viewModelScope.launch {
+		bulkDataResult = BulkDataRepo(studentDatabase).cacheData()
 	}
 }

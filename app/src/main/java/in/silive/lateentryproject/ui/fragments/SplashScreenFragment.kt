@@ -30,11 +30,6 @@ class SplashScreenFragment : Fragment(R.layout.splash_screen) {
         var REFRESH_TOKEN: String? = null
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//		exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = SplashScreenBinding.bind(view)
@@ -46,14 +41,8 @@ class SplashScreenFragment : Fragment(R.layout.splash_screen) {
 
         Handler(Looper.getMainLooper()).postDelayed({
             lifecycleScope.launch {
-                if (datastore.loginStatus() == "no")
-                    goToNextFragment(LoginFragment())
-                else {
-//                    askPermission()
-                    goToNextFragment(BarcodeFragment())
-                }
+                goToNextFragment(if (datastore.loginStatus() == "no") LoginFragment() else BarcodeFragment())
             }
-
         }, 900)
     }
 

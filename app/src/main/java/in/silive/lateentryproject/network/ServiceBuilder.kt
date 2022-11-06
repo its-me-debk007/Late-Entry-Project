@@ -3,7 +3,6 @@ package `in`.silive.lateentryproject.network
 import `in`.silive.lateentryproject.ui.fragments.SplashScreenFragment
 import `in`.silive.lateentryproject.utils.BASE_URL
 import `in`.silive.lateentryproject.utils.generateNewToken
-import android.util.Log
 import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -29,17 +28,11 @@ object ServiceBuilder {
         }
 
         val tokenAuthenticator = Authenticator { _, response ->
-            Log.e("Authenticator", "CALLED")
-			Log.e("Authenticator", SplashScreenFragment.ACCESS_TOKEN.toString())
-
             if (response.code() == 401) generateNewToken()
 
-			Log.e("Authenticator", SplashScreenFragment.ACCESS_TOKEN.toString())
-			Log.e("Authenticator", response.request().toString())
-
-			response.request().newBuilder()
-				.header("Authorization", "Bearer ${SplashScreenFragment.ACCESS_TOKEN}")
-				.build()
+            response.request().newBuilder()
+                .header("Authorization", "Bearer ${SplashScreenFragment.ACCESS_TOKEN}")
+                .build()
         }
 
         val tokenClient = OkHttpClient.Builder()

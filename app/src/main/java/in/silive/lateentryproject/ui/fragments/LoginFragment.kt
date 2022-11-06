@@ -81,7 +81,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             datastore.saveAccessToken(loginResponse.data.access!!)
 
                             if (datastore.isSync()) {
-                                bulkViewModel.sendResult(requireContext())
+                                bulkViewModel.sendResult()
                                 bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
 
                                     if (it is Response.Success) {
