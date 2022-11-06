@@ -58,7 +58,7 @@
                     android:fontFamily="@font/source_sans_pro_semibold"
                     android:hint="  Student No."
                     android:imeOptions="actionGo"
-                    android:inputType="number"
+                    android:inputType="textCapCharacters"
                     android:maxLength="15"
                     android:padding="16dp"
                     android:paddingEnd="91dp"

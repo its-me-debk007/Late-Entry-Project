@@ -18,13 +18,15 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.*
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.view.WindowInsetsController
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
@@ -68,10 +70,9 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     private lateinit var seeStudentDetailView: View
     private var isInternetAvailable = true
     private var lastClickTime = 0L
+    var isFirstTime = true
 
-    companion object {
-        lateinit var scannerView: ZBarScannerView
-    }
+    private lateinit var scannerView: ZBarScannerView
 
     val customView by lazy { layoutInflater.inflate(R.layout.dialog, null) }
     val builder by lazy {
@@ -84,13 +85,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//		WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-            activity?.window?.insetsController?.setSystemBarsAppearance(
-                0,
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            )
-        else activity?.window?.decorView?.systemUiVisibility = 0
 
         binding = FragmentBarcodeScannerBinding.bind(view)
         venue = HashMap()
@@ -250,12 +244,13 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
     override fun onResume() {
         super.onResume()
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_DENIED
-        )
+        Log.e("ASK_PERMISSION", isFirstTime.toString())
+        if (requireActivity().checkSelfPermission(Manifest.permission.CAMERA) ==
+            PackageManager.PERMISSION_DENIED && isFirstTime
+        ) {
+            isFirstTime = false
             askPermission()
+        }
 
         scannerView.setResultHandler(this)
         scannerView.startCamera()
@@ -551,15 +546,11 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     private fun showGoToAppSettingsDialog(context: Context) {
         val customView = layoutInflater.inflate(R.layout.camera_permission_dialog, null)
 
-        Log.e("ASK_PERMISSION", "BEFORE_DIALOG")
-
         MaterialAlertDialogBuilder(context)
             .setView(customView)
             .setCancelable(false)
             .setBackground(ColorDrawable(Color.TRANSPARENT))
             .show()
-
-        Log.e("ASK_PERMISSION", "AFTER_DIALOG")
 
         val grant = customView.findViewById<MaterialButton>(R.id.grant)
         val cancel = customView.findViewById<MaterialButton>(R.id.cancel)

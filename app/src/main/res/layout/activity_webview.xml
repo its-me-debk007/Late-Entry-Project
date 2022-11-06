@@ -34,13 +34,12 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="87dp"
+        android:layout_marginTop="86dp"
         android:indeterminate="true"
         app:hideAnimationBehavior="inward"
+        app:trackColor="@color/colorTransparent"
         app:indicatorColor="@color/custom_blue"
-        app:minHideDelay="@integer/material_motion_duration_short_2"
         app:showAnimationBehavior="outward"
-        app:showDelay="@integer/material_motion_duration_short_2"
         app:trackCornerRadius="8dp" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -53,9 +52,7 @@
         android:indeterminate="true"
         app:hideAnimationBehavior="inward"
         app:indicatorColor="@color/custom_blue"
-        app:minHideDelay="@integer/material_motion_duration_short_2"
         app:showAnimationBehavior="outward"
-        app:showDelay="@integer/material_motion_duration_short_2"
         app:trackCornerRadius="8dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
