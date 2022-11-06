@@ -29,225 +29,224 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
-	private lateinit var binding: FragmentLoginBinding
-	private lateinit var toast: Toast
-	private val datastore by lazy { Datastore(requireContext()) }
-	private val viewModel by lazy { ViewModelProvider(this@LoginFragment)[LoginViewModel::class.java] }
-	private val bulkViewModel by lazy {
-		ViewModelProvider(
-			this,
-			BulkDataViewModelFactory(StudentDatabase.getDatabase(requireContext()))
-		)[BulkDataViewModel::class.java]
-	}
-	private var dialog: AlertDialog? = null
+    private lateinit var binding: FragmentLoginBinding
+    private lateinit var toast: Toast
+    private val datastore by lazy { Datastore(requireContext()) }
+    private val viewModel by lazy { ViewModelProvider(this@LoginFragment)[LoginViewModel::class.java] }
+    private val bulkViewModel by lazy {
+        ViewModelProvider(
+            this,
+            BulkDataViewModelFactory(StudentDatabase.getDatabase(requireContext()))
+        )[BulkDataViewModel::class.java]
+    }
+    private var dialog: AlertDialog? = null
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		activity?.let { it.window.decorView.systemUiVisibility = 0 }
-		binding = FragmentLoginBinding.bind(view)
-		toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activity?.let { it.window.decorView.systemUiVisibility = 0 }
+        binding = FragmentLoginBinding.bind(view)
+        toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
 
-		binding.apply {
-			loginBtn.setOnClickListener {
+        binding.apply {
+            loginBtn.setOnClickListener {
 
-				emailTextInputLayout.helperText = null
-				passwordTextInputLayout.helperText = null
+                emailTextInputLayout.helperText = null
+                passwordTextInputLayout.helperText = null
 
-				if (email.text?.trim().isNullOrEmpty()) {
-					emailTextInputLayout.helperText = "Please enter an email"
-					return@setOnClickListener
-				} else if (password.text?.trim().isNullOrEmpty()) {
-					passwordTextInputLayout.helperText = "Please enter a password"
-					return@setOnClickListener
-				}
+                if (email.text?.trim().isNullOrEmpty()) {
+                    emailTextInputLayout.helperText = "Please enter an email"
+                    return@setOnClickListener
+                } else if (password.text?.trim().isNullOrEmpty()) {
+                    passwordTextInputLayout.helperText = "Please enter a password"
+                    return@setOnClickListener
+                }
 
-				hideKeyboard(requireView(), activity)
-				disableViews(true)
+                hideKeyboard(requireView(), activity)
+                disableViews(true)
 
-				viewModel.login(email.text?.trim().toString(), password.text?.trim().toString())
+                viewModel.login(email.text?.trim().toString(), password.text?.trim().toString())
 
-				viewModel.loginLiveData.observe(viewLifecycleOwner) {
+                viewModel.loginLiveData.observe(viewLifecycleOwner) { loginResponse ->
 
-					if (it is Response.Success) {
-						SplashScreenFragment.ACCESS_TOKEN = it.data!!.access
-						SplashScreenFragment.REFRESH_TOKEN = it.data.refresh
-						lifecycleScope.launch {
-//							try {
+                    if (loginResponse is Response.Success) {
+                        SplashScreenFragment.ACCESS_TOKEN = loginResponse.data!!.access
+                        SplashScreenFragment.REFRESH_TOKEN = loginResponse.data.refresh
+                        lifecycleScope.launch {
 
-							datastore.saveRefreshToken(it.data.refresh!!)
-							datastore.saveAccessToken(it.data.access!!)
-//							} finally {
-							if (datastore.isSync()) {
-								bulkViewModel.sendResult(requireContext())
-								bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
+                            datastore.saveRefreshToken(loginResponse.data.refresh!!)
+                            datastore.saveAccessToken(loginResponse.data.access!!)
 
-									if (it is Response.Success) {
-										val venueMap = mutableMapOf<Int, String>()
+                            if (datastore.isSync()) {
+                                bulkViewModel.sendResult(requireContext())
+                                bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
 
-										it.data?.venue_data!!.forEach { venueData ->
-											venueMap[venueData.id] = venueData.venue
-										}
-										lifecycleScope.launch {
-											datastore.changeSyncState(false)
-											datastore.saveVenueDetails(venueMap)
-											val venue = datastore.getVenueDetails()
-												?.replace("\\s".toRegex(), "")!!
-												.split(",")
-												.associateTo(mutableMapOf()) { str ->
-													val (left, right) = str.split("=")
-													left.toInt() to right
-												}
-											datastore.saveId(
-												"ID_KEY",
-												venue.keys.toTypedArray()[0]
-											)
-											datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
-											datastore.saveSyncTime(currentTime())
-											datastore.changeLoginState(true)
-											disableViews(false)
-											askPermission()
-										}
-									} else if (it is Response.Error) it.errorMessage?.let { it1 ->
-										showToast(it1)
-									}
-								}
-							} else {
-								datastore.changeLoginState(true)
-								disableViews(false)
-								askPermission()
-							}
-//							}
-						}
-					} else if (it is Response.Error) {
-						val snackBar = Snackbar.make(
-							loginBtn, it.errorMessage!!, Snackbar
-								.LENGTH_SHORT
-						)
-						snackBar.apply {
-							setAction(R.string.ok_btn_snackbar) {
-								dismiss()
-							}
-							animationMode = Snackbar.ANIMATION_MODE_SLIDE
-							show()
-						}
-						disableViews(false)
-					}
-				}
-			}
-		}
-	}
+                                    if (it is Response.Success) {
+                                        val venueMap = mutableMapOf<Int, String>()
 
-	private fun showToast(text: String) {
-		toast.cancel()
-		toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
-		toast.show()
-	}
+                                        it.data?.venue_data!!.forEach { venueData ->
+                                            venueMap[venueData.id] = venueData.venue
+                                        }
+                                        lifecycleScope.launch {
+                                            datastore.changeSyncState(false)
+                                            datastore.saveVenueDetails(venueMap)
+                                            val venue = datastore.getVenueDetails()
+                                                ?.replace("\\s".toRegex(), "")!!
+                                                .split(",")
+                                                .associateTo(mutableMapOf()) { str ->
+                                                    val (left, right) = str.split("=")
+                                                    left.toInt() to right
+                                                }
+                                            datastore.saveId(
+                                                "ID_KEY",
+                                                venue.keys.toTypedArray()[0]
+                                            )
+                                            datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
+                                            datastore.saveSyncTime(currentTime())
+                                            datastore.changeLoginState(
+                                                loginResponse.data.type ?: "other"
+                                            )
+                                            disableViews(false)
+                                            askPermission()
+                                        }
+                                    } else if (it is Response.Error) it.errorMessage?.let { it1 ->
+                                        showToast(it1)
+                                    }
+                                }
+                            } else {
+                                datastore.changeLoginState(loginResponse.data.type ?: "other")
+                                disableViews(false)
+                                askPermission()
+                            }
+                        }
+                    } else if (loginResponse is Response.Error) {
+                        val snackBar = Snackbar.make(
+                            loginBtn, loginResponse.errorMessage!!, Snackbar
+                                .LENGTH_SHORT
+                        )
+                        snackBar.apply {
+                            setAction(R.string.ok_btn_snackbar) {
+                                dismiss()
+                            }
+                            animationMode = Snackbar.ANIMATION_MODE_SLIDE
+                            show()
+                        }
+                        disableViews(false)
+                    }
+                }
+            }
+        }
+    }
 
-	private fun disableViews(bool: Boolean) {
-		binding.apply {
-			emailTextInputLayout.isEnabled = !bool
-			passwordTextInputLayout.isEnabled = !bool
-			loginBtn.isEnabled = !bool
+    private fun showToast(text: String) {
+        toast.cancel()
+        toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
+        toast.show()
+    }
 
-			if (bool) {
-				progressBar.visibility = View.VISIBLE
-				loginBtn.text = ""
-			} else {
-				progressBar.visibility = View.INVISIBLE
-				loginBtn.text = "Login"
-				password.text?.clear()
-			}
-		}
-	}
+    private fun disableViews(bool: Boolean) {
+        binding.apply {
+            emailTextInputLayout.isEnabled = !bool
+            passwordTextInputLayout.isEnabled = !bool
+            loginBtn.isEnabled = !bool
 
-	private fun askPermission() {
-		requestPermission.launch(Manifest.permission.CAMERA)
-	}
+            if (bool) {
+                progressBar.visibility = View.VISIBLE
+                loginBtn.text = ""
+            } else {
+                progressBar.visibility = View.INVISIBLE
+                loginBtn.text = "Login"
+                password.text?.clear()
+            }
+        }
+    }
 
-	private fun gotToBarcodeFragment() {
-		dialog?.dismiss()
-		activity?.supportFragmentManager?.beginTransaction()
-			?.replace(R.id.fragmentContainerView, BarcodeFragment())
-			?.commit()
-	}
+    private fun askPermission() {
+        requestPermission.launch(Manifest.permission.CAMERA)
+    }
 
-	private val requestPermission = registerForActivityResult(
-		ActivityResultContracts.RequestPermission()
-	) {
-		if (it) {
-			gotToBarcodeFragment()
-		} else {
-			if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
-				showGoToAppSettingsDialog(requireContext())
-			else askPermission()
-		}
-	}
+    private fun gotToBarcodeFragment() {
+        dialog?.dismiss()
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.fragmentContainerView, BarcodeFragment())
+            ?.commit()
+    }
 
-	private fun showGoToAppSettingsDialog(context: Context) {
-		val customView = layoutInflater.inflate(R.layout.camera_permission_dialog, null)
+    private val requestPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        if (it) {
+            gotToBarcodeFragment()
+        } else {
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+                showGoToAppSettingsDialog(requireContext())
+            else askPermission()
+        }
+    }
 
-		MaterialAlertDialogBuilder(context)
-			.setView(customView)
-			.setCancelable(false)
-			.setBackground(ColorDrawable(Color.TRANSPARENT))
-			.show()
+    private fun showGoToAppSettingsDialog(context: Context) {
+        val customView = layoutInflater.inflate(R.layout.camera_permission_dialog, null)
 
-		val grant = customView.findViewById<MaterialButton>(R.id.grant)
-		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+        MaterialAlertDialogBuilder(context)
+            .setView(customView)
+            .setCancelable(false)
+            .setBackground(ColorDrawable(Color.TRANSPARENT))
+            .show()
 
-		grant.setOnClickListener {
-			goToAppSettings()
-			activity?.finishAffinity()
-		}
+        val grant = customView.findViewById<MaterialButton>(R.id.grant)
+        val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
 
-		cancel.setOnClickListener { activity?.finishAffinity() }
-	}
+        grant.setOnClickListener {
+            goToAppSettings()
+            activity?.finishAffinity()
+        }
 
-	private fun goToAppSettings() {
-		val intent = Intent(
-			Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-			Uri.fromParts("package", activity?.packageName, null)
-		)
-		intent.addCategory(Intent.CATEGORY_DEFAULT)
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-		startActivity(intent)
-	}
+        cancel.setOnClickListener { activity?.finishAffinity() }
+    }
 
-	override fun onPause() {
-		super.onPause()
-		toast.cancel()
-	}
+    private fun goToAppSettings() {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", activity?.packageName, null)
+        )
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+    override fun onPause() {
+        super.onPause()
+        toast.cancel()
+    }
 
-		activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-			override fun handleOnBackPressed() {
-				showExitDialog()
-			}
-		})
-	}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
 
-	private fun showExitDialog() {
-		val customView = layoutInflater.inflate(R.layout.dialog, null)
-		val builder = MaterialAlertDialogBuilder(requireContext()).apply {
-			setView(customView)
-			background = ColorDrawable(Color.TRANSPARENT)
-		}
-		dialog = builder.show()
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showExitDialog()
+            }
+        })
+    }
 
-		val exit = customView.findViewById<MaterialButton>(R.id.positiveBtn)
-		val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
+    private fun showExitDialog() {
+        val customView = layoutInflater.inflate(R.layout.dialog, null)
+        val builder = MaterialAlertDialogBuilder(requireContext()).apply {
+            setView(customView)
+            background = ColorDrawable(Color.TRANSPARENT)
+        }
+        dialog = builder.show()
 
-		exit.setOnClickListener { activity?.finishAffinity() }
+        val exit = customView.findViewById<MaterialButton>(R.id.positiveBtn)
+        val cancel = customView.findViewById<MaterialButton>(R.id.cancel)
 
-		cancel.setOnClickListener { dialog?.dismiss() }
-	}
+        exit.setOnClickListener { activity?.finishAffinity() }
+
+        cancel.setOnClickListener { dialog?.dismiss() }
+    }
 
 }

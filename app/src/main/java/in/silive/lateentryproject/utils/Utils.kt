@@ -3,6 +3,7 @@ package `in`.silive.lateentryproject.utils
 import `in`.silive.lateentryproject.models.TokenDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.ui.fragments.SplashScreenFragment
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.view.View
@@ -53,8 +54,6 @@ fun hideKeyboard(view: View, activity: FragmentActivity?) {
 }
 
 fun currentTimeInIsoFormat(): String {
-	val iso24HrFullFormat = "yyyy-MM-dd HH:mm:ss.SSSZ"
-
 	val sdf = SimpleDateFormat(iso24HrFullFormat, Locale.UK)
 	var format = sdf.format(Date())
 
@@ -69,7 +68,7 @@ fun currentTime(): String {
 	return current.format(formatter).substring(0, 11)
 }
 
-fun generateNewToken(context: Context) {
+fun generateNewToken(context: Context = Application()) {
 	runBlocking {
 		try {
 			val response = ServiceBuilder.buildService(isTokenRequired = false).generateToken(

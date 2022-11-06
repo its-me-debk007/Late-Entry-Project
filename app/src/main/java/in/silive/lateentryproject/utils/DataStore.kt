@@ -12,7 +12,7 @@ val Context.datastore: DataStore<Preferences> by preferencesDataStore(DATASTORE_
 class Datastore(val context: Context) {
 
 	companion object {
-		val LOGIN_KEY = booleanPreferencesKey("login_key")
+		val LOGIN_KEY = stringPreferencesKey("login_key")
 		val SYNC_KEY = booleanPreferencesKey("sync_key")
 		val SYNCED_TIME_KEY = stringPreferencesKey("sync_time")
 		val VENUE_KEY = stringPreferencesKey("venue_key")
@@ -43,7 +43,7 @@ class Datastore(val context: Context) {
 		}
 	}
 
-	suspend fun changeLoginState(value: Boolean) {
+	suspend fun changeLoginState(value: String) {
 		context.datastore.edit {
 			it[LOGIN_KEY] = value
 		}
@@ -62,7 +62,7 @@ class Datastore(val context: Context) {
 
 	suspend fun getVenueDetails() = context.datastore.data.first()[VENUE_KEY]
 
-	suspend fun isLogin() = context.datastore.data.first()[LOGIN_KEY] ?: false
+	suspend fun loginStatus() = context.datastore.data.first()[LOGIN_KEY] ?: "no"
 
 	suspend fun isSync() = context.datastore.data.first()[SYNC_KEY] ?: true
 
