@@ -25,7 +25,6 @@ import android.os.SystemClock
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -244,12 +243,15 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
     override fun onResume() {
         super.onResume()
-        Log.e("ASK_PERMISSION", isFirstTime.toString())
         if (requireActivity().checkSelfPermission(Manifest.permission.CAMERA) ==
             PackageManager.PERMISSION_DENIED && isFirstTime
         ) {
             isFirstTime = false
-            askPermission()
+
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+                showGoToAppSettingsDialog(requireContext())
+            else
+                requestPermission.launch(Manifest.permission.CAMERA)
         }
 
         scannerView.setResultHandler(this)
@@ -529,17 +531,13 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         }
     }
 
-    private fun askPermission() {
-        requestPermission.launch(Manifest.permission.CAMERA)
-    }
-
     private val requestPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) {
         if (!it) {
-            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+//            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
                 showGoToAppSettingsDialog(requireContext())
-            else askPermission()
+//            else askPermission()
         }
     }
 

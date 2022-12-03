@@ -20,15 +20,15 @@ object ServiceBuilder {
             .create(ApiInterface::class.java)
 
         val tokenInterceptor = Interceptor { chain ->
-            var request = chain.request()
-            request = request.newBuilder()
+            val request = chain.request().newBuilder()
                 .addHeader("Authorization", "Bearer ${SplashScreenFragment.ACCESS_TOKEN}")
                 .build()
+
             chain.proceed(request)
         }
 
         val tokenAuthenticator = Authenticator { _, response ->
-            if (response.code() == 401) generateNewToken()
+            generateNewToken()
 
             response.request().newBuilder()
                 .header("Authorization", "Bearer ${SplashScreenFragment.ACCESS_TOKEN}")
