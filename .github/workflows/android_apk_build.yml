@@ -17,12 +17,6 @@ jobs:
           fileName: 'keystore/jelly_bean_keystore.jks'
           encodedString: ${{ secrets.KEYSTORE }}
 
-      - name: current directory
-        run : pwd
-
-      - name: list keystore file
-        run:  ls
-
       - uses: actions/checkout@v2
 
       - name: set up JDK
@@ -33,25 +27,19 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: build prod
+      - name: build apk
         run: ./gradlew assembleDebug
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
 
-
-#      - name: Build with Gradle
-#        run: ./gradlew build
-
-#      - name: Build Debug APK
-#        run: ./gradlew assembleDebug
-
       - name: Upload APK to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+#          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          token: ${{secrets.FIREBASE_TOKEN}}
           groups: newTestGroup
           file: app/build/outputs/apk/debug/app-debug.apk
           releaseNotes: A new update!!!!!!!!!!
