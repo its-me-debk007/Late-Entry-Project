@@ -5,30 +5,55 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        build_signed_apk {
+//            storeFile file('..\\keystore\\jelly_bean_keystore.jks')
+//            storePassword 'jellybean'
+//            keyAlias 'key0'
+//            keyPassword 'jellybean'
+
+            def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+            def allFilesFromDir = new File(tmpFilePath).listFiles()
+
+            if (allFilesFromDir != null) {
+                def keystoreFile = allFilesFromDir.first()
+                keystoreFile.renameTo("keystore/your_keystore.jks")
+            }
+
+            storeFile = file("keystore/jelly_bean_keystore.jks")
+            storePassword System.getenv("SIGNING_STORE_PASSWORD")
+            keyAlias System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+        }
+    }
+
     compileSdk 33
 
     defaultConfig {
         applicationId "in.silive.lateentryproject"
         minSdk 26
         targetSdk 32
-        versionCode 2
-        versionName "1.1"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionCode 6
+        versionName "1.5"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.build_signed_apk
+        }
+        debug {
+            signingConfig signingConfigs.build_signed_apk
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     buildFeatures {
         viewBinding true
