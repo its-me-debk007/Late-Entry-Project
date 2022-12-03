@@ -16,20 +16,14 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 
 class WebViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWebviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-//            window.insetsController?.setSystemBarsAppearance(
-//                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-//                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-//            )
-//        else window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         binding = ActivityWebviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)

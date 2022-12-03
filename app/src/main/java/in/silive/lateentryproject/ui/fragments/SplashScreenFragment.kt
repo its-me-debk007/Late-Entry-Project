@@ -43,7 +43,7 @@ class SplashScreenFragment : Fragment(R.layout.splash_screen) {
             lifecycleScope.launch {
                 goToNextFragment(if (datastore.loginStatus() == "no") LoginFragment() else BarcodeFragment())
             }
-        }, 900)
+        }, 700)
     }
 
     private fun askPermission() {
