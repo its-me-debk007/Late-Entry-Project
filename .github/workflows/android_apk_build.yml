@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'keystore/jelly_bean_keystore.jks'
-          encodedString: ${{ secrets.KEYSTORE }}
+#      - name: Decode Keystore
+#        id: decode_keystore
+#        uses: timheuer/base64-to-file@v1
+#        with:
+#          fileName: 'keystore/jelly_bean_keystore.jks'
+#          encodedString: ${{ secrets.KEYSTORE }}
 
       - name: current directory
         run : pwd
