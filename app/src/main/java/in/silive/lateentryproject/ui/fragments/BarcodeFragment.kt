@@ -18,10 +18,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
+import android.os.*
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
@@ -51,6 +48,7 @@ import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
 import java.io.File
 
+@Suppress("DEPRECATION")
 class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView
 .ResultHandler, VenueClickListenerInterface {
     private lateinit var binding: FragmentBarcodeScannerBinding
@@ -69,8 +67,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     private lateinit var seeStudentDetailView: View
     private var isInternetAvailable = true
     private var lastClickTime = 0L
-    var isFirstTime = true
-
+    private var isFirstTime = true
     private lateinit var scannerView: ZBarScannerView
 
     val customView by lazy { layoutInflater.inflate(R.layout.dialog, null) }
@@ -261,9 +258,8 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     override fun onPause() {
         super.onPause()
         toast.cancel()
-        binding.scannerContainer.postDelayed({
-            scannerView.stopCamera()
-        }, 400)
+        scannerView.stopCamera()
+        dialog.dismiss()
     }
 
     override fun handleResult(rawResult: Result?) {
@@ -305,7 +301,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         if (studentNumber == null) bottomSheetDialog.setContentView(enterStudentNoView)
         else {
             bottomSheetDialog.setContentView(seeStudentDetailView)
-            studentNoEditText.setText(studentNumber)
+            studentNoEditText.text = studentNumber
         }
 
         bottomSheetDialog.show()
@@ -357,7 +353,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                     hideKeyboard(studentNo, activity)
                     bottomSheetDialog.setContentView(seeStudentDetailView)
 //                    student_No = studentNo.text.toString()
-                    studentNoEditText.setText(studentNo.text!!.trim())
+                    studentNoEditText.text = studentNo.text!!.trim()
                     return@launch
                 }
             }
@@ -510,8 +506,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     }
 
     private fun showExitDialog() {
-
-        if (!dialog.isShowing) dialog.show()
+        dialog.show()
 
         binding.scannerContainer.postDelayed({
             scannerView.stopCamera()
@@ -533,13 +528,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
     private val requestPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) {
-        if (!it) {
-//            if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
-                showGoToAppSettingsDialog(requireContext())
-//            else askPermission()
-        }
-    }
+    ) { if (!it) showGoToAppSettingsDialog(requireContext()) }
 
     private fun showGoToAppSettingsDialog(context: Context) {
         val customView = layoutInflater.inflate(R.layout.camera_permission_dialog, null)

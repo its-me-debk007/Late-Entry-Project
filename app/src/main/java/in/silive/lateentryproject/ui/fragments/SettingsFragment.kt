@@ -92,9 +92,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             }
 
             syncBtn.setOnClickListener {
-//				lifecycleScope.launch {
-//					studentDatabase.studentDao().clearStudentTable()
-//				}
                 disableBtn(true, syncBtn, 'S')
                 bulkViewModel.sendResult()
                 bulkViewModel._bulkDataResult.observe(viewLifecycleOwner) {
