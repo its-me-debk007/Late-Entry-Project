@@ -17,8 +17,11 @@ jobs:
           fileName: 'keystore/jelly_bean_keystore.jks'
           encodedString: ${{ secrets.KEYSTORE }}
 
+      - name: current directory
+        run : pwd
+
       - name: list keystore file
-        run: ls keystore
+        run:  ls
 
       - uses: actions/checkout@v2
 
