@@ -33,8 +33,8 @@ android {
         applicationId "in.silive.lateentryproject"
         minSdk 26
         targetSdk 32
-        versionCode 7
-        versionName "1.6"
+        versionCode 8
+        versionName "1.7"
     }
 
     buildTypes {
