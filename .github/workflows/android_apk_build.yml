@@ -27,11 +27,19 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build
-
-      - name: Build Debug APK
+      - name: build prod
         run: ./gradlew assembleDebug
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+
+
+#      - name: Build with Gradle
+#        run: ./gradlew build
+
+#      - name: Build Debug APK
+#        run: ./gradlew assembleDebug
 
       - name: Upload APK to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
