@@ -2,7 +2,7 @@ name: Build & Publish APK
 
 on:
   push:
-    branches: [ development ]
+    branches: [ testing-ci-cd ]
 
 jobs:
   build:
@@ -16,6 +16,9 @@ jobs:
         with:
           fileName: 'keystore/jelly_bean_keystore.jks'
           encodedString: ${{ secrets.KEYSTORE }}
+
+      - name: list keystore file
+        run: ls keystore
 
       - uses: actions/checkout@v2
 
