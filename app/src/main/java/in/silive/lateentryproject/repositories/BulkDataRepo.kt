@@ -4,7 +4,6 @@ import `in`.silive.lateentryproject.models.BulkDataClass
 import `in`.silive.lateentryproject.network.ServiceBuilder
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -22,7 +21,6 @@ class BulkDataRepo(private val studentDatabase: StudentDatabase) {
                 call: Call<BulkDataClass?>,
                 response: retrofit2.Response<BulkDataClass?>
             ) {
-                Log.e("Authenticator", response.toString())
 
                 if (response.isSuccessful) {
                     val responseBody = response.body()!!

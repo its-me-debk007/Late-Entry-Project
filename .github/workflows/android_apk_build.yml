@@ -2,7 +2,7 @@ name: Build & Publish APK
 
 on:
   push:
-    branches: [ testing-ci-cd ]
+    branches: [ development ]
 
 jobs:
   build:
