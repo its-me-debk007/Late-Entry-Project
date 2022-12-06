@@ -18,6 +18,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -60,7 +61,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 if (email.text?.trim().isNullOrEmpty()) {
                     emailTextInputLayout.helperText = "Please enter an email"
                     return@setOnClickListener
-                } else if (password.text?.trim().isNullOrEmpty()) {
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(email.text?.trim()).matches())
+                {
+                    emailTextInputLayout.helperText = "Enter valid Email Id"
+                    return@setOnClickListener
+                }
+                else if (password.text?.trim().isNullOrEmpty()) {
                     passwordTextInputLayout.helperText = "Please enter a password"
                     return@setOnClickListener
                 }

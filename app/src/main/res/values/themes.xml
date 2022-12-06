@@ -48,5 +48,7 @@
     <style name="ShapeAppearanceOverlay.App.CornerSize8Percent" parent="">
         <item name="cornerSize">8%</item>
     </style>
-
+    <style name="TextLabel" parent="@android:style/TextAppearance">
+        <item name="android:textSize">13sp</item>
+    </style>
 </resources>
