@@ -25,6 +25,9 @@
 -keep @androidx.room.Entity class *
 # model classes
 -keep class in.silive.lateentryproject.models.*
+
+-keep class me.dm7.barcodescanner.** { *; }
+-keep class net.sourceforge.zbar.** { *; }
 # Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
 # EnclosingMethod is required to use InnerClasses.
 -keepattributes Signature, InnerClasses, EnclosingMethod
@@ -83,3 +86,6 @@
 -dontwarn org.openjsse.**
 # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
 -dontwarn org.codehaus.mojo.animal_sniffer.*
+#viewmodel
+-keepclassmembers public class * extends androidx.lifecycle.ViewModel { public <init>(...); }
+-keepclassmembers class * { public <init>(...); }

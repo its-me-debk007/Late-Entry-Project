@@ -49,8 +49,8 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView
 import java.io.File
 
 @Suppress("DEPRECATION")
-class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView
-.ResultHandler, VenueClickListenerInterface {
+class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScannerView.ResultHandler,
+    VenueClickListenerInterface {
     private lateinit var binding: FragmentBarcodeScannerBinding
     private val venueBottomSheetDialog by lazy { BottomSheetDialog(requireContext()) }
     private val datastore by lazy { Datastore(requireContext()) }
@@ -70,14 +70,14 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     private var isFirstTime = true
     private lateinit var scannerView: ZBarScannerView
 
-    val customView by lazy { layoutInflater.inflate(R.layout.dialog, null) }
-    val builder by lazy {
+    private val customView by lazy { layoutInflater.inflate(R.layout.dialog, null) }
+    private val builder by lazy {
         MaterialAlertDialogBuilder(requireContext()).apply {
             setView(customView)
             background = ColorDrawable(Color.TRANSPARENT)
         }
     }
-    val dialog by lazy { builder.show() }
+    private val dialog by lazy { builder.show() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

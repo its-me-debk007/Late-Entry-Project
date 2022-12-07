@@ -7,23 +7,11 @@ plugins {
 android {
     signingConfigs {
         build_signed_apk {
-            storeFile file('..\\keystore\\jelly_bean_keystore.jks')
-            storePassword 'jellybean'
-            keyAlias 'key0'
-            keyPassword 'jellybean'
 
-//            def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-//            def allFilesFromDir = new File(tmpFilePath).listFiles()
-//
-//            if (allFilesFromDir != null) {
-//                def keystoreFile = allFilesFromDir.first()
-//                keystoreFile.renameTo("keystore/your_keystore.jks")
-//            }
-//
-//            storeFile file('..\\keystore\\jelly_bean_keystore.jks')
-//            storePassword System.getenv("SIGNING_STORE_PASSWORD")
-//            keyAlias System.getenv("SIGNING_KEY_ALIAS")
-//            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+            storeFile file('..\\keystore\\jelly_bean_keystore.jks')
+            storePassword System.getenv("SIGNING_STORE_PASSWORD")
+            keyAlias System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
         }
     }
 
@@ -33,8 +21,10 @@ android {
         applicationId "in.silive.lateentryproject"
         minSdk 26
         targetSdk 32
-        versionCode 9
-        versionName "1.7.1"
+        versionCode 10
+        versionName "1.7.2"
+
+        signingConfig signingConfigs.build_signed_apk
     }
 
     buildTypes {
@@ -42,10 +32,6 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.build_signed_apk
-        }
-        debug {
-            signingConfig signingConfigs.build_signed_apk
         }
     }
     compileOptions {
