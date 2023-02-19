@@ -41,4 +41,4 @@ jobs:
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: newTestGroup
           file: app/build/outputs/apk/debug/app-debug.apk
-          releaseNotes: Bug fixes and optimizations
+          releaseNotes: Bugfix related to resuming camera

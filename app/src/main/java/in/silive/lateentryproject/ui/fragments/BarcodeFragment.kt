@@ -68,6 +68,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
     private var isInternetAvailable = true
     private var lastClickTime = 0L
     private var isFirstTime = true
+    private var isBottomSheetOpen = false
     private lateinit var scannerView: ZBarScannerView
 
     private val customView by lazy { layoutInflater.inflate(R.layout.dialog, null) }
@@ -147,6 +148,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 layoutInflater.inflate(R.layout.layout_venue_bottom_sheet, null)
             venueBottomSheetDialog.setContentView(venueItems)
             venueBottomSheetDialog.show()
+            isBottomSheetOpen = true
 
             binding.scannerContainer.postDelayed({
                 scannerView.stopCamera()
@@ -158,6 +160,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
             recyclerView.adapter = adapter
 
             venueBottomSheetDialog.setOnCancelListener {
+                isBottomSheetOpen = false
                 scannerView.setResultHandler(this)
                 scannerView.startCamera()
             }
@@ -251,8 +254,10 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 requestPermission.launch(Manifest.permission.CAMERA)
         }
 
-        scannerView.setResultHandler(this)
-        scannerView.startCamera()
+        if (!isBottomSheetOpen) {
+            scannerView.setResultHandler(this)
+            scannerView.startCamera()
+        }
     }
 
     override fun onPause() {
@@ -305,6 +310,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         }
 
         bottomSheetDialog.show()
+        isBottomSheetOpen = true
 
         studentNo.requestFocus()
         studentNo.postDelayed({
@@ -360,6 +366,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         }
 
         bottomSheetDialog.setOnCancelListener {
+            isBottomSheetOpen = false
             hideKeyboard(requireView(), activity)
             scannerView.setResultHandler(this)
             scannerView.startCamera()
@@ -482,6 +489,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         scannerView.startCamera()
 
         Handler(Looper.getMainLooper()).postDelayed({
+            isBottomSheetOpen = false
             venueBottomSheetDialog.dismiss()
         }, 150)
         val animation =
@@ -560,4 +568,3 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         startActivity(intent)
     }
 }
-
