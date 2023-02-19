@@ -28,7 +28,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: build apk
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleDebug
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
@@ -41,4 +41,4 @@ jobs:
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: newTestGroup
           file: app/build/outputs/apk/debug/app-debug.apk
-          releaseNotes: A new update!!!!!!!!!!
+          releaseNotes: Bug fixes and optimizations

@@ -21,16 +21,15 @@ android {
         applicationId "in.silive.lateentryproject"
         minSdk 26
         targetSdk 32
-        versionCode 10
-        versionName "1.7.2"
+        versionCode 13
+        versionName "1.7.5"
 
         signingConfig signingConfigs.build_signed_apk
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
