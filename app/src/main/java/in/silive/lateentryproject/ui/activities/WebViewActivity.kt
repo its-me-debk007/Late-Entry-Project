@@ -4,14 +4,11 @@ package `in`.silive.lateentryproject.ui.activities
 
 import `in`.silive.lateentryproject.databinding.ActivityWebviewBinding
 import `in`.silive.lateentryproject.utils.CHANGE_PASSWORD_URL
-import `in`.silive.lateentryproject.utils.STAFF_PANEL_URL
+import `in`.silive.lateentryproject.utils.ADMIN_PANEL_URL
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
-import android.view.WindowInsetsController
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
@@ -30,7 +27,7 @@ class WebViewActivity : AppCompatActivity() {
         var pageFirstTimeLoaded = true
 
         val intentArg = intent.getStringExtra("WEBSITE")
-        supportActionBar?.title = if (intentArg == "STAFF") "Staff Panel" else "Change Password"
+        supportActionBar?.title = if (intentArg == "ADMIN") "Admin Panel" else "Change Password"
 
         binding.webview.apply {
             settings.javaScriptEnabled = true
@@ -72,7 +69,7 @@ class WebViewActivity : AppCompatActivity() {
 
             webViewClient = customWebViewClient
             loadUrl(
-                if (intentArg == "STAFF") STAFF_PANEL_URL
+                if (intentArg == "ADMIN") ADMIN_PANEL_URL
                 else CHANGE_PASSWORD_URL
             )
 

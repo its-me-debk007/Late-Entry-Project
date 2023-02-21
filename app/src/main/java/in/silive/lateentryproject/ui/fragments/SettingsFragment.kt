@@ -75,8 +75,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 goToWebViewActivity("CHANGE_PASSWORD")
             }
 
-            staffPanelBtn.setOnClickListener {
-                goToWebViewActivity("STAFF")
+            adminPanelBtn.setOnClickListener {
+                goToWebViewActivity("ADMIN")
             }
 
             logoutBtn.setOnClickListener {
@@ -87,9 +87,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 }, 300)
             }
 
-            lifecycleScope.launch {
-                if (datastore.loginStatus() == "staff") staffPanelBtn.visibility = View.VISIBLE
-            }
+//            lifecycleScope.launch {
+//                if (datastore.loginStatus() == "staff") adminPanelBtn.visibility = View.VISIBLE
+//            }
 
             syncBtn.setOnClickListener {
                 disableBtn(true, syncBtn, 'S')
