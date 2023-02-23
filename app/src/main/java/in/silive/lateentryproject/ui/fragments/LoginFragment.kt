@@ -5,7 +5,7 @@ import `in`.silive.lateentryproject.databinding.FragmentLoginBinding
 import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.utils.Datastore
-import `in`.silive.lateentryproject.utils.currentTime
+import `in`.silive.lateentryproject.utils.currentDate
 import `in`.silive.lateentryproject.utils.hideKeyboard
 import `in`.silive.lateentryproject.view_model_factories.BulkDataViewModelFactory
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
@@ -111,7 +111,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                                 venue.keys.toTypedArray()[0]
                                             )
                                             datastore.saveDefaultVenue(venue.values.toTypedArray()[0])
-                                            datastore.saveSyncTime(currentTime())
+                                            datastore.saveSyncTime(currentDate())
                                             datastore.changeLoginState(
                                                 loginResponse.data.type ?: "other"
                                             )

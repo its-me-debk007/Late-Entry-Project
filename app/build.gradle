@@ -19,10 +19,10 @@ android {
 
     defaultConfig {
         applicationId "in.silive.lateentryproject"
-        minSdk 26
+        minSdk 24
         targetSdk 32
-        versionCode 15
-        versionName "1.7.7"
+        versionCode 17
+        versionName "1.7.8"
 
         signingConfig signingConfigs.build_signed_apk
     }

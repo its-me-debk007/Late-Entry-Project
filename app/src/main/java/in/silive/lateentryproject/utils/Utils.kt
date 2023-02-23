@@ -15,9 +15,6 @@ import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
 
 var isDialogShown = false
@@ -61,12 +58,7 @@ fun currentTimeInIsoFormat(): String {
 	return format
 }
 
-fun currentTime(): String {
-	val current = LocalDateTime.now()
-	val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-
-	return current.format(formatter).substring(0, 11)
-}
+fun currentDate(): String = SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault()).format(Date())
 
 fun generateNewToken(context: Context = Application()) {
 	runBlocking {

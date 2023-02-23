@@ -10,7 +10,7 @@ import `in`.silive.lateentryproject.room_database.StudentDatabase
 import `in`.silive.lateentryproject.sealed_class.Response
 import `in`.silive.lateentryproject.ui.activities.WebViewActivity
 import `in`.silive.lateentryproject.utils.Datastore
-import `in`.silive.lateentryproject.utils.currentTime
+import `in`.silive.lateentryproject.utils.currentDate
 import `in`.silive.lateentryproject.utils.isDialogShown
 import `in`.silive.lateentryproject.view_model_factories.BulkDataViewModelFactory
 import `in`.silive.lateentryproject.view_models.BulkDataViewModel
@@ -113,7 +113,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                                     }
                             datastore.saveId("ID_KEY", venue.keys.toTypedArray()[0])
 
-                            val currentTime = currentTime()
+                            val currentTime = currentDate()
                             datastore.saveSyncTime(currentTime)
                             lastSyncTime.text = "Last synced: $currentTime"
                         }

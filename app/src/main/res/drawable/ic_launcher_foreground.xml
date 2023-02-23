@@ -2,12 +2,12 @@
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-  <group android:scaleX="0.515"
-      android:scaleY="0.515"
-      android:translateX="20.01"
-      android:translateY="20.01">
+    android:viewportWidth="132"
+    android:viewportHeight="132">
+  <group android:scaleX="0.6294444"
+      android:scaleY="0.6294444"
+      android:translateX="24.456667"
+      android:translateY="24.456667">
     <group>
       <clip-path
           android:pathData="M0,66C0,29.55 29.55,0 66,0V0C102.45,0 132,29.55 132,66V66C132,102.45 102.45,132 66,132V132C29.55,132 0,102.45 0,66V66Z"/>
