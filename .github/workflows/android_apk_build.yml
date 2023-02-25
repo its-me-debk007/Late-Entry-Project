@@ -41,4 +41,4 @@ jobs:
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: newTestGroup
           file: app/build/outputs/apk/debug/app-debug.apk
-          releaseNotes: added support for android 7 (API 24)
+          releaseNotes: view details ui update
