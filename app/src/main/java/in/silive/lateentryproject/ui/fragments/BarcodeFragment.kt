@@ -291,7 +291,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
             seeStudentDetailView.findViewById<TextInputLayout>(R.id.studentNoInputLayout)
         val submitLateEntryBtn =
             seeStudentDetailView.findViewById<MaterialButton>(R.id.submitLateEntryBtn)
-        val viewDetails = seeStudentDetailView.findViewById<MaterialTextView>(R.id.viewDetails)
         val name = seeStudentDetailView.findViewById<MaterialTextView>(R.id.name)
         val branch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.branch)
         val batch = seeStudentDetailView.findViewById<MaterialTextView>(R.id.batch)
@@ -307,6 +306,57 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         else {
             bottomSheetDialog.setContentView(seeStudentDetailView)
             studentNoEditText.text = studentNumber
+            lifecycleScope.launch {
+                val lateEntryList = studentDatabase.studentDao().getStudentDetails()
+                var flag = false
+                val studentNumber2 = studentNoEditText.text.toString().trim()
+                for (student in lateEntryList) {
+                    if (student.student_no == studentNumber2) {
+                        flag = true
+                        viewDetailConstraint.visibility = View.GONE
+                        name.text = student.name
+                        branch.text = student.branch
+                        studentno.text = studentNumber2
+                        batch.text = student.batch.toString()
+
+                        student.student_image?.let {
+                            if (!student.image_downloaded) {
+                                val imgUrl = "https://lateentry.silive.in$it"
+                                Glide.with(requireActivity())
+                                    .applyDefaultRequestOptions(
+                                        RequestOptions.placeholderOf(R.drawable.ic_placeholder)
+                                            .error(R.drawable.ic_placeholder)
+                                    )
+                                    .load(imgUrl)
+                                    .into(studentImage)
+
+                                downloadImg(
+                                    requireContext(), imgUrl,
+                                    "${context?.filesDir}/Images/",
+                                    "${student.student_no}_${student.name}" +
+                                            ".jpg"
+                                )
+                                    .observe(viewLifecycleOwner) { result ->
+                                        if (result == "Download complete")
+                                            student.image_downloaded = true
+                                    }
+                            } else {
+                                val file = File(context?.filesDir, "Images/")
+                                Glide.with(requireContext())
+                                    .applyDefaultRequestOptions(
+                                        RequestOptions.placeholderOf(R.drawable.ic_placeholder)
+                                            .error(R.drawable.ic_placeholder)
+                                    )
+                                    .load(file.absolutePath + "${student.student_no}_${student.name}.jpg")
+                                    .into(studentImage)
+                            }
+                        }
+                    }
+                }
+                if (!flag) {
+                    studentConstraint.visibility = View.GONE
+                }
+            }
         }
 
         bottomSheetDialog.show()
@@ -358,8 +408,52 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
                 } else {
                     hideKeyboard(studentNo, activity)
                     bottomSheetDialog.setContentView(seeStudentDetailView)
-//                    student_No = studentNo.text.toString()
                     studentNoEditText.text = studentNo.text!!.trim()
+                    val lateEntryList = studentDatabase.studentDao().getStudentDetails()
+                    val studentNumber2 = studentNoEditText.text.toString().trim()
+                    for (student in lateEntryList) {
+                        if (student.student_no == studentNumber2) {
+                            viewDetailConstraint.visibility = View.GONE
+                            name.text = student.name
+                            branch.text = student.branch
+                            studentno.text = studentNumber2
+                            batch.text = student.batch.toString()
+
+                            student.student_image?.let {
+                                if (!student.image_downloaded) {
+                                    val imgUrl = "https://lateentry.silive.in$it"
+                                    Glide.with(requireActivity())
+                                        .applyDefaultRequestOptions(
+                                            RequestOptions.placeholderOf(R.drawable.ic_placeholder)
+                                                .error(R.drawable.ic_placeholder)
+                                        )
+                                        .load(imgUrl)
+                                        .into(studentImage)
+
+                                    downloadImg(
+                                        requireContext(), imgUrl,
+                                        "${context?.filesDir}/Images/",
+                                        "${student.student_no}_${student.name}" +
+                                                ".jpg"
+                                    )
+                                        .observe(viewLifecycleOwner) { result ->
+                                            if (result == "Download complete")
+                                                student.image_downloaded = true
+                                        }
+                                } else {
+                                    val file = File(context?.filesDir, "Images/")
+                                    Glide.with(requireContext())
+                                        .applyDefaultRequestOptions(
+                                            RequestOptions.placeholderOf(R.drawable.ic_placeholder)
+                                                .error(R.drawable.ic_placeholder)
+                                        )
+                                        .load(file.absolutePath + "${student.student_no}_${student.name}.jpg")
+                                        .into(studentImage)
+                                }
+                            }
+                        }
+                    }
+
                     return@launch
                 }
             }
@@ -416,68 +510,6 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
 
         }
 
-        viewDetails.setOnClickListener {
-            hideKeyboard(it, activity)
-            viewDetails.isEnabled = false
-            viewDetails.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.disabledSettingsBtnColor
-                )
-            )
-
-            lifecycleScope.launch {
-                val lateEntryList = studentDatabase.studentDao().getStudentDetails()
-                var flag = false
-                val studentNumber2 = studentNoEditText.text.toString().trim()
-                for (student in lateEntryList) {
-                    if (student.student_no == studentNumber2) {
-                        flag = true
-                        viewDetailConstraint.visibility = View.GONE
-                        studentConstraint.visibility = View.VISIBLE
-
-                        name.text = student.name
-                        branch.text = student.branch
-                        studentno.text = studentNumber2
-                        batch.text = student.batch.toString()
-
-                        student.student_image?.let {
-                            if (!student.image_downloaded) {
-                                val imgUrl = "https://lateentry.silive.in$it"
-                                Glide.with(requireActivity())
-                                    .applyDefaultRequestOptions(
-                                        RequestOptions.placeholderOf(R.drawable.ic_placeholder)
-                                            .error(R.drawable.ic_placeholder)
-                                    )
-                                    .load(imgUrl)
-                                    .into(studentImage)
-
-                                downloadImg(
-                                    requireContext(), imgUrl,
-                                    "${context?.filesDir}/Images/",
-                                    "${student.student_no}_${student.name}" +
-                                            ".jpg"
-                                )
-                                    .observe(viewLifecycleOwner) { result ->
-                                        if (result == "Download complete")
-                                            student.image_downloaded = true
-                                    }
-                            } else {
-                                val file = File(context?.filesDir, "Images/")
-                                Glide.with(requireContext())
-                                    .applyDefaultRequestOptions(
-                                        RequestOptions.placeholderOf(R.drawable.ic_placeholder)
-                                            .error(R.drawable.ic_placeholder)
-                                    )
-                                    .load(file.absolutePath + "${student.student_no}_${student.name}.jpg")
-                                    .into(studentImage)
-                            }
-                        }
-                    }
-                }
-                if (!flag) showToast("Invalid student number")
-            }
-        }
     }
 
     override fun venueClickListener(venue: String, id: Int) {

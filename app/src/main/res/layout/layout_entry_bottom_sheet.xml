@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <View
         android:id="@+id/horizontalBar"
@@ -15,173 +15,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraint"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/submitLateEntryBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalBar">
-        <!--        <com.google.android.material.textview.MaterialTextView-->
-        <!--            android:id="@+id/studentNoInputLayout"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginHorizontal="24dp"-->
-        <!--            android:layout_marginTop="18dp"-->
-        <!--            android:ellipsize="end"-->
-        <!--            android:fontFamily="@font/source_sans_pro_semibold"-->
-        <!--            android:padding="10dp"-->
-        <!--            android:text=""-->
-        <!--            android:textColor="#242E42"-->
-        <!--            android:background="@drawable/student_number_text_bg"-->
-        <!--            android:textSize="18sp"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="parent"-->
-        <!--             />-->
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/studentNoInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginEnd="24dp"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
-            app:helperTextTextAppearance="@font/source_sans_pro_semibold"
-            app:helperTextTextColor="#F13A3A"
-            app:hintEnabled="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <RelativeLayout
-                android:id="@+id/relativeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <!--                        <com.google.android.material.button.MaterialButton-->
-                <!--                            android:id="@+id/okButton"-->
-                <!--                            android:layout_width="74dp"-->
-                <!--                            android:layout_height="56dp"-->
-                <!--                            android:layout_alignParentEnd="true"-->
-                <!--                            android:background="@drawable/ok_button_curved_edge"-->
-                <!--                            android:enabled="false"-->
-                <!--                            android:fontFamily="@font/source_sans_pro_semibold"-->
-                <!--                            android:text="OK"-->
-                <!--                            android:textColor="#BFBFBF"-->
-                <!--                            android:textSize="20sp"-->
-                <!--                            />-->
-
-                <!--                        <com.google.android.material.textfield.TextInputEditText-->
-                <!--                            android:id="@+id/studentNo"-->
-                <!--                            android:layout_width="match_parent"-->
-                <!--                            android:layout_height="56dp"-->
-                <!--                            android:layout_marginEnd="74dp"-->
-                <!--                            android:fontFamily="@font/source_sans_pro_semibold"-->
-                <!--                            android:hint="  Student No."-->
-                <!--                            android:imeOptions="actionGo"-->
-                <!--                            android:inputType="number"-->
-                <!--                            android:maxLength="15"-->
-                <!--                            android:padding="16dp"-->
-                <!--                            android:paddingEnd="91dp"-->
-                <!--                            android:textColor="#242E42"-->
-                <!--                            android:textColorHint="#BDC0C6"-->
-                <!--                            android:textSize="18sp" />-->
-
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/studentNoEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="47dp"
-                    android:background="@drawable/curved_edge_edit_text"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/source_sans_pro_semibold"
-                    android:imeOptions="actionGo"
-                    android:inputType="number"
-                    android:maxLength="15"
-                    android:maxLines="1"
-                    android:paddingStart="12dp"
-                    android:paddingTop="6dp"
-                    android:paddingEnd="110dp"
-                    android:paddingBottom="8dp"
-                    android:textColor="#242E42"
-                    android:textSize="24sp" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/viewDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginBottom="3dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="@font/source_sans_pro_semibold"
-                    android:foreground="@drawable/view_details_textview_ripple_effect"
-                    android:padding="12dp"
-                    android:text="View Details"
-                    android:textColor="@color/custom_blue"
-                    android:textSize="16sp" />
-
-            </RelativeLayout>
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!--        <com.google.android.material.textview.MaterialTextView-->
-        <!--            android:id="@+id/viewDetails"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:clickable="true"-->
-        <!--            android:focusable="true"-->
-        <!--            android:layout_marginBottom="3dp"-->
-        <!--            android:fontFamily="@font/source_sans_pro_semibold"-->
-        <!--            android:foreground="@drawable/view_details_textview_ripple_effect"-->
-        <!--            android:padding="12dp"-->
-        <!--            android:text="View Details"-->
-        <!--            android:textColor="@color/custom_blue"-->
-        <!--            android:textSize="16sp"-->
-        <!--            app:layout_constraintBottom_toBottomOf="@+id/studentNoInputLayout"-->
-        <!--            app:layout_constraintEnd_toEndOf="@+id/studentNoInputLayout"-->
-        <!--            app:layout_constraintTop_toTopOf="@+id/studentNoInputLayout" />-->
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/submitLateEntryBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
-        android:fontFamily="@font/source_sans_pro_semibold"
-        android:paddingVertical="14dp"
-        android:text="Submit Late Entry"
-        android:textSize="18sp"
-        app:backgroundTint="@color/custom_blue"
-        app:cornerRadius="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/studentConstraint"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="14dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/submitLateEntryBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -303,5 +145,74 @@
             app:layout_constraintTop_toTopOf="@+id/textView6" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/submitLateEntryBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalBar">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/studentNoInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="24dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:helperTextTextAppearance="@font/source_sans_pro_semibold"
+            app:helperTextTextColor="#F13A3A"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/studentNoEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="47dp"
+                    android:background="@drawable/curved_edge_edit_text"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/source_sans_pro_semibold"
+                    android:imeOptions="actionGo"
+                    android:inputType="number"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    android:paddingStart="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="110dp"
+                    android:paddingBottom="8dp"
+                    android:textColor="#242E42"
+                    android:textSize="24sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/submitLateEntryBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="@font/source_sans_pro_semibold"
+        android:paddingVertical="14dp"
+        android:text="Submit Late Entry"
+        android:textSize="18sp"
+        app:backgroundTint="@color/custom_blue"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
