@@ -1,8 +1,13 @@
 <resources>
-    <string name="app_name">Late Entry Project</string>
+    <string name="app_name">Late Entry</string>
     <string name="grant">Grant</string>
     <string name="cancel">Cancel</string>
     <string name="grant_permissions">Grant Permissions</string>
-    <string name="we_need_permission">We need camera permission to scan Bar codes. Go to App Settings and manage
-        permissions</string>
+    <string name="we_need_permission">We need camera permission to scan bar codes. Go to app settings and grant permission.</string>
+    <string name="ok_btn_snackbar"><font color="#4890EE" size="15"><b>OK</b></font></string>
+    <string name="upload_data">Upload locally saved late entries</string>
+    <string name="sync_data">Sync data every year to get updated student list</string>
+    <string name="logoutMessage">Are you sure you want to log out?</string>
+    <string name="exitMessage">Are you sure you want to exit app?</string>
+    <string name="powered_by_software_incubator">Powered by Software Incubator</string>
 </resources>

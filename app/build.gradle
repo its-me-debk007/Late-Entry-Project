@@ -1,19 +1,30 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
-    compileSdk 32
+    signingConfigs {
+        build_signed_apk {
+
+            storeFile file('..\\keystore\\jelly_bean_keystore.jks')
+            storePassword System.getenv("SIGNING_STORE_PASSWORD")
+            keyAlias System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+        }
+    }
+
+    compileSdk 33
 
     defaultConfig {
         applicationId "in.silive.lateentryproject"
-        minSdk 23
+        minSdk 24
         targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        versionCode 19
+        versionName "1.8.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.build_signed_apk
     }
 
     buildTypes {
@@ -23,28 +34,52 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     buildFeatures {
-        dataBinding true
+        viewBinding true
     }
+    namespace 'in.silive.lateentryproject'
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.6.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    // retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    // moshi
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    // ViewModel
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
+    // LiveData
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     // QR/Bar Code Scanner
     implementation 'me.dm7.barcodescanner:zbar:1.9.13'
-
+    //Gson
+    implementation 'com.google.code.gson:gson:2.10'
+    //Javax
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    //room database
+    implementation 'androidx.room:room-runtime:2.4.3'
+    kapt 'androidx.room:room-compiler:2.4.3'
+    implementation 'androidx.room:room-ktx:2.4.3'
+    //preferences datastore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    //PRDownloader
+    implementation 'com.mindorks.android:prdownloader:0.6.0'
+    //Glide
+    implementation('com.github.bumptech.glide:glide:4.14.2@aar') {
+        transitive = true
+    }
 }

@@ -1,88 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <data>
-
-    </data>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/scannerContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/enterStudentNoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="@font/source_sans_pro_semibold"
+        android:letterSpacing="0.03"
+        android:paddingVertical="14dp"
+        android:paddingEnd="16dp"
+        android:text="Enter student number"
+        android:textColor="#242E42"
+        android:textSize="16sp"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="52dp"
+        app:icon="@drawable/ic_avatar"
+        app:iconPadding="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/scannerContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/scannerContainer"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/flashToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="36dp"
+        android:contentDescription="flash icon"
+        android:foreground="@drawable/ic_ripple_effect"
+        android:stateListAnimator="@null"
+        app:backgroundTint="@color/colorTransparent"
+        app:borderWidth="0dp"
+        app:elevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/scannerContainer"
+        app:maxImageSize="20dp"
+        app:rippleColor="@color/colorTransparent"
+        app:srcCompat="@drawable/ic_flash_on"
+        app:tint="@color/white" />
 
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/enterStudentNoBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:fontFamily="@font/source_sans_pro_semibold"
-                android:paddingVertical="14dp"
-                android:paddingEnd="16dp"
-                android:text="Enter student number"
-                android:textColor="#242E42"
-                android:textSize="16sp"
-                app:backgroundTint="@color/white"
-                app:cornerRadius="52dp"
-                app:icon="@drawable/ic_avatar"
-                app:iconPadding="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:drawablePadding="6dp"
+        android:padding="20dp"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="41dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:contentDescription="settings"
+        android:foreground="@drawable/ic_ripple_effect"
+        android:padding="11dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_settings" />
 
-        <ImageView
-            android:id="@+id/flashToggle"
-            android:layout_width="25dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="26dp"
-            android:layout_marginEnd="31dp"
-            android:src="@drawable/selector"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/scannerContainer" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/materialTextView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:fontFamily="@font/source_sans_pro_semibold"
+        android:text="Align the barcode here"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
-        <TextView
-            android:id="@+id/location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
-            android:text="CS/IT"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/noConnection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:clickable="false"
+        android:fontFamily="@font/source_sans_pro_semibold"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:text="No Connection"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:backgroundTint="#747474"
+        app:cornerRadius="30dp"
+        app:elevation="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/enterStudentNoBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/scannerContainer" />
 
-        <ImageView
-            android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="31dp"
-            android:layout_marginTop="28dp"
-            app:layout_constraintStart_toStartOf="@+id/scannerContainer"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_vector__42_" />
-
-        <ImageView
-            android:id="@+id/icLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="6dp"
-            app:layout_constraintEnd_toStartOf="@+id/location"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_vector__43_" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+</androidx.constraintlayout.widget.ConstraintLayout>
