@@ -271,7 +271,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
         student_No = rawResult?.contents.toString()
         bool = true
         rawResult?.contents?.let {
-            if (it.length in 7..15) showBottomSheet(rawResult.contents)
+            if (it.length in 2..17) showBottomSheet(rawResult.contents)
             else scannerView.resumeCameraPreview(this)
         }
     }
@@ -373,7 +373,7 @@ class BarcodeFragment : Fragment(R.layout.fragment_barcode_scanner), ZBarScanner
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (p0 == null || p0.length < 7) {
+                if (p0 == null || p0.length < 3) {
                     okButton.isEnabled = false
                     okButton.setTextColor(Color.parseColor("#BFBFBF"))
                     okButton.setBackgroundResource(R.drawable.ok_button_curved_edge)

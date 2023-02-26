@@ -21,8 +21,8 @@ android {
         applicationId "in.silive.lateentryproject"
         minSdk 24
         targetSdk 32
-        versionCode 18
-        versionName "1.7.9"
+        versionCode 19
+        versionName "1.8.0"
 
         signingConfig signingConfigs.build_signed_apk
     }
