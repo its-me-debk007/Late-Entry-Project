@@ -47,3 +47,6 @@ https://github.com/its-me-debk007/Late-Entry-Project/assets/81604986/ec633376-d6
 - R8
 - GitHub Actions
 - Firebase App Distribution
+
+#### Note:-
+This is however, a copy of the actual repo! The actual repo contains a little extra amount of confidential code that can't be shared in a public repo.
