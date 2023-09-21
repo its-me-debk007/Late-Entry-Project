@@ -2,7 +2,7 @@
 &nbsp;
 [![Owner](https://img.shields.io/badge/by-its--me--debk007-brightgreen?logo=github&style=social)](https://github.com/its-me-debk007)
 &nbsp;
-![License](https://img.shields.io/github/license/its-me-debk007/Late-Entry-Project?style=social)
+![License](https://img.shields.io/github/license/its-me-debk007/gradle-version-catalog-migrator?style=social)
 
 <div align=center>
   
