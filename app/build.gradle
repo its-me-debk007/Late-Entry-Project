@@ -55,7 +55,7 @@ dependencies {
     // retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     // moshi
-    implementation "com.squareup.retrofit2:converter-moshi:2.11.0"
+    implementation "com.squareup.retrofit2:converter-moshi:3.0.0"
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
