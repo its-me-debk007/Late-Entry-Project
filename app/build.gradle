@@ -75,7 +75,7 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.8.4'
     implementation 'androidx.room:room-ktx:2.8.4'
     //preferences datastore
-    implementation "androidx.datastore:datastore-preferences:1.1.7"
+    implementation "androidx.datastore:datastore-preferences:1.2.0"
     //PRDownloader
     implementation 'com.mindorks.android:prdownloader:0.6.0'
     //Glide
